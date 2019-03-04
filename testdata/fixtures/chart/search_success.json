@@ -1,0 +1,47 @@
+{
+  "count": 0,
+  "results": [
+    {
+      "created": 1533676829319,
+      "creator": "string",
+      "customProperties": "string",
+      "description": "string",
+      "id": "string",
+      "lastUpdated": 1533676829319,
+      "lastUpdatedBy": "string",
+      "name": "string",
+      "options": {
+        "areaChartOptions": {},
+        "axes": [],
+        "axisPrecision": 3,
+        "colorBy": "Range",
+        "colorRange": {},
+        "colorScale": {},
+        "colorScale2": [],
+        "defaultPlotType": "LineChart",
+        "groupBy": [],
+        "histogramChartOptions": {},
+        "includeZero": false,
+        "legendOptions": {},
+        "lineChartOptionsObject": {},
+        "markdown": "string",
+        "maximumPrecision": 0,
+        "onChartLegendOptions": {},
+        "programOptions": {},
+        "publishLabelOptions": [],
+        "refreshInterval": 0,
+        "secondaryVisualization": "None",
+        "showEventLines": false,
+        "showSparkLine": false,
+        "sortBy": "string",
+        "sortDirection": "Ascending",
+        "sortProperty": "string",
+        "stacked": false,
+        "time": {},
+        "timeStampHidden": false,
+        "type": "Heatmap",
+        "unitPrefix": "Metric"
+      }
+    }
+  ]
+}

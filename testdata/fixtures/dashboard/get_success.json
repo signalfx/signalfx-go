@@ -1,0 +1,96 @@
+{
+  "authorizedWriters": {
+    "teams": [
+      "string"
+    ],
+    "users": [
+      "string"
+    ]
+  },
+  "chartDensity": "DEFAULT\\\"",
+  "charts": [
+    {
+      "chartId": "string",
+      "column": 0,
+      "height": 1,
+      "row": 0,
+      "width": 1
+    }
+  ],
+  "created": 0,
+  "creator": "string",
+  "customProperties": {},
+  "description": "string",
+  "discoveryOptions": {},
+  "eventOverlays": [
+    {
+      "NOT": false,
+      "property": "string",
+      "value": [
+        "string"
+      ]
+    }
+  ],
+  "filters": {
+    "sources": [
+      {
+        "NOT": false,
+        "property": "string",
+        "value": [
+          "string"
+        ]
+      }
+    ],
+    "time": {
+      "end": "string",
+      "start": "string"
+    },
+    "variables": [
+      {
+        "alias": "string",
+        "preferredSuggestions": [
+          "string"
+        ],
+        "property": "string",
+        "required": false,
+        "restricted": false,
+        "value": [
+          "string"
+        ]
+      }
+    ]
+  },
+  "groupId": "string",
+  "id": "string",
+  "lastUpdated": 0,
+  "lastUpdatedBy": "string",
+  "locked": true,
+  "maxDelayOverride": 0,
+  "name": "string",
+  "selectedEventOverlays": [
+    {
+      "eventLine": false,
+      "eventSignal": {
+        "eventSearchText": "string",
+        "eventType": "detectorEvents"
+      },
+      "eventColorIndex": 0,
+      "label": "string",
+      "overlayId": "string",
+      "sources": [
+        [
+          {
+            "NOT": false,
+            "property": "string",
+            "value": [
+              "string"
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "tags": [
+    "string"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "created": 1533676829319,
+  "creator": "\"AAAAAAAAAA\" if the system created the detector",
+  "customProperties": "string",
+  "description": "string",
+  "id": "string",
+  "labelResolution": {
+    "label": "string"
+  },
+  "lastUpdated": 1533676829319,
+  "lastUpdatedBy": "string",
+  "locked": true,
+  "maxDelay": 60000,
+  "name": "string",
+  "overMTSLimit": true,
+  "programText": "string",
+  "rules": [
+    {
+      "description": "string",
+      "detectLabel": "string",
+      "disabled": true,
+      "notifications": [
+        {
+          "channel": "limit-notifications",
+          "credentialId": "ZZZZZZZAAAA",
+          "type": "Slack"
+        }
+      ],
+      "parameterizedBody": "string",
+      "parameterizedSubject": "string",
+      "runbookUrl": "string",
+      "severity": "Critical"
+    }
+  ],
+  "tags": [
+    "string"
+  ],
+  "teams": [
+    "string"
+  ],
+  "visualizationOptions": [
+    {
+      "disableSampling": true,
+      "showDataMarkers": true,
+      "showEventLines": true,
+      "time": {
+        "end": 0,
+        "range": 0,
+        "start": 0,
+        "type": "absolute"
+      }
+    }
+  ]
+}

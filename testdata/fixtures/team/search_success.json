@@ -1,0 +1,33 @@
+{
+  "count": 0,
+  "results": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "members": [
+        "string"
+      ],
+      "notificationLists": {
+        "default": [
+          "string"
+        ],
+        "critical": [
+          "string"
+        ],
+        "warning": [
+          "string"
+        ],
+        "major": [
+          "string"
+        ],
+        "minor": [
+          "string"
+        ],
+        "info": [
+          "string"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "count": 0,
+  "results": [
+    {
+      "authorizedWriters": {
+        "teams": [
+          "string"
+        ],
+        "users": [
+          "string"
+        ]
+      },
+      "created": 0,
+      "creator": "string",
+      "dashboards": [
+        "string"
+      ],
+      "description": "string",
+      "id": "string",
+      "lastUpdated": 0,
+      "lastUpdatedBy": "string",
+      "name": "string",
+      "teams": null
+    }
+  ]
+}

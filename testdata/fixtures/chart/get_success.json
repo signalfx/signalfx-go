@@ -1,0 +1,112 @@
+{
+  "created": 1533676829319,
+  "creator": "string",
+  "customProperties": "string",
+  "description": "string",
+  "id": "string",
+  "lastUpdated": 1533676829319,
+  "lastUpdatedBy": "string",
+  "name": "string",
+  "options": {
+    "areaChartOptions": {
+      "showDataMarkers": false
+    },
+    "axes": [
+      {
+        "highWaterMark": 0,
+        "highWaterMarkLabel": "string",
+        "label": "string",
+        "lowhWaterMark": 0,
+        "lowWaterMarkLabel": "string",
+        "max": 0,
+        "min": 0
+      }
+    ],
+    "axisPrecision": 3,
+    "colorBy": "Range",
+    "colorRange": {
+      "color": "strings",
+      "max": "strings",
+      "min": "strings"
+    },
+    "colorScale": {
+      "inverted": false,
+      "thresholds": [
+        0
+      ]
+    },
+    "colorScale2": [
+      {
+        "gt": 0,
+        "gte": 0,
+        "lt": 0,
+        "lte": 0,
+        "paletteIndex": 0
+      }
+    ],
+    "defaultPlotType": "LineChart",
+    "groupBy": [
+      "string"
+    ],
+    "histogramChartOptions": {
+      "colorThemeIndex": 16
+    },
+    "includeZero": false,
+    "legendOptions": {
+      "fields": [
+        {
+          "enabled": true,
+          "property": "string"
+        }
+      ]
+    },
+    "lineChartOptionsObject": {
+      "showDataMarkers": false
+    },
+    "markdown": "string",
+    "maximumPrecision": 0,
+    "onChartLegendOptions": {
+      "dimensionInLegend": "string",
+      "showLegend": false
+    },
+    "programOptions": {
+      "disableSampling": false,
+      "maxDelay": 0,
+      "minimumResolution": 0
+    },
+    "publishLabelOptions": [
+      {
+        "displayName": "string",
+        "label": "string",
+        "paletteIndex": 0,
+        "plotType": "LineChart",
+        "valuePrefix": "string",
+        "valueSuffix": "string",
+        "valueUnit": "Bit",
+        "yAxis": 0
+      }
+    ],
+    "refreshInterval": 0,
+    "secondaryVisualization": "None",
+    "showEventLines": false,
+    "showSparkLine": false,
+    "sortBy": "string",
+    "sortDirection": "Ascending",
+    "sortProperty": "string",
+    "stacked": false,
+    "time": {
+      "end": 0,
+      "range": 0,
+      "start": 0,
+      "type": "relative"
+    },
+    "timeStampHidden": false,
+    "type": "Heatmap",
+    "unitPrefix": "Metric"
+  },
+  "packageSpecifications": "string",
+  "programText": "string",
+  "tags": [
+    "string"
+  ]
+}
