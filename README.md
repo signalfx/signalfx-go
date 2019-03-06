@@ -12,7 +12,7 @@ import "github.com/signalfx/signalfx-go"
 // The client can be customized by backing options onto the end. Check the
 // for more info!
 
-// Instantiate your own client if you want to customize it's options
+// Instantiate your own client if you want to customize its options
 // or test with a RoundTripper
 httpClient := &http.Client{…}
 client := new Client("your-token-here", HTTPClient(httpClient))
