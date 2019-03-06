@@ -22,22 +22,46 @@ type Client struct {
 	authToken  string
 }
 
-// TODO override, reuse?
+// ClientParam is an option for NewClient. Its implementation borrows
+// from Dave Cheney's functional options API
+// (https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis).
+type ClientParam func(*Client) error
 
 // NewClient creates a new SignalFx client using the specified token.
-func NewClient(token string, apiURL string) (*Client, error) {
-	configuredURL := apiURL
-	if configuredURL == "" {
-		configuredURL = DefaultAPIURL
-	}
-
-	return &Client{
-		baseURL: configuredURL,
+func NewClient(token string, options ...ClientParam) (*Client, error) {
+	client := &Client{
+		baseURL: DefaultAPIURL,
 		httpClient: &http.Client{
 			Timeout: time.Second * 30,
 		},
 		authToken: token,
-	}, nil
+	}
+
+	for _, option := range options {
+		option(client)
+	}
+
+	return client, nil
+}
+
+// APIUrl sets the URL that our client will communicate with, allowing
+// it to be adjusted to another URL for testing or communication with other
+// SignalFx clusters.
+func APIUrl(apiURL string) ClientParam {
+	return func(client *Client) error {
+		client.baseURL = apiURL
+		return nil
+	}
+}
+
+// HTTPClient sets the `http.Client` that this API client will use to
+// to communicate. This allows you to replace the client or tune it to your
+// needs.
+func HTTPClient(httpClient *http.Client) ClientParam {
+	return func(client *Client) error {
+		client.httpClient = httpClient
+		return nil
+	}
 }
 
 func (c *Client) doRequest(method string, path string, params url.Values, body io.Reader) (*http.Response, error) {
