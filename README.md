@@ -4,6 +4,11 @@ Note: This library is experimental. Do not rely on it yet.
 
 This is a programmatic interface in Go for SignalFx's metadata and ingest APIs.
 
+# TODO
+
+* Settle on request/response body deserialization (we're thinking of using OpenTracing generated models to be in sync with docs!)
+* Include APIs for metric reading (signalflow, etc!)
+
 # Example
 
 ```
