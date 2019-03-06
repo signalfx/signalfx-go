@@ -32,7 +32,7 @@ func setup() func() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
 
-	client, _ = NewClient(TestToken, server.URL)
+	client, _ = NewClient(TestToken, APIUrl(server.URL))
 
 	return func() {
 		server.Close()
