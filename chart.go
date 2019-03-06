@@ -15,7 +15,7 @@ import (
 const ChartAPIURL = "/v2/chart"
 
 // CreateChart creates a chart.
-func (c *Client) CreateChart(chartRequest *chart.CreateUpdateChartRequest) (*chart.CreateUpdateChartResponse, error) {
+func (c *Client) CreateChart(chartRequest *chart.CreateUpdateChartRequest) (*chart.Chart, error) {
 	payload, err := json.Marshal(chartRequest)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (c *Client) CreateChart(chartRequest *chart.CreateUpdateChartRequest) (*cha
 	}
 	defer resp.Body.Close()
 
-	finalChart := &chart.CreateUpdateChartResponse{}
+	finalChart := &chart.Chart{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalChart)
 
@@ -51,7 +51,7 @@ func (c *Client) DeleteChart(id string) error {
 }
 
 // GetChart gets a chart.
-func (c *Client) GetChart(id string) (*chart.GetSingleChartResponse, error) {
+func (c *Client) GetChart(id string) (*chart.Chart, error) {
 	resp, err := c.doRequest("GET", ChartAPIURL+"/"+id, nil, nil)
 
 	if err != nil {
@@ -59,7 +59,7 @@ func (c *Client) GetChart(id string) (*chart.GetSingleChartResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	finalChart := &chart.GetSingleChartResponse{}
+	finalChart := &chart.Chart{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalChart)
 
@@ -67,7 +67,7 @@ func (c *Client) GetChart(id string) (*chart.GetSingleChartResponse, error) {
 }
 
 // UpdateChart updates a chart.
-func (c *Client) UpdateChart(id string, chartRequest *chart.CreateUpdateChartRequest) (*chart.CreateUpdateChartResponse, error) {
+func (c *Client) UpdateChart(id string, chartRequest *chart.CreateUpdateChartRequest) (*chart.Chart, error) {
 	payload, err := json.Marshal(chartRequest)
 	if err != nil {
 		return nil, err
@@ -79,15 +79,15 @@ func (c *Client) UpdateChart(id string, chartRequest *chart.CreateUpdateChartReq
 	}
 	defer resp.Body.Close()
 
-	finalChart := &chart.CreateUpdateChartResponse{}
+	finalChart := &chart.Chart{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalChart)
 
 	return finalChart, err
 }
 
-// SearchChart searches for charts, given a query string in `name`.
-func (c *Client) SearchCharts(limit int, name string, offset int, tags string) (*chart.GetChartsResult, error) {
+// SearchCharts searches for charts, given a query string in `name`.
+func (c *Client) SearchCharts(limit int, name string, offset int, tags string) (*chart.SearchResult, error) {
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("name", name)
@@ -101,7 +101,7 @@ func (c *Client) SearchCharts(limit int, name string, offset int, tags string) (
 	}
 	defer resp.Body.Close()
 
-	finalCharts := &chart.GetChartsResult{}
+	finalCharts := &chart.SearchResult{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalCharts)
 

@@ -22,3 +22,11 @@ import "github.com/signalfx/signalfx-go"
 httpClient := &http.Client{…}
 client := new Client("your-token-here", HTTPClient(httpClient))
 ```
+
+# Questions
+
+## Why are the class names sometimes long and the source file names prefixed with `_model`?
+
+The request and response bodies for this library are machine generated from the [SignalFx REST API Reference](https://github.com/signalfx/api-reference) using [OpenAPI code generator](https://github.com/OpenAPITools/openapi-generator). This is a real boon for everyone, keeping the documentation as a source of truth and ensuring that this library has support for all the things!
+
+This means that some of our type names are verbose. It's fine, you only type code once and the benefits are worth it.
