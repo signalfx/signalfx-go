@@ -17,6 +17,4 @@ type GeneralOptions struct {
 	MaxDelay int32 `json:"maxDelay,omitempty"`
 	// The minimum resolution to use when computing the SignalFlow program, specified in milliseconds. By default, SignalFx computes and applies a sensible value. You can also choose the automatic option by explicitly setting `minimumResolution` to 0. The maximum value is 900,000 ms (15 minutes).<br> **Note** Available for *all* values of `options.type` except for `Text`.
 	MinimumResolution int32 `json:"minimumResolution,omitempty"`
-	// Specifies which time zone SignalFlow should use as the basis of calendar window transformation methods. For example, if you set `\"timezone\": \"Europe/Paris\"` and then use the transformation `sum(cycle=\"week\", cycle_start=\"Monday\")` in your chart's SignalFlow program, the calendar window starts on Monday, Paris time. <br> For a list of supported time zones, see [Timezones and SignalFlow calendar window transformations](https://developers.signalfx.com/charts_dashboards/charts_overview.html#_timezones_and_signalflow_calendar_window_transformations)
-	Timezone string `json:"timezone,omitempty"`
 }
