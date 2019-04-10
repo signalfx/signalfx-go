@@ -7,65 +7,16 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-)
 
-// TODO retrieve events
-// TODO retrieve incidents
-// TODO validate detector definition
+	"github.com/signalfx/signalfx-go/detector"
+)
 
 // DetectorAPIURL is the base URL for interacting with detectors.
 const DetectorAPIURL = "/v2/detector"
 
-// Detector is a detector.
-type Detector struct {
-	AuthorizedWriters struct {
-		Teams []string `json:"teams"`
-		Users []string `json:"users"`
-	} `json:"authorizedWriters"`
-	CustomProperties string `json:"customProperties"`
-	Description      string `json:"description"`
-	MaxDelay         int64  `json:"maxDelay"`
-	Name             string `json:"name"`
-	ProgramText      string `json:"programText"`
-	Rules            []struct {
-		Description   string `json:"description"`
-		DetectLabel   string `json:"detectLabel"`
-		Disabled      bool   `json:"disabled"`
-		Notifications []struct {
-			Channel      string `json:"channel"`
-			CredentialID string `json:"credentialId"`
-			Type         string `json:"type"`
-		} `json:"notifications"`
-		ParameterizedBody    string `json:"parameterizedBody"`
-		ParameterizedSubject string `json:"parameterizedSubject"`
-		RunbookURL           string `json:"runbookUrl"`
-		Severity             string `json:"severity"`
-	} `json:"rules"`
-	Tags                 []string `json:"tags"`
-	Teams                []string `json:"teams"`
-	Timezone             string   `json:"timezone"`
-	VisualizationOptions []struct {
-		DisableSampling bool `json:"disableSampling"`
-		ShowDataMarkers bool `json:"showDataMarkers"`
-		ShowEventLines  bool `json:"showEventLines"`
-		Time            struct {
-			End   int64  `json:"end"`
-			Range int64  `json:"range"`
-			Start int64  `json:"start"`
-			Type  string `json:"type"`
-		} `json:"time"`
-	} `json:"visualizationOptions"`
-}
-
-// DetectorSearch is the result of a query for Detectors
-type DetectorSearch struct {
-	Count   int64 `json:"count,omitempty"`
-	Results []Detector
-}
-
 // CreateDetector creates a detector.
-func (c *Client) CreateDetector(detector *Detector) (*Detector, error) {
-	payload, err := json.Marshal(detector)
+func (c *Client) CreateDetector(detectorRequest *detector.CreateUpdateDetectorRequest) (*detector.Detector, error) {
+	payload, err := json.Marshal(detectorRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +27,7 @@ func (c *Client) CreateDetector(detector *Detector) (*Detector, error) {
 	}
 	defer resp.Body.Close()
 
-	finalDetector := &Detector{}
+	finalDetector := &detector.Detector{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
 
@@ -122,7 +73,7 @@ func (c *Client) EnableDetector(id string) error {
 }
 
 // GetDetector gets a detector.
-func (c *Client) GetDetector(id string) (*Detector, error) {
+func (c *Client) GetDetector(id string) (*detector.Detector, error) {
 	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id, nil, nil)
 
 	if err != nil {
@@ -130,7 +81,7 @@ func (c *Client) GetDetector(id string) (*Detector, error) {
 	}
 	defer resp.Body.Close()
 
-	finalDetector := &Detector{}
+	finalDetector := &detector.Detector{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
 
@@ -138,8 +89,8 @@ func (c *Client) GetDetector(id string) (*Detector, error) {
 }
 
 // UpdateDetector updates a detector.
-func (c *Client) UpdateDetector(id string, detector *Detector) (*Detector, error) {
-	payload, err := json.Marshal(detector)
+func (c *Client) UpdateDetector(id string, detectorRequest *detector.CreateUpdateDetectorRequest) (*detector.Detector, error) {
+	payload, err := json.Marshal(detectorRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +101,7 @@ func (c *Client) UpdateDetector(id string, detector *Detector) (*Detector, error
 	}
 	defer resp.Body.Close()
 
-	finalDetector := &Detector{}
+	finalDetector := &detector.Detector{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
 
@@ -158,7 +109,7 @@ func (c *Client) UpdateDetector(id string, detector *Detector) (*Detector, error
 }
 
 // SearchDetector searches for detectors, given a query string in `name`.
-func (c *Client) SearchDetector(limit int, name string, offset int, tags string) (*DetectorSearch, error) {
+func (c *Client) SearchDetectors(limit int, name string, offset int, tags string) (*detector.SearchResults, error) {
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("name", name)
@@ -172,7 +123,7 @@ func (c *Client) SearchDetector(limit int, name string, offset int, tags string)
 	}
 	defer resp.Body.Close()
 
-	finalDetectors := &DetectorSearch{}
+	finalDetectors := &detector.SearchResults{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetectors)
 

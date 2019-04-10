@@ -1,5 +1,5 @@
 {
-  "count": null,
+  "count": 1,
   "results": [
     {
       "created": 1533676829319,
@@ -17,22 +17,24 @@
       "name": "string",
       "overMTSLimit": true,
       "programText": "string",
-      "rules": {
-        "description": "string",
-        "detectLabel": "string",
-        "disabled": true,
-        "notifications": [
-          {
-            "channel": "limit-notifications",
-            "credentialId": "ZZZZZZZAAAA",
-            "type": "Slack"
-          }
-        ],
-        "parameterizedBody": "string",
-        "parameterizedSubject": "string",
-        "runbookUrl": "string",
-        "severity": "Critical"
-      },
+      "rules": [
+        {
+          "description": "string",
+          "detectLabel": "string",
+          "disabled": true,
+          "notifications": [
+            {
+              "channel": "limit-notifications",
+              "credentialId": "ZZZZZZZAAAA",
+              "type": "Slack"
+            }
+          ],
+          "parameterizedBody": "string",
+          "parameterizedSubject": "string",
+          "runbookUrl": "string",
+          "severity": "Critical"
+        }
+      ],
       "tags": [
         "string"
       ],

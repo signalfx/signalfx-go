@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/signalfx/signalfx-go/detector"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +16,7 @@ func TestCreateDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", http.StatusOK, nil, "detector/create_success.json"))
 
-	result, err := client.CreateDetector(&Detector{
+	result, err := client.CreateDetector(&detector.CreateUpdateDetectorRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating detector")
@@ -77,11 +78,11 @@ func TestSearchDetector(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", http.StatusOK, params, "detector/get_success.json"))
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", http.StatusOK, params, "detector/search_success.json"))
 
-	results, err := client.SearchDetector(limit, name, offset, tags)
+	results, err := client.SearchDetectors(limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search detector")
-	assert.Equal(t, int64(0), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
 func TestUpdateDetector(t *testing.T) {
@@ -90,7 +91,7 @@ func TestUpdateDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", http.StatusOK, nil, "detector/update_success.json"))
 
-	result, err := client.UpdateDetector("string", &Detector{
+	result, err := client.UpdateDetector("string", &detector.CreateUpdateDetectorRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating detector")
