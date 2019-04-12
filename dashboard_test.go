@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/signalfx/signalfx-go/dashboard"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +16,7 @@ func TestCreateDashboard(t *testing.T) {
 
 	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "POST", http.StatusOK, nil, "dashboard/create_success.json"))
 
-	result, err := client.CreateDashboard(&Dashboard{
+	result, err := client.CreateDashboard(&dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating dashboard")
@@ -57,11 +58,11 @@ func TestSearchDashboard(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "GET", http.StatusOK, params, "dashboard/get_success.json"))
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "GET", http.StatusOK, params, "dashboard/search_success.json"))
 
 	results, err := client.SearchDashboard(limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search dashboard")
-	assert.Equal(t, int64(0), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
 func TestUpdateDashboard(t *testing.T) {
@@ -70,7 +71,7 @@ func TestUpdateDashboard(t *testing.T) {
 
 	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "PUT", http.StatusOK, nil, "dashboard/update_success.json"))
 
-	result, err := client.UpdateDashboard("string", &Dashboard{
+	result, err := client.UpdateDashboard("string", &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating dashboard")
