@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/signalfx/signalfx-go/dashboard_group"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +18,7 @@ func TestCreateDashboardGroup(t *testing.T) {
 
 	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", http.StatusOK, nil, "dashboardgroup/create_success.json"))
 
-	result, err := client.CreateDashboardGroup(&DashboardGroup{
+	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating dashboard group")
@@ -59,11 +60,11 @@ func TestSearchDashboardGroup(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", http.StatusOK, params, "dashboardgroup/get_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", http.StatusOK, params, "dashboardgroup/search_success.json"))
 
-	results, err := client.SearchDashboardGroup(limit, name, offset, tags)
+	results, err := client.SearchDashboardGroups(limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search dashboard group")
-	assert.Equal(t, int64(0), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
 func TestUpdateDashboardGroup(t *testing.T) {
@@ -72,7 +73,7 @@ func TestUpdateDashboardGroup(t *testing.T) {
 
 	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "PUT", http.StatusOK, nil, "dashboardgroup/update_success.json"))
 
-	result, err := client.UpdateDashboardGroup("string", &DashboardGroup{
+	result, err := client.UpdateDashboardGroup("string", &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating dashboard group")
