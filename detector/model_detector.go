@@ -15,7 +15,7 @@ type Detector struct {
 	// User ID of the initial creator
 	Creator string `json:"creator,omitempty"`
 	// User-defined JSON object containing metadata
-	CustomProperties string `json:"customProperties,omitempty"`
+	CustomProperties interface{} `json:"customProperties,omitempty"`
 	// Description of the detector. It appears in the Detector window displayed from the web UI Actions menu
 	Description string `json:"description,omitempty"`
 	// System-defined identifier for the detector
