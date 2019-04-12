@@ -89,12 +89,11 @@ func (c *Client) UpdateDashboardGroup(id string, dashboardGroupRequest *dashboar
 }
 
 // SearchDashboardGroup searches for dashboard groups, given a query string in `name`.
-func (c *Client) SearchDashboardGroups(limit int, name string, offset int, tags string) (*dashboard_group.SearchResult, error) {
+func (c *Client) SearchDashboardGroups(limit int, name string, offset int) (*dashboard_group.SearchResult, error) {
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("name", name)
 	params.Add("offset", strconv.Itoa(offset))
-	params.Add("tags", tags)
 
 	resp, err := c.doRequest("GET", DashboardGroupAPIURL, params, nil)
 

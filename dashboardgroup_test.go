@@ -53,16 +53,14 @@ func TestSearchDashboardGroup(t *testing.T) {
 	limit := 10
 	name := "foo"
 	offset := 2
-	tags := "bar"
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("name", name)
 	params.Add("offset", strconv.Itoa(offset))
-	params.Add("tags", tags)
 
 	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", http.StatusOK, params, "dashboardgroup/search_success.json"))
 
-	results, err := client.SearchDashboardGroups(limit, name, offset, tags)
+	results, err := client.SearchDashboardGroups(limit, name, offset)
 	assert.NoError(t, err, "Unexpected error search dashboard group")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
