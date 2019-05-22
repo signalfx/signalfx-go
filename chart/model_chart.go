@@ -14,8 +14,6 @@ type Chart struct {
 	Created int64 `json:"created,omitempty"`
 	// SignalFx user ID of the user that initially created the chart
 	Creator string `json:"creator,omitempty"`
-	// User-defined JSON object containing metadata
-	CustomProperties string `json:"customProperties,omitempty"`
 	// Description of the chart. This value appears underneath the chart name in the SignalFx web UI.
 	Description string `json:"description,omitempty"`
 	// System-defined identifier for the chart
@@ -25,7 +23,7 @@ type Chart struct {
 	// The SignalFx user ID of the last person who updated the chart. If the last update was done by the system, the value is the string literal \"AAAAAAAAAA\".
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// The displayed name of the chart in the dashboard
-	Name string `json:"name,omitempty"`
+	Name    string  `json:"name,omitempty"`
 	Options Options `json:"options,omitempty"`
 	// Specifies one or more SignalFlow packages to import for use with the SignalFlow program specified in the `programText` option. This option must be set to `signalfx`.
 	PackageSpecifications string `json:"packageSpecifications,omitempty"`
