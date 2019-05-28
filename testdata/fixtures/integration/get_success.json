@@ -1,0 +1,17 @@
+{
+  "id": "string",
+  "created": 1556361030000,
+  "creator": "string",
+  "enabled": true,
+  "lastUpdated": 1556620230000,
+  "lastUpdatedBy": "string",
+  "name": "string",
+  "type": "Slack",
+  "method": "Webhook",
+  "webhookUrl": "string",
+  "scope": "string",
+  "slackTeamName": "string",
+  "slackTeamId": "string",
+  "slackUserId": "string",
+  "accessTokenUpdated": 1555929030000
+}
