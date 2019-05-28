@@ -26,7 +26,7 @@ func (c *Client) DeleteIntegration(id string) error {
 }
 
 // GetIntegration gets a integration.
-func (c *Client) GetIntegration(id string) (*map[string]interface{}, error) {
+func (c *Client) GetIntegration(id string) (map[string]interface{}, error) {
 	resp, err := c.doRequest("GET", IntegrationAPIURL+"/"+id, nil, nil)
 
 	if err != nil {
@@ -34,9 +34,9 @@ func (c *Client) GetIntegration(id string) (*map[string]interface{}, error) {
 	}
 	defer resp.Body.Close()
 
-	finalIntegration := map[string]interface{}{}
+	finalIntegration := make(map[string]interface{})
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
 
-	return &finalIntegration, err
+	return finalIntegration, err
 }

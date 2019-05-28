@@ -23,6 +23,8 @@ func TestGetIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "GET", http.StatusOK, nil, "integration/get_success.json"))
 
-	_, err := client.GetIntegration("string")
+	result, err := client.GetIntegration("string")
 	assert.NoError(t, err, "Unexpected error getting integration")
+	id := result["id"].(string)
+	assert.Equal(t, id, "string", "Missing ID")
 }
