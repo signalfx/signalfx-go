@@ -1,52 +1,35 @@
 package signalflow
 
+import "github.com/signalfx/signalfx-go/signalflow/messages"
+
+// Channel is a queue of messages that all pertain to the same computation.
 type Channel struct {
 	name     string
-	messages chan Message
-	// Channel that is always read from to pull messages out and buffer them
-	// without blocking, even if nobody is listening on `messages`.
-	incoming chan Message
+	messages chan messages.Message
 }
 
 func newChannel(name string) *Channel {
 	c := &Channel{
 		name:     name,
-		messages: make(chan Message),
-		incoming: make(chan Message, 10),
+		messages: make(chan messages.Message),
 	}
-	go c.processBufferedMessages()
 	return c
 }
 
-// Buffer up messages indefinitely until another goroutine reads them off of
-// c.messages, which is an unbuffered channel.
-func (c *Channel) processBufferedMessages() {
-	buffer := make([]Message, 0)
-	for {
-		if len(buffer) > 0 {
-			var nextMessage Message
-			nextMessage, buffer = buffer[0], buffer[1:]
-			select {
-			case c.messages <- nextMessage:
-				continue
-			case msg := <-c.incoming:
-				buffer = append(buffer, msg)
-			}
-		} else {
-			buffer = append(buffer, <-c.incoming)
-		}
-	}
+// AcceptMessage from a websocket.  This might block if nothing is reading from
+// the channel but generally a compuatation should always be doing so.
+func (c *Channel) AcceptMessage(msg messages.Message) {
+	c.messages <- msg
 }
 
-func (c *Channel) AcceptMessage(msg Message) {
-	// This shouldn't block since it should always be read from
-	c.incoming <- msg
-}
-
-func (c *Channel) Messages() <-chan Message {
+// Messages returns a Go chan that will be pushed all of the deserialized
+// SignalFlow messages from the websocket.
+func (c *Channel) Messages() <-chan messages.Message {
 	return c.messages
 }
 
+// Close the channel.  This does not actually stop a job in SignalFlow, for
+// that use Computation.Stop().
 func (c *Channel) Close() {
 	close(c.messages)
 }

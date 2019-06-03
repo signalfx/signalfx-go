@@ -13,26 +13,32 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/signalfx/signalfx-go/signalflow/messages"
 )
 
 // Client for SignalFlow via websockets (SSE is not currently supported).
 type Client struct {
 	// Access token for the org
-	token            string
-	nextChannelNum   int64
-	conn             *websocket.Conn
-	outgoingMessages chan interface{}
+	token                  string
+	userAgent              string
+	defaultMetadataTimeout time.Duration
+	nextChannelNum         int64
+	conn                   *websocket.Conn
+	outgoingMessages       chan interface{}
 	// How long to wait for writes to the websocket to finish
 	writeTimeout   time.Duration
 	streamURL      *url.URL
 	channelsByName map[string]*Channel
 
-	isShutdown bool
-	ctx        context.Context
-	cancel     context.CancelFunc
-	lock       sync.Mutex
+	isInitialized bool
+	isShutdown    bool
+	ctx           context.Context
+	cancel        context.CancelFunc
+	lastErr       error
+	lock          sync.Mutex
 }
 
+// ClientParam is the common type of configuration functions for the SignalFlow client
 type ClientParam func(*Client) error
 
 // StreamURL lets you set the full URL to the stream endpoint, including the
@@ -45,7 +51,9 @@ func StreamURL(streamEndpoint string) ClientParam {
 	}
 }
 
-func StreamURLFromRealm(realm string) ClientParam {
+// StreamURLForRealm can be used to configure the websocket url for a specific
+// SignalFx realm.
+func StreamURLForRealm(realm string) ClientParam {
 	return func(c *Client) error {
 		var err error
 		c.streamURL, err = url.Parse(fmt.Sprintf("wss://stream.%s.signalfx.com/v2/signalflow", realm))
@@ -53,6 +61,8 @@ func StreamURLFromRealm(realm string) ClientParam {
 	}
 }
 
+// AccessToken can be used to provide a SignalFx organization access token to
+// the SignalFlow client.
 func AccessToken(token string) ClientParam {
 	return func(c *Client) error {
 		c.token = token
@@ -60,6 +70,28 @@ func AccessToken(token string) ClientParam {
 	}
 }
 
+// UserAgent allows setting the `userAgent` field when authenticating to
+// SignalFlow.  This can be useful for accounting how many jobs are started
+// from each client.
+func UserAgent(userAgent string) ClientParam {
+	return func(c *Client) error {
+		c.userAgent = userAgent
+		return nil
+	}
+}
+
+// MetadataTimeout is the default amount of time that calls to metadata
+// accessors on a SignalFlow Computation instance will wait to receive the
+// metadata from the backend before failing and returning a zero value. Usually
+// metadata comes in very quickly from the stream after the job start.
+func MetadataTimeout(timeout time.Duration) ClientParam {
+	return func(c *Client) error {
+		c.defaultMetadataTimeout = timeout
+		return nil
+	}
+}
+
+// NewClient makes a new, but uninitialized, SignalFlow client.
 func NewClient(options ...ClientParam) (*Client, error) {
 	c := &Client{
 		streamURL: &url.URL{
@@ -67,9 +99,10 @@ func NewClient(options ...ClientParam) (*Client, error) {
 			Host:   "stream.us0.signalfx.com",
 			Path:   "/v2/signalflow",
 		},
-		writeTimeout:     5 * time.Second,
-		outgoingMessages: make(chan interface{}),
-		channelsByName:   make(map[string]*Channel),
+		writeTimeout:           5 * time.Second,
+		outgoingMessages:       make(chan interface{}),
+		channelsByName:         make(map[string]*Channel),
+		defaultMetadataTimeout: 5 * time.Second,
 	}
 
 	for i := range options {
@@ -81,10 +114,24 @@ func NewClient(options ...ClientParam) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) initialize() error {
+func (c *Client) ensureInitialized() error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
+	var err error
+	if !c.isInitialized {
+		err = c.initialize()
+		// The mutex also acts as a memory barrier to ensure this write will be
+		// seen by any goroutine that obtains the lock after the last Unlock,
+		// see https://golang.org/ref/mem#tmp_8.
+		c.isInitialized = true
+	}
+	return err
+}
+
+// Assumes c.Mutex is held when called.  Gets the client connection in a state
+// that is ready for execute requests.
+func (c *Client) initialize() error {
 	authenticatedCond := sync.NewCond(&c.lock)
 
 	if c.isShutdown {
@@ -94,7 +141,9 @@ func (c *Client) initialize() error {
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 
 	if c.conn == nil {
-		if err := c.connect(); err != nil {
+		var err error
+		c.conn, err = connect(c.ctx, c.streamURL)
+		if err != nil {
 			return err
 		}
 
@@ -107,8 +156,7 @@ func (c *Client) initialize() error {
 }
 
 func (c *Client) newUniqueChannelName() string {
-	name := fmt.Sprintf("ch-%d", c.nextChannelNum)
-	atomic.AddInt64(&c.nextChannelNum, 1)
+	name := fmt.Sprintf("ch-%d", atomic.AddInt64(&c.nextChannelNum, 1))
 	return name
 }
 
@@ -123,18 +171,21 @@ func (c *Client) keepWritingMessages() {
 			err := c.conn.SetWriteDeadline(time.Now().Add(c.writeTimeout))
 			if err != nil {
 				log.Printf("Error setting write timeout for SignalFlow request: %v", err)
+				c.lastErr = err
 				continue
 			}
 
 			msgBytes, err := json.Marshal(message)
 			if err != nil {
 				log.Printf("Error marshaling SignalFlow request: %v", err)
+				c.lastErr = err
 				continue
 			}
 
 			err = c.conn.WriteMessage(websocket.TextMessage, msgBytes)
 			if err != nil {
 				log.Printf("Error writing SignalFlow request: %v", err)
+				c.lastErr = err
 				continue
 			}
 		}
@@ -151,75 +202,84 @@ func (c *Client) keepReadingMessages(authenticatedCond *sync.Cond) {
 			if c.ctx.Err() != nil {
 				return
 			}
-			c.broadcastError(err)
+			c.lastErr = err
+			log.Printf("SignalFlow websocket error: %v", err)
+			// This will shut down all computation resources in the client as
+			// well.
+			c.cancel()
 			continue
 		}
 
-		message, err := parseMessage(msgBytes, msgTyp == websocket.TextMessage)
+		message, err := messages.ParseMessage(msgBytes, msgTyp == websocket.TextMessage)
 		if err != nil {
 			log.Printf("Error parsing SignalFlow message: %v", err)
+			c.lastErr = err
 			continue
 		}
 
-		if cm, ok := message.(ChannelMessage); ok {
+		if cm, ok := message.(messages.ChannelMessage); ok {
 			channelName := cm.Channel()
 			channel, ok := c.channelsByName[channelName]
 			if !ok || channelName == "" {
-				log.Printf("SignalFlow message received for unknown channel: %s", channelName)
+				log.Printf("SignalFlow message received for unknown channel '%s': %v", channelName, cm)
 				continue
 			}
-			channel.AcceptMessage(cm)
+			channel.AcceptMessage(message)
 		} else {
 			c.acceptMessage(message, authenticatedCond)
 		}
 	}
 }
 
-func (c *Client) acceptMessage(message Message, authenticatedCond *sync.Cond) {
-	if _, ok := message.(*AuthenticatedMessage); ok {
+func (c *Client) acceptMessage(message messages.Message, authenticatedCond *sync.Cond) {
+	if _, ok := message.(*messages.AuthenticatedMessage); ok {
 		authenticatedCond.Signal()
 	}
 }
 
-func (c *Client) connect() error {
-	connectURL := *c.streamURL
-	connectURL.Path = path.Join(c.streamURL.Path, "connect")
-	conn, _, err := websocket.DefaultDialer.DialContext(c.ctx, connectURL.String(), nil)
+func connect(ctx context.Context, streamURL *url.URL) (*websocket.Conn, error) {
+	connectURL := *streamURL
+	connectURL.Path = path.Join(streamURL.Path, "connect")
+	conn, _, err := websocket.DefaultDialer.DialContext(ctx, connectURL.String(), nil)
 	if err != nil {
-		return fmt.Errorf("could not connect Signalflow websocket: %v", err)
+		return nil, fmt.Errorf("could not connect Signalflow websocket: %v", err)
 	}
-	c.conn = conn
-	return nil
+	return conn, nil
 }
 
 func (c *Client) authenticate() {
 	c.outgoingMessages <- &AuthRequest{
-		Token: c.token,
-	}
-}
-
-func (c *Client) broadcastError(err error) {
-	for _, ch := range c.channelsByName {
-		ch.AcceptMessage(&WebsocketErrorMessage{
-			Error: err,
-		})
+		Token:     c.token,
+		UserAgent: c.userAgent,
 	}
 }
 
 // Execute a SignalFlow job and return a channel upon which informational
 // messages and data will flow.
-func (c *Client) Execute(req *ExecuteRequest) (*Channel, error) {
-	if err := c.initialize(); err != nil {
-		return nil, err
-	}
-
+func (c *Client) Execute(req *ExecuteRequest) (*Computation, error) {
 	if req.Channel == "" {
 		req.Channel = c.newUniqueChannelName()
 	}
 
+	if err := c.ensureInitialized(); err != nil {
+		return nil, err
+	}
+
 	c.outgoingMessages <- req
 
-	return c.registerChannel(req.Channel), nil
+	return newComputation(c.ctx, c.registerChannel(req.Channel), c), nil
+}
+
+// Stop sends a job stop request message to the backend.  It does not wait for
+// jobs to actually be stopped.
+func (c *Client) Stop(req *StopRequest) error {
+	// We are assuming that the stop request will always come from the same
+	// client that started it with the Execute method above, and thus the
+	// connection is still active (i.e. we don't need to call ensureInitialized
+	// here).  If the websocket connection does drop, all jobs started by that
+	// connection get stopped automatically.
+	c.outgoingMessages <- req
+	return nil
 }
 
 func (c *Client) registerChannel(name string) *Channel {
@@ -244,17 +304,4 @@ func (c *Client) Close() {
 		ch.Close()
 	}
 	c.isShutdown = true
-}
-
-// The way to distinguish between JSON and binary messages is the websocket
-// message type.
-func parseMessage(msg []byte, isText bool) (Message, error) {
-	if isText {
-		var baseMessage BaseMessage
-		if err := json.Unmarshal(msg, &baseMessage); err != nil {
-			return nil, fmt.Errorf("couldn't unmarshal JSON websocket message: %v", err)
-		}
-		return parseJSONMessage(&baseMessage, msg)
-	}
-	return parseBinaryMessage(msg)
 }

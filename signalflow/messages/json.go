@@ -1,12 +1,11 @@
-package signalflow
+package messages
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
-func parseJSONMessage(baseMessage Message, msg []byte) (Message, error) {
-	var out Message
+func parseJSONMessage(baseMessage Message, msg []byte) (JSONMessage, error) {
+	var out JSONMessage
 	switch baseMessage.Type() {
 	case AuthenticatedType:
 		out = &AuthenticatedMessage{}
@@ -22,13 +21,20 @@ func parseJSONMessage(baseMessage Message, msg []byte) (Message, error) {
 		default:
 			return &base, nil
 		}
+	case ErrorType:
+		out = &ErrorMessage{}
 	case MetadataType:
 		out = &MetadataMessage{}
+	case ExpiredTSIDType:
+		out = &ExpiredTSIDMessage{}
 	case MessageType:
-		out = &MessageMessage{}
+		out = &InfoMessage{}
+	case EventType:
+		out = &EventMessage{}
 	default:
-		return nil, fmt.Errorf("unknown message type: %s", baseMessage.Type())
+		out = &BaseJSONMessage{}
 	}
 	err := json.Unmarshal(msg, out)
+	out.JSONBase().rawMessage = msg
 	return out, err
 }

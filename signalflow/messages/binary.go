@@ -1,4 +1,4 @@
-package signalflow
+package messages
 
 import (
 	"bytes"
@@ -6,18 +6,96 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io/ioutil"
+	"math"
+
+	"github.com/signalfx/signalfx-go/idtool"
 )
+
+type BinaryPayload struct {
+	Type ValType
+	TSID idtool.ID
+	Val  [8]byte
+}
+
+// Value returns the numeric value as an interface{}.
+func (bp *BinaryPayload) Value() interface{} {
+	switch bp.Type {
+	case ValTypeLong:
+		return bp.Int64()
+	case ValTypeDouble:
+		return bp.Float64()
+	case ValTypeInt:
+		return bp.Int32()
+	default:
+		return nil
+	}
+}
+
+func (bp *BinaryPayload) Int64() int64 {
+	n := binary.BigEndian.Uint64(bp.Val[:])
+	return int64(n)
+}
+
+func (bp *BinaryPayload) Float64() float64 {
+	bits := binary.BigEndian.Uint64(bp.Val[:])
+	return math.Float64frombits(bits)
+}
+
+func (bp *BinaryPayload) Int32() int32 {
+	var n int32
+	_ = binary.Read(bytes.NewBuffer(bp.Val[:]), binary.BigEndian, &n)
+	return n
+}
+
+// DataMessage is a set of datapoints that share a common timestamp
+type DataMessage struct {
+	BaseMessage
+	BaseChannelMessage
+	TimestampedMessage
+	Payloads []BinaryPayload
+}
+
+func (dm *DataMessage) String() string {
+	pls := make([]map[string]interface{}, 0)
+	for _, pl := range dm.Payloads {
+		pls = append(pls, map[string]interface{}{
+			"type":  pl.Type,
+			"tsid":  pl.TSID,
+			"value": pl.Value(),
+		})
+	}
+
+	return fmt.Sprintf("%v", map[string]interface{}{
+		"channel":   dm.Channel(),
+		"timestamp": dm.Timestamp(),
+		"payloads":  pls,
+	})
+}
 
 type binaryMessageHeader struct {
 	TimestampMillis uint64
 	ElementCount    uint32
 }
 
+type ValType uint8
+
 const (
-	ValTypeLong   uint8 = 1
-	ValTypeDouble uint8 = 2
-	ValTypeInt    uint8 = 3
+	ValTypeLong   ValType = 1
+	ValTypeDouble ValType = 2
+	ValTypeInt    ValType = 3
 )
+
+func (vt ValType) String() string {
+	switch vt {
+	case ValTypeLong:
+		return "long"
+	case ValTypeDouble:
+		return "double"
+	case ValTypeInt:
+		return "int32"
+	}
+	return "Unknown"
+}
 
 // The first 20 bytes of every binary websocket message from the backend.
 // https://developers.signalfx.com/signalflow_analytics/rest_api_messages/stream_messages_specification.html#_binary_encoding_of_websocket_messages
@@ -93,10 +171,14 @@ func parseBinaryMessage(msg []byte) (Message, error) {
 
 	return &DataMessage{
 		BaseMessage: BaseMessage{
-			Typ:  DataType,
+			Typ: DataType,
+		},
+		BaseChannelMessage: BaseChannelMessage{
 			Chan: channel,
 		},
-		TimestampMillis: header.TimestampMillis,
-		Payloads:        payloads,
+		TimestampedMessage: TimestampedMessage{
+			TimestampMillis: header.TimestampMillis,
+		},
+		Payloads: payloads,
 	}, nil
 }

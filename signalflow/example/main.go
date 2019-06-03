@@ -1,10 +1,11 @@
+// package main shows a basic usage pattern of the SiganlFlow client.
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/signalfx/signalfx-go/signalflow"
 )
 
@@ -20,7 +21,7 @@ func main() {
 		return
 	}
 
-	ch, err := c.Execute(&signalflow.ExecuteRequest{
+	comp, err := c.Execute(&signalflow.ExecuteRequest{
 		Program: "data('cpu.utilization').publish()",
 	})
 	if err != nil {
@@ -28,12 +29,28 @@ func main() {
 		return
 	}
 
-	for msg := range ch.Messages() {
-		spew.Dump(msg)
-		if dm, ok := msg.(*signalflow.DataMessage); ok {
-			for _, pl := range dm.Payloads {
-				log.Printf("value: %v", pl.Value())
-			}
+	fmt.Printf("Resolution: %v\n", comp.Resolution())
+	fmt.Printf("Max Delay: %v\n", comp.MaxDelay())
+	fmt.Printf("Deteted Lag: %v\n", comp.Lag())
+
+	for msg := range comp.Data() {
+		// This will run as long as there is data, or until the websocket gets
+		// disconnected.
+		if len(msg.Payloads) == 0 {
+			fmt.Printf("\rNo data available")
+			continue
 		}
+		for _, pl := range msg.Payloads {
+			meta := comp.TSIDMetadata(pl.TSID)
+			fmt.Printf("%s %v: %v\n", meta.OriginatingMetric, meta.CustomProperties, pl.Value())
+		}
+		fmt.Println("")
+	}
+
+	err = comp.Err()
+	if err != nil {
+		log.Printf("Error: %v", comp.Err())
+	} else {
+		log.Printf("Job completed")
 	}
 }
