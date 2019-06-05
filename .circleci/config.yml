@@ -1,0 +1,21 @@
+version: 2.1
+jobs:
+  test:
+    parameters:
+      go_version:
+        type: string
+    docker:
+      - image: "golang:<< parameters.go_version >>"
+    steps:
+      - checkout
+      - run: go test ./...
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          go_version: 1.10
+      - test:
+          go_version: 1.11
+      - test:
+          go_version: 1.12
