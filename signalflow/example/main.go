@@ -31,7 +31,7 @@ func main() {
 
 	fmt.Printf("Resolution: %v\n", comp.Resolution())
 	fmt.Printf("Max Delay: %v\n", comp.MaxDelay())
-	fmt.Printf("Deteted Lag: %v\n", comp.Lag())
+	fmt.Printf("Detected Lag: %v\n", comp.Lag())
 
 	for msg := range comp.Data() {
 		// This will run as long as there is data, or until the websocket gets

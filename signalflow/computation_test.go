@@ -24,7 +24,7 @@ func waitForDataMsg(t *testing.T, comp *Computation) messages.Message {
 }
 
 func TestBuffersDataMessages(t *testing.T) {
-	ch := newChannel("ch1")
+	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
@@ -66,7 +66,7 @@ func mustParse(m messages.Message, err error) messages.Message {
 }
 
 func TestResolutionMetadata(t *testing.T) {
-	ch := newChannel("ch1")
+	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
@@ -97,7 +97,7 @@ func TestResolutionMetadata(t *testing.T) {
 }
 
 func TestMaxDelayMetadata(t *testing.T) {
-	ch := newChannel("ch1")
+	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
@@ -116,7 +116,7 @@ func TestMaxDelayMetadata(t *testing.T) {
 }
 
 func TestLagMetadata(t *testing.T) {
-	ch := newChannel("ch1")
+	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})

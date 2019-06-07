@@ -6,7 +6,7 @@ This is a programmatic interface in Go for SignalFx's metadata and ingest APIs.
 
 # SignalFlow
 
-There is an experimental SignalFlow client in the `signalflow` directory.  An
+There is an **experimental** SignalFlow client in the `signalflow` directory.  An
 example of its use is in `signalflow/example`.
 
 # TODO

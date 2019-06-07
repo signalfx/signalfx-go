@@ -25,6 +25,7 @@ type Client struct {
 	nextChannelNum         int64
 	conn                   *websocket.Conn
 	outgoingMessages       chan interface{}
+	readTimeout            time.Duration
 	// How long to wait for writes to the websocket to finish
 	writeTimeout   time.Duration
 	streamURL      *url.URL
@@ -61,8 +62,8 @@ func StreamURLForRealm(realm string) ClientParam {
 	}
 }
 
-// AccessToken can be used to provide a SignalFx organization access token to
-// the SignalFlow client.
+// AccessToken can be used to provide a SignalFx organization access token or
+// user access token to the SignalFlow client.
 func AccessToken(token string) ClientParam {
 	return func(c *Client) error {
 		c.token = token
@@ -91,6 +92,16 @@ func MetadataTimeout(timeout time.Duration) ClientParam {
 	}
 }
 
+// ReadTimeout sets the duration to wait between messages that come on the
+// websocket.  If the resolution of the job is very low, this should be
+// increased.
+func ReadTimeout(timeout time.Duration) ClientParam {
+	return func(c *Client) error {
+		c.readTimeout = timeout
+		return nil
+	}
+}
+
 // NewClient makes a new, but uninitialized, SignalFlow client.
 func NewClient(options ...ClientParam) (*Client, error) {
 	c := &Client{
@@ -99,6 +110,7 @@ func NewClient(options ...ClientParam) (*Client, error) {
 			Host:   "stream.us0.signalfx.com",
 			Path:   "/v2/signalflow",
 		},
+		readTimeout:            1 * time.Minute,
 		writeTimeout:           5 * time.Second,
 		outgoingMessages:       make(chan interface{}),
 		channelsByName:         make(map[string]*Channel),
@@ -152,7 +164,7 @@ func (c *Client) initialize() error {
 		c.authenticate()
 		authenticatedCond.Wait()
 	}
-	return nil
+	return c.lastErr
 }
 
 func (c *Client) newUniqueChannelName() string {
@@ -196,6 +208,7 @@ func (c *Client) keepWritingMessages() {
 // needed.
 func (c *Client) keepReadingMessages(authenticatedCond *sync.Cond) {
 	for {
+		err := c.conn.SetReadDeadline(time.Now().Add(c.readTimeout))
 		msgTyp, msgBytes, err := c.conn.ReadMessage()
 		if err != nil {
 			// this means we are shutdown
@@ -207,6 +220,9 @@ func (c *Client) keepReadingMessages(authenticatedCond *sync.Cond) {
 			// This will shut down all computation resources in the client as
 			// well.
 			c.cancel()
+			// The websocket connection is closed by the server if the auth
+			// token is bad.
+			authenticatedCond.Signal()
 			continue
 		}
 
@@ -221,7 +237,7 @@ func (c *Client) keepReadingMessages(authenticatedCond *sync.Cond) {
 			channelName := cm.Channel()
 			channel, ok := c.channelsByName[channelName]
 			if !ok || channelName == "" {
-				log.Printf("SignalFlow message received for unknown channel '%s': %v", channelName, cm)
+				c.acceptMessage(message, authenticatedCond)
 				continue
 			}
 			channel.AcceptMessage(message)
@@ -283,9 +299,12 @@ func (c *Client) Stop(req *StopRequest) error {
 }
 
 func (c *Client) registerChannel(name string) *Channel {
-	ch := newChannel(name)
+	ch := newChannel(c.ctx, name)
 
+	c.lock.Lock()
 	c.channelsByName[name] = ch
+	defer c.lock.Unlock()
+
 	return ch
 }
 

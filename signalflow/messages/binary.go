@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -137,7 +138,6 @@ func parseBinaryMessage(msg []byte) (Message, error) {
 	}
 
 	if isCompressed {
-		var err error
 		reader, err := gzip.NewReader(bytes.NewReader(rest))
 		if err != nil {
 			return nil, err
@@ -149,7 +149,7 @@ func parseBinaryMessage(msg []byte) (Message, error) {
 	}
 
 	if isJSON {
-		panic("cannot handle json binary message")
+		return nil, errors.New("cannot handle json binary message")
 	}
 
 	r := bytes.NewReader(rest[:12])
