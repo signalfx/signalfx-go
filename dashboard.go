@@ -29,6 +29,10 @@ func (c *Client) CreateDashboard(dashboardRequest *dashboard.CreateUpdateDashboa
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Unexpected status code: " + resp.Status)
+	}
+
 	finalDashboard := &dashboard.Dashboard{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboard)
@@ -80,6 +84,10 @@ func (c *Client) UpdateDashboard(id string, dashboardRequest *dashboard.CreateUp
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Unexpected status code: " + resp.Status)
+	}
 
 	finalDashboard := &dashboard.Dashboard{}
 

@@ -23,6 +23,19 @@ func TestCreateDashboard(t *testing.T) {
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
+func TestCreateBadDashboard(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+
+	result, err := client.CreateDashboard(&dashboard.CreateUpdateDashboardRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should have gotten an error code for a bad dashboard")
+	assert.Nil(t, result, "Should have gotten a nil dashboard for a bad dashboard")
+}
+
 func TestDeleteDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
@@ -30,7 +43,17 @@ func TestDeleteDashboard(t *testing.T) {
 	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "DELETE", http.StatusOK, nil, ""))
 
 	err := client.DeleteDashboard("string")
-	assert.NoError(t, err, "Unexpected error getting dashboard")
+	assert.NoError(t, err, "Unexpected error deleting dashboard")
+}
+
+func TestDeleteMissingDashboard(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "DELETE", http.StatusNotFound, nil, ""))
+
+	err := client.DeleteDashboard("string")
+	assert.Error(t, err, "Should have gotten an error code for a missing dashboard")
 }
 
 func TestGetDashboard(t *testing.T) {
@@ -76,4 +99,17 @@ func TestUpdateDashboard(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error updating dashboard")
 	assert.Equal(t, "string", result.Name, "Name does not match")
+}
+
+func TestUpdateMissingDashboard(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+
+	result, err := client.UpdateDashboard("string", &dashboard.CreateUpdateDashboardRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should've gotten an error from a missing dashboard update")
+	assert.Nil(t, result, "Should've gotten a nil dashboard from a missing dashboard update")
 }
