@@ -25,6 +25,19 @@ func TestCreateDashboardGroup(t *testing.T) {
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
+func TestCreateBadDashboardGroup(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+
+	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should get an error from bad dashboard group")
+	assert.Nil(t, result, "Should get nil result from bad dashboard group")
+}
+
 func TestDeleteDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
@@ -33,6 +46,16 @@ func TestDeleteDashboardGroup(t *testing.T) {
 
 	err := client.DeleteDashboardGroup("string")
 	assert.NoError(t, err, "Unexpected error getting dashboard group")
+}
+
+func TestDeleteMissingDashboardGroup(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", http.StatusNotFound, nil, ""))
+
+	err := client.DeleteDashboardGroup("string")
+	assert.Error(t, err, "Should get an error getting missing dashboard group")
 }
 
 func TestGetDashboardGroup(t *testing.T) {
@@ -44,6 +67,17 @@ func TestGetDashboardGroup(t *testing.T) {
 	result, err := client.GetDashboardGroup("string")
 	assert.NoError(t, err, "Unexpected error getting dashboard group")
 	assert.Equal(t, result.Name, "string", "Name does not match")
+}
+
+func TestGetMissingDashboardGroup(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+
+	result, err := client.GetDashboardGroup("string")
+	assert.Error(t, err, "Should get error getting missing dashboard group")
+	assert.Nil(t, result, "Result should be nil")
 }
 
 func TestSearchDashboardGroup(t *testing.T) {
@@ -69,11 +103,11 @@ func TestUpdateDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "PUT", http.StatusOK, nil, "dashboardgroup/update_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "PUT", http.StatusBadRequest, nil, ""))
 
 	result, err := client.UpdateDashboardGroup("string", &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
 	})
-	assert.NoError(t, err, "Unexpected error updating dashboard group")
-	assert.Equal(t, "string", result.Name, "Name does not match")
+	assert.Error(t, err, "Should have error updating missing dashboard group")
+	assert.Nil(t, result, "Should have nil result")
 }

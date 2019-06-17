@@ -29,6 +29,10 @@ func (c *Client) CreateDashboardGroup(dashboardGroupRequest *dashboard_group.Cre
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Unexpected status code: " + resp.Status)
+	}
+
 	finalDashboardGroup := &dashboard_group.DashboardGroup{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroup)
@@ -61,6 +65,10 @@ func (c *Client) GetDashboardGroup(id string) (*dashboard_group.DashboardGroup, 
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Unexpected status code: " + resp.Status)
+	}
+
 	finalDashboardGroup := &dashboard_group.DashboardGroup{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroup)
@@ -80,6 +88,10 @@ func (c *Client) UpdateDashboardGroup(id string, dashboardGroupRequest *dashboar
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Unexpected status code: " + resp.Status)
+	}
 
 	finalDashboardGroup := &dashboard_group.DashboardGroup{}
 
