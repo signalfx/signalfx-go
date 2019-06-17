@@ -34,6 +34,10 @@ func (c *Client) GetIntegration(id string) (map[string]interface{}, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Unexpected status code: " + resp.Status)
+	}
+
 	finalIntegration := make(map[string]interface{})
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
