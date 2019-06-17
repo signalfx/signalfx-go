@@ -62,7 +62,7 @@ func TestDisableDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusNoContent, nil, ""))
 
-	err := client.DisableDetector("string")
+	err := client.DisableDetector("string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
 }
 
@@ -72,7 +72,7 @@ func TestDisableMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
 
-	err := client.DisableDetector("string")
+	err := client.DisableDetector("string", []string{"example"})
 	assert.Error(t, err, "Should have gotten an error from a missing disable")
 }
 
@@ -82,7 +82,7 @@ func TestEnableDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusNoContent, nil, ""))
 
-	err := client.EnableDetector("string")
+	err := client.EnableDetector("string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
 }
 
@@ -92,7 +92,7 @@ func TestEnableMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
 
-	err := client.EnableDetector("string")
+	err := client.EnableDetector("string", []string{"example"})
 	assert.Error(t, err, "Should have gotten an error from a missing enable")
 }
 

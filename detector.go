@@ -58,8 +58,13 @@ func (c *Client) DeleteDetector(id string) error {
 }
 
 // DisableDetector disables a detector.
-func (c *Client) DisableDetector(id string) error {
-	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/disable", nil, nil)
+func (c *Client) DisableDetector(id string, labels []string) error {
+	payload, err := json.Marshal(labels)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/disable", nil, bytes.NewReader(payload))
 	if err != nil {
 		return err
 	}
@@ -73,8 +78,13 @@ func (c *Client) DisableDetector(id string) error {
 }
 
 // EnableDetector enables a detector.
-func (c *Client) EnableDetector(id string) error {
-	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/enable", nil, nil)
+func (c *Client) EnableDetector(id string, labels []string) error {
+	payload, err := json.Marshal(labels)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/enable", nil, bytes.NewReader(payload))
 	if err != nil {
 		return err
 	}
