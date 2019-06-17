@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -26,6 +28,11 @@ func (c *Client) CreateDetector(detectorRequest *detector.CreateUpdateDetectorRe
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
 
 	finalDetector := &detector.Detector{}
 
@@ -58,6 +65,10 @@ func (c *Client) DisableDetector(id string) error {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusNoContent {
+		return errors.New("Unexpected status code: " + resp.Status)
+	}
+
 	return nil
 }
 
@@ -69,17 +80,25 @@ func (c *Client) EnableDetector(id string) error {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusNoContent {
+		return errors.New("Unexpected status code: " + resp.Status)
+	}
+
 	return nil
 }
 
 // GetDetector gets a detector.
 func (c *Client) GetDetector(id string) (*detector.Detector, error) {
 	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id, nil, nil)
-
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
 
 	finalDetector := &detector.Detector{}
 
@@ -100,6 +119,11 @@ func (c *Client) UpdateDetector(id string, detectorRequest *detector.CreateUpdat
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
 
 	finalDetector := &detector.Detector{}
 

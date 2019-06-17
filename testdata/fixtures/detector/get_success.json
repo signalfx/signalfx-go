@@ -38,17 +38,15 @@
   "teams": [
     "string"
   ],
-  "visualizationOptions": [
-    {
-      "disableSampling": true,
-      "showDataMarkers": true,
-      "showEventLines": true,
-      "time": {
-        "end": 0,
-        "range": 0,
-        "start": 0,
-        "type": "absolute"
-      }
+  "visualizationOptions": {
+    "disableSampling": true,
+    "showDataMarkers": true,
+    "showEventLines": true,
+    "time": {
+      "end": 0,
+      "range": 0,
+      "start": 0,
+      "type": "absolute"
     }
-  ]
+  }
 }
