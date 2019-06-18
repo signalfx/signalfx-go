@@ -23,6 +23,19 @@ func TestCreateDetector(t *testing.T) {
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
+func TestCreateBadDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+
+	result, err := client.CreateDetector(&detector.CreateUpdateDetectorRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should have gotten an error from a bad create")
+	assert.Nil(t, result, "Should have a null detector on bad create")
+}
+
 func TestDeleteDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
@@ -33,24 +46,54 @@ func TestDeleteDetector(t *testing.T) {
 	assert.NoError(t, err, "Unexpected error getting detector")
 }
 
+func TestDeleteMissingDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+
+	err := client.DeleteDetector("example")
+	assert.Error(t, err, "Should have gotten an error from a missing delete")
+}
+
 func TestDisableDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusNoContent, nil, ""))
 
-	err := client.DisableDetector("string")
-	assert.NoError(t, err, "Unexpected error enabling detector")
+	err := client.DisableDetector("string", []string{"example"})
+	assert.NoError(t, err, "Unexpected error disabling detector")
+}
+
+func TestDisableMissingDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+
+	err := client.DisableDetector("string", []string{"example"})
+	assert.Error(t, err, "Should have gotten an error from a missing disable")
 }
 
 func TestEnableDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusNoContent, nil, ""))
 
-	err := client.EnableDetector("string")
+	err := client.EnableDetector("string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
+}
+
+func TestEnableMissingDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+
+	err := client.EnableDetector("string", []string{"example"})
+	assert.Error(t, err, "Should have gotten an error from a missing enable")
 }
 
 func TestGetDetector(t *testing.T) {
@@ -62,6 +105,17 @@ func TestGetDetector(t *testing.T) {
 	result, err := client.GetDetector("string")
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result.Name, "string", "Name does not match")
+}
+
+func TestGetMissingDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+
+	result, err := client.GetDetector("string")
+	assert.Error(t, err, "Should have gotten an error from a missing detector")
+	assert.Nil(t, result, "Should have gotten a nil result from a missing detector")
 }
 
 func TestSearchDetector(t *testing.T) {
@@ -96,4 +150,17 @@ func TestUpdateDetector(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error updating detector")
 	assert.Equal(t, "string", result.Name, "Name does not match")
+}
+
+func TestUpdateMissingDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+
+	result, err := client.UpdateDetector("string", &detector.CreateUpdateDetectorRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should have gotten an error from an update on a missing detector")
+	assert.Nil(t, result, "Should have gotten a nil result from an update on a missing detector")
 }
