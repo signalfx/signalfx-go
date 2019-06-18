@@ -85,9 +85,9 @@ func (c *Client) doRequest(method string, path string, params url.Values, body i
 	return c.httpClient.Do(req)
 }
 
-// Signalflow returns a Signalflow client that can be used to execute streaming
-// jobs.
-func (c *Client) Signalflow(options ...signalflow.ClientParam) (*signalflow.Client, error) {
+// SignalFlow creates and returns a SignalFlow client that can be used to
+// execute streaming jobs.
+func (c *Client) SignalFlow(options ...signalflow.ClientParam) (*signalflow.Client, error) {
 	options = append(options, signalflow.AccessToken(c.authToken))
 	return signalflow.NewClient(options...)
 }

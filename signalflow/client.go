@@ -87,6 +87,9 @@ func UserAgent(userAgent string) ClientParam {
 // metadata comes in very quickly from the stream after the job start.
 func MetadataTimeout(timeout time.Duration) ClientParam {
 	return func(c *Client) error {
+		if timeout <= 0 {
+			return errors.New("MetadataTimeout cannot be <= 0")
+		}
 		c.defaultMetadataTimeout = timeout
 		return nil
 	}
@@ -97,7 +100,22 @@ func MetadataTimeout(timeout time.Duration) ClientParam {
 // increased.
 func ReadTimeout(timeout time.Duration) ClientParam {
 	return func(c *Client) error {
+		if timeout <= 0 {
+			return errors.New("ReadTimeout cannot be <= 0")
+		}
 		c.readTimeout = timeout
+		return nil
+	}
+}
+
+// WriteTimeout sets the maximum duration to wait to send a single message when
+// writing messages to the SignalFlow server over the WebSocket connection.
+func WriteTimeout(timeout time.Duration) ClientParam {
+	return func(c *Client) error {
+		if timeout <= 0 {
+			return errors.New("WriteTimeout cannot be <= 0")
+		}
+		c.writeTimeout = timeout
 		return nil
 	}
 }
@@ -161,6 +179,10 @@ func (c *Client) initialize() error {
 
 		go c.keepWritingMessages()
 		go c.keepReadingMessages(authenticatedCond)
+		// This just sends off the authenticate request but we have to wait for
+		// another websocket message saying that the credentials were valid,
+		// after which the authenticatedCond is triggered in the
+		// keepReadingMessages loop.
 		c.authenticate()
 		authenticatedCond.Wait()
 	}
@@ -208,7 +230,10 @@ func (c *Client) keepWritingMessages() {
 // needed.
 func (c *Client) keepReadingMessages(authenticatedCond *sync.Cond) {
 	for {
-		err := c.conn.SetReadDeadline(time.Now().Add(c.readTimeout))
+		if err := c.conn.SetReadDeadline(time.Now().Add(c.readTimeout)); err != nil {
+			log.Printf("Error setting read timeout in SignalFlow client: %v", err)
+			continue
+		}
 		msgTyp, msgBytes, err := c.conn.ReadMessage()
 		if err != nil {
 			// this means we are shutdown
@@ -247,9 +272,13 @@ func (c *Client) keepReadingMessages(authenticatedCond *sync.Cond) {
 	}
 }
 
+// acceptMessages accepts non-channel specific messages.  The only one that I
+// know of is the authenticated response.
 func (c *Client) acceptMessage(message messages.Message, authenticatedCond *sync.Cond) {
 	if _, ok := message.(*messages.AuthenticatedMessage); ok {
 		authenticatedCond.Signal()
+	} else {
+		log.Printf("Unknown SignalFlow message received: %v", message)
 	}
 }
 
@@ -263,6 +292,7 @@ func connect(ctx context.Context, streamURL *url.URL) (*websocket.Conn, error) {
 	return conn, nil
 }
 
+// Sends the authenticate message but does not wait for a response.
 func (c *Client) authenticate() {
 	c.outgoingMessages <- &AuthRequest{
 		Token:     c.token,

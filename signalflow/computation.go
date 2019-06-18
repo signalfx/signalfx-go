@@ -145,7 +145,7 @@ func (c *Computation) watchMessages() {
 	}
 }
 
-func (c *Computation) processMessage(m messages.Message) error {
+func (c *Computation) processMessage(m messages.Message) {
 	defer c.updateSignal.SignalAll()
 
 	switch v := m.(type) {
@@ -173,7 +173,6 @@ func (c *Computation) processMessage(m messages.Message) error {
 	case *messages.MetadataMessage:
 		c.tsidMetadata[v.TSID] = &v.Properties
 	}
-	return nil
 }
 
 // Buffer up data messages indefinitely until another goroutine reads them off of

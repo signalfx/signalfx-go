@@ -82,7 +82,7 @@ func (s *mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		typ, ok := in["type"].(string)
 		if !ok {
-			c.WriteMessage(mt, []byte(`{"type": "error"}`))
+			_ = c.WriteMessage(mt, []byte(`{"type": "error"}`))
 			continue
 		}
 
@@ -175,5 +175,32 @@ func TestMultipleComputations(t *testing.T) {
 		require.Equal(t, time.Duration(i)*time.Second, comp.Resolution())
 		require.Equal(t, fmt.Sprintf("ch-%d", i), comp.Channel().name)
 	}
+}
 
+func TestShutdown(t *testing.T) {
+	handler, url, closer := runMockServer()
+	defer closer()
+
+	handler.validAccessToken = "testing123"
+	c, err := NewClient(StreamURL(url), AccessToken(handler.validAccessToken))
+	require.Nil(t, err)
+
+	var comps []*Computation
+	for i := 1; i < 3; i++ {
+		comp, err := c.Execute(&ExecuteRequest{
+			Program:    "data('cpu.utilization').publish()",
+			Resolution: time.Duration(i) * time.Second,
+		})
+		require.Nil(t, err)
+		comps = append(comps, comp)
+
+		require.Equal(t, time.Duration(i)*time.Second, comp.Resolution())
+		require.Equal(t, fmt.Sprintf("ch-%d", i), comp.Channel().name)
+	}
+
+	c.Close()
+
+	for _, comp := range comps {
+		require.True(t, comp.IsFinished())
+	}
 }
