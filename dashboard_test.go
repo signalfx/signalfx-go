@@ -67,6 +67,17 @@ func TestGetDashboard(t *testing.T) {
 	assert.Equal(t, result.Name, "string", "Name does not match")
 }
 
+func TestGetMissingDashboard(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+
+	result, err := client.GetDashboard("string")
+	assert.Error(t, err, "Expected error getting missing dashboard")
+	assert.Nil(t, result, "Expected nil result getting missing dashboard")
+}
+
 func TestSearchDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
