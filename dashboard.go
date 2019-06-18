@@ -68,6 +68,11 @@ func (c *Client) GetDashboard(id string) (*dashboard.Dashboard, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	}
+
 	finalDashboard := &dashboard.Dashboard{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboard)
