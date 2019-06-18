@@ -3,7 +3,6 @@ package signalfx
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -51,7 +50,8 @@ func (c *Client) DeleteDetector(id string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	return nil
@@ -71,7 +71,8 @@ func (c *Client) DisableDetector(id string, labels []string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
-		return errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	return nil
@@ -91,7 +92,8 @@ func (c *Client) EnableDetector(id string, labels []string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
-		return errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	return nil

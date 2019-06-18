@@ -3,7 +3,8 @@ package signalfx
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -30,7 +31,8 @@ func (c *Client) CreateDashboard(dashboardRequest *dashboard.CreateUpdateDashboa
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	finalDashboard := &dashboard.Dashboard{}
@@ -50,7 +52,8 @@ func (c *Client) DeleteDashboard(id string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	return nil
@@ -86,7 +89,8 @@ func (c *Client) UpdateDashboard(id string, dashboardRequest *dashboard.CreateUp
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	finalDashboard := &dashboard.Dashboard{}

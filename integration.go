@@ -2,7 +2,8 @@ package signalfx
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -19,7 +20,8 @@ func (c *Client) DeleteIntegration(id string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	return nil
@@ -35,7 +37,8 @@ func (c *Client) GetIntegration(id string) (map[string]interface{}, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Unexpected status code: " + resp.Status)
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	finalIntegration := make(map[string]interface{})
