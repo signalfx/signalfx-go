@@ -47,6 +47,12 @@ func verifyRequest(t *testing.T, method string, status int, params url.Values, r
 			assert.Fail(t, "Failed to find auth token in headers")
 		}
 
+		if val, ok := r.Header["Content-Type"]; ok {
+			assert.Equal(t, []string{"application/json"}, val, "Incorrect content-type in headers")
+		} else {
+			assert.Fail(t, "Failed to find content type in headers")
+		}
+
 		assert.Equal(t, method, r.Method, "Incorrect HTTP method")
 
 		if params != nil {
