@@ -1,0 +1,34 @@
+version: 2.1
+jobs:
+  test:
+    parameters:
+      go_version:
+        type: string
+      # Needed to paper over differences between Go with and without modules
+      dir:
+        type: string
+        default: ~/project
+    working_directory: "<< parameters.dir >>"
+    docker:
+      - image: "golang:<< parameters.go_version >>"
+    steps:
+      - checkout
+      - run: |
+          go get ./...
+          go get github.com/stretchr/testify/assert
+          go get github.com/stretchr/testify/require
+          go test ./...
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          name: "Go 1.10"
+          go_version: "1.10"
+          dir: /go/src/github.com/signalfx/signalfx-go
+      - test:
+          name: "Go 1.11"
+          go_version: "1.11"
+      - test:
+          name: "Go 1.12"
+          go_version: "1.12"
