@@ -21,5 +21,5 @@ type ChartEventOverlay struct {
 	// Unique ID for this event overlay. Use this ID with any element of the `selectedEventOverlays` property to apply this overlay to a dashboard.<br> **Note:** The system generates this value if you don't specify one.
 	OverlayId string `json:"overlayId,omitempty"`
 	// An array of objects that specify filters to apply to events for this event overlay.
-	Sources []EventOverlayFilter `json:"sources,omitempty"`
+	Sources []*EventOverlayFilter `json:"sources,omitempty"`
 }
