@@ -11,7 +11,7 @@ func TestDeleteIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "DELETE", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
 
 	err := client.DeleteIntegration("string")
 	assert.NoError(t, err, "Unexpected error deleting integration")

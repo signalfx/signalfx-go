@@ -42,7 +42,7 @@ func TestDeleteDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
 
 	err := client.DeleteDashboardGroup("string")
 	assert.NoError(t, err, "Unexpected error getting dashboard group")
