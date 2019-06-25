@@ -10,7 +10,7 @@
 package chart
 
 type Options struct {
-	AreaChartOptions AreaChartOptions `json:"areaChartOptions,omitempty"`
+	AreaChartOptions *AreaChartOptions `json:"areaChartOptions,omitempty"`
 	// *These options are only used for time series charts.*<br> Axis options for the left and right side of a time series chart. The object in the first element specifies options for the left side of the chart, and the object in the second element corresponds to the right side of the chart. Other elements are ignored.
 	Axes []*Axes `json:"axes,omitempty"`
 	// Specifies the digits SignalFx displays for values plotted on the chart. Choose a value that is sensible for the data; that is, ensure that the variations in the data are discernible using the specified precision. For example, if the data values usually fluctuate between 100000 and 100010, using a precision of 3 would result in a value of 100000 for every data point. Setting the precision to 6 would distinguish between 100001 and 100002.<br>**Note:** SignalFx only uses this value for time series charts.
