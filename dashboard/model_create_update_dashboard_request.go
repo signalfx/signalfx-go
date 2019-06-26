@@ -25,7 +25,7 @@ type CreateUpdateDashboardRequest struct {
 	// A human-readable label for the dashboard. The web UI displays this label in the dashboard's group.
 	Name string `json:"name,omitempty"`
 	// Array of event overlays that are currently active for the charts in this dashboard. For each overlay, the system displays the active events that match the overlay search term and optional feature, using the the overlay's color and event line settings. To set options for inactive overlays so you can apply them at a later time, use the `eventOverlays` property instead.
-	SelectedEventOverlays []*EventOverlayFilter `json:"selectedEventOverlays,omitempty"`
+	SelectedEventOverlays []*ChartEventOverlay `json:"selectedEventOverlays,omitempty"`
 	// Array of dashboard tags. Reserved for future use.
 	Tags []string `json:"tags,omitempty"`
 }
