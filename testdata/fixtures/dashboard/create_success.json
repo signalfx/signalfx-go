@@ -7,7 +7,7 @@
       "string"
     ]
   },
-  "chartDensity": "DEFAULT\\\"",
+  "chartDensity": "DEFAULT",
   "charts": [
     {
       "chartId": "string",
@@ -20,10 +20,22 @@
   "description": "string",
   "eventOverlays": [
     {
-      "NOT": false,
-      "property": "string",
-      "value": [
-        "string"
+      "eventLine": false,
+      "eventSignal": {
+        "eventSearchText": "string",
+        "eventType": "detectorEvents"
+      },
+      "eventColorIndex": 0,
+      "label": "string",
+      "overlayId": "string",
+      "sources": [
+        {
+          "NOT": false,
+          "property": "string",
+          "value": [
+            "string"
+          ]
+        }
       ]
     }
   ],
@@ -61,24 +73,18 @@
   "name": "string",
   "selectedEventOverlays": [
     {
-      "eventLine": false,
       "eventSignal": {
-        "eventSearchText": "string",
+        "eventSearchText" : "Farts 2",
         "eventType": "detectorEvents"
       },
-      "eventColorIndex": 0,
-      "label": "string",
-      "overlayId": "string",
       "sources": [
-        [
-          {
-            "NOT": false,
-            "property": "string",
-            "value": [
-              "string"
-            ]
-          }
-        ]
+        {
+          "NOT": false,
+          "property": "string",
+          "value": [
+            "string"
+          ]
+        }
       ]
     }
   ]
