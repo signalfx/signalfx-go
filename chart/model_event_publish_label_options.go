@@ -1,4 +1,4 @@
-package charts
+package chart
 
 type EventPublishLabelOptions struct {
 	DisplayName  string `json:"displayName,omitempty"`
