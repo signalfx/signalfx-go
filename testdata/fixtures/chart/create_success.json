@@ -26,8 +26,8 @@
     "colorBy": "Range",
     "colorRange": {
       "color": "strings",
-      "max": "strings",
-      "min": "strings"
+      "max": 2.0,
+      "min": 1.0
     },
     "colorScale": {
       "inverted": false,
