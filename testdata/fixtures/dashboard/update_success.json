@@ -36,9 +36,7 @@
         {
           "NOT": false,
           "property": "string",
-          "value": [
-            "string"
-          ]
+          "value": "string"
         }
       ]
     }
@@ -48,9 +46,7 @@
       {
         "NOT": false,
         "property": "string",
-        "value": [
-          "string"
-        ]
+        "value": "string"
       }
     ],
     "time": {
@@ -89,9 +85,7 @@
         {
           "NOT": false,
           "property": "string",
-          "value": [
-            "string"
-          ]
+          "value": "string"
         }
       ]
     }
