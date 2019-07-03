@@ -12,10 +12,40 @@
   "dashboards": [
     "string"
   ],
+  "dashboardConfigs": [
+    {
+      "configId": "string",
+      "dashboardId": "string",
+      "descriptionOverride": "string",
+      "filtersOverride": {
+        "sources": [
+          {
+            "NOT": false,
+            "property": "string",
+            "values": [
+              "string"
+            ]
+          }
+        ],
+        "variables": [
+          {
+            "preferredSuggestions": null,
+            "property": "string",
+            "value": [
+              "string"
+            ]
+          }
+        ]
+      },
+      "nameOverride": null
+    }
+  ],
   "description": "string",
   "id": "string",
   "lastUpdated": 0,
   "lastUpdatedBy": "string",
   "name": "string",
-  "teams": null
+  "teams": [
+    "string"
+  ]
 }
