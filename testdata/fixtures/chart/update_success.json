@@ -67,7 +67,8 @@
     "programOptions": {
       "disableSampling": false,
       "maxDelay": 0,
-      "minimumResolution": 0
+      "minimumResolution": 0,
+      "timezone": "UTC"
     },
     "publishLabelOptions": [
       {
