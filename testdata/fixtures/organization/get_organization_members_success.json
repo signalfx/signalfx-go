@@ -7,7 +7,7 @@
       "lastUpdated": 1557696630000,
       "id": "string",
       "userId": "string",
-      "organizationId": null,
+      "organizationId": "string",
       "email": "string",
       "fullName": "string",
       "phone": "string",
