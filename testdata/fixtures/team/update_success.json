@@ -7,22 +7,45 @@
   ],
   "notificationLists": {
     "default": [
-      "string"
+      {
+        "type": "BigPanda",
+        "credentialId": "string"
+      }
     ],
     "critical": [
-      "string"
+      {
+        "type": "BigPanda",
+        "credentialId": "string"
+      }
     ],
     "warning": [
-      "string"
+      {
+        "type": "Email",
+        "email": "string"
+      }
     ],
     "major": [
-      "string"
+      {
+        "type": "OpsGenie",
+        "credentialId": "string",
+        "credentialName": "string",
+        "responderName": "string",
+        "responderId": "string",
+        "responderType": "string"
+      }
     ],
     "minor": [
-      "string"
+      {
+        "type": "Slack",
+        "credentialId": "string",
+        "channel": "string"
+      }
     ],
     "info": [
-      "string"
+      {
+        "type": "Team",
+        "team": "string"
+      }
     ]
   }
 }

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/signalfx/signalfx-go/team"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +16,7 @@ func TestCreateTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team", verifyRequest(t, "POST", http.StatusOK, nil, "team/create_success.json"))
 
-	result, err := client.CreateTeam(&Team{
+	result, err := client.CreateTeam(&team.CreateUpdateTeamRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating team")
@@ -57,11 +58,11 @@ func TestSearchTeam(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/team", verifyRequest(t, "GET", http.StatusOK, params, "team/get_success.json"))
+	mux.HandleFunc("/v2/team", verifyRequest(t, "GET", http.StatusOK, params, "team/search_success.json"))
 
 	results, err := client.SearchTeam(limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search Team")
-	assert.Equal(t, int64(0), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
 func TestUpdateTeam(t *testing.T) {
@@ -70,7 +71,7 @@ func TestUpdateTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "PUT", http.StatusOK, nil, "team/update_success.json"))
 
-	result, err := client.UpdateTeam("string", &Team{
+	result, err := client.UpdateTeam("string", &team.CreateUpdateTeamRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating Team")

@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "creator": "string",
+      "lastUpdatedBy": "string",
+      "created": 1533676829319,
+      "lastUpdated": 1557696630000,
+      "id": "string",
+      "userId": "string",
+      "organizationId": "string",
+      "email": "string",
+      "fullName": "string",
+      "phone": "string",
+      "title": "string",
+      "admin": true
+    }
+  ],
+  "count": 1
+}

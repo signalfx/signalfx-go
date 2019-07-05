@@ -43,7 +43,7 @@ func TestDeleteDetector(t *testing.T) {
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
 
 	err := client.DeleteDetector("string")
-	assert.NoError(t, err, "Unexpected error getting detector")
+	assert.NoError(t, err, "Unexpected error deleting detector")
 }
 
 func TestDeleteMissingDetector(t *testing.T) {

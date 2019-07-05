@@ -1,0 +1,15 @@
+{
+  "creator": "string",
+  "lastUpdatedBy": "string",
+  "created": 1531690230000,
+  "lastUpdated": 1554240630000,
+  "id": "string",
+  "apiAccessToken": "string",
+  "organizationName": "string",
+  "accountType": "string",
+  "accountStatus": "string",
+  "accountKey": "string",
+  "accountRenews": "string",
+  "accountValidUntil": 1626384630000,
+  "dpmLimit": 0
+}

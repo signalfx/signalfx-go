@@ -1,0 +1,7 @@
+{
+  "email": "string",
+  "fullName": "string",
+  "title": "string",
+  "phone": "string",
+  "admin": null
+}
