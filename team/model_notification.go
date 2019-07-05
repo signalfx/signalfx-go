@@ -36,6 +36,8 @@ func (n *Notification) UnmarshalJSON(data []byte) error {
 		n.Value = &OpsgenieNotification{}
 	case "PagerDuty":
 		n.Value = &PagerDutyNotification{}
+	case "ServiceNow":
+		n.Value = &ServiceNowNotification{}
 	case "Slack":
 		n.Value = &SlackNotification{}
 	case "Team":
