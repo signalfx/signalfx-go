@@ -55,13 +55,13 @@ func TestGetMissingMember(t *testing.T) {
 	assert.Nil(t, result, "Should have gotten a nil result from a missing member")
 }
 
-func TestGetInviteMember(t *testing.T) {
+func TestInviteMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
 	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", http.StatusOK, nil, "organization/invite_member_success.json"))
 
-	results, err := client.InviteMember(&organization.InviteMemberRequest{
+	results, err := client.InviteMember(&organization.CreateUpdateMemberRequest{
 		Email: "string",
 	})
 	assert.NoError(t, err, "Unexpected error inviting member")
@@ -124,4 +124,30 @@ func TestDeleteMissingMember(t *testing.T) {
 
 	err := client.DeleteMember("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
+}
+
+func TestUpdateMember(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "PUT", http.StatusOK, nil, "organization/update_member_success.json"))
+
+	result, err := client.UpdateMember("string", &organization.CreateUpdateMemberRequest{
+		FullName: "string",
+	})
+	assert.NoError(t, err, "Unexpected error updating member")
+	assert.Equal(t, "string", result.FullName, "Name does not match")
+}
+
+func TestUpdateMissingMember(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+
+	result, err := client.UpdateMember("string", &organization.CreateUpdateMemberRequest{
+		FullName: "string",
+	})
+	assert.Error(t, err, "Should've gotten an error from a missing member update")
+	assert.Nil(t, result, "Should've gotten a nil dashboard from a missing member update")
 }

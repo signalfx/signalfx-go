@@ -75,13 +75,38 @@ func (c *Client) DeleteMember(id string) error {
 }
 
 // InviteMember invites a member to the organization.
-func (c *Client) InviteMember(inviteRequest *organization.InviteMemberRequest) (*organization.Member, error) {
+func (c *Client) InviteMember(inviteRequest *organization.CreateUpdateMemberRequest) (*organization.Member, error) {
 	payload, err := json.Marshal(inviteRequest)
 	if err != nil {
 		return nil, err
 	}
 
 	resp, err := c.doRequest("POST", OrganizationMemberAPIURL, nil, bytes.NewReader(payload))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
+	finalMember := &organization.Member{}
+
+	err = json.NewDecoder(resp.Body).Decode(finalMember)
+
+	return finalMember, err
+}
+
+// UpdateMember updates a member in the organization.
+func (c *Client) UpdateMember(id string, inviteRequest *organization.CreateUpdateMemberRequest) (*organization.Member, error) {
+	payload, err := json.Marshal(inviteRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.doRequest("PUT", OrganizationMemberAPIURL+"/"+id, nil, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
