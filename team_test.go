@@ -23,14 +23,37 @@ func TestCreateTeam(t *testing.T) {
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
+func TestCreateBadTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+
+	result, err := client.CreateTeam(&team.CreateUpdateTeamRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should get an error from bad tream")
+	assert.Nil(t, result, "Should get nil result from bad team")
+}
+
 func TestDeleteTeam(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/team/string", verifyRequest(t, "DELETE", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/team/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
 
 	err := client.DeleteTeam("string")
 	assert.NoError(t, err, "Unexpected error getting Team")
+}
+
+func TestDeleteMissingTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string", verifyRequest(t, "DELETE", http.StatusNotFound, nil, ""))
+
+	err := client.DeleteTeam("string")
+	assert.Error(t, err, "Should have gotten an error code for a missing team")
 }
 
 func TestGetTeam(t *testing.T) {
@@ -42,6 +65,17 @@ func TestGetTeam(t *testing.T) {
 	result, err := client.GetTeam("string")
 	assert.NoError(t, err, "Unexpected error getting Team")
 	assert.Equal(t, result.Name, "string", "Name does not match")
+}
+
+func TestGetMissingTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+
+	result, err := client.GetTeam("string")
+	assert.Error(t, err, "Expected error getting missing team")
+	assert.Nil(t, result, "Expected nil result getting missing team")
 }
 
 func TestSearchTeam(t *testing.T) {
@@ -76,4 +110,17 @@ func TestUpdateTeam(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error updating Team")
 	assert.Equal(t, "string", result.Name, "Name does not match")
+}
+
+func TestUpdateMissingTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+
+	result, err := client.UpdateTeam("string", &team.CreateUpdateTeamRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should've gotten an error from a missing team update")
+	assert.Nil(t, result, "Should've gotten a nil dashboard from a missing team update")
 }
