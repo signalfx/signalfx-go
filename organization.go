@@ -99,31 +99,6 @@ func (c *Client) InviteMember(inviteRequest *organization.CreateUpdateMemberRequ
 	return finalMember, err
 }
 
-// UpdateMember updates a member in the organization.
-func (c *Client) UpdateMember(id string, inviteRequest *organization.CreateUpdateMemberRequest) (*organization.Member, error) {
-	payload, err := json.Marshal(inviteRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.doRequest("PUT", OrganizationMemberAPIURL+"/"+id, nil, bytes.NewReader(payload))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
-	}
-
-	finalMember := &organization.Member{}
-
-	err = json.NewDecoder(resp.Body).Decode(finalMember)
-
-	return finalMember, err
-}
-
 // InviteMembers invites many members to the organization.
 func (c *Client) InviteMembers(inviteRequest *organization.InviteMembersRequest) (*organization.InviteMembersRequest, error) {
 	payload, err := json.Marshal(inviteRequest)
