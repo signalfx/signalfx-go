@@ -25,5 +25,5 @@ type ChartsWebUiFilter struct {
 	// Flag that controls the values allowed in the filter. If `true`, the only allowable values are those specified in the `ChartsWebUIFilter.preferredSuggestsions` array; otherwise, any value is allowed.
 	Restricted bool `json:"restricted,omitempty"`
 	// A list of values to compare to the value of the dimension or custom property specified in `ChartsWebUIFilter.property`. If the list contains more than one value, the filter becomes a set of queries between the value of `property` and each element of `value`. The system joins these queries with an implicit OR.
-	Value []string `json:"value"`
+	Value StringOrSlice `json:"value"`
 }
