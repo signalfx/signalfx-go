@@ -1,0 +1,17 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "created": 1554287430000,
+      "creator": "string",
+      "customProperties": {
+        "name": "region",
+        "value": "emea"
+      },
+      "description": "string",
+      "lastUpdated": 1555497030000,
+      "lastUpdatedBy": "string",
+      "name": "string"
+    }
+  ]
+}
