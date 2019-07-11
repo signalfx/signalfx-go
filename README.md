@@ -1,5 +1,7 @@
 # Go client library for SignalFx
 
+[![GoDoc](https://godoc.org/github.com/signalfx/signalfx-go?status.svg)](https://godoc.org/github.com/signalfx/signalfx-go)
+
 This is a programmatic interface in Go for SignalFx's metadata and ingest APIs.
 
 # SignalFlow
