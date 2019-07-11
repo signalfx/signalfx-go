@@ -18,7 +18,7 @@ type DimensionKeyValueModel struct {
 	// The description for the dimension. You can use up to 1024 UTF-8 characters.
 	Description string `json:"description,omitempty"`
 	// The custom properties for the dimension, in the form of a JSON object (dictionary) containing custom property key-value pairs: <br>   * For a GET response, this value contains the existing custom     properties.   * For a PUT *request*, use this property to update custom     properties for the dimension. The PUT *response* returns all of     the custom properties for the specified dimension.     The section [Custom Properties Criteria](https://developers.signalfx.com/metrics/metrics_metadata_overview.html#_custom_properties_criteria)     lists the requirements for custom properties.
-	CustomProperties map[string]interface{} `json:"customProperties,omitempty"`
+	CustomProperties map[string]string `json:"customProperties,omitempty"`
 	// The tags for the dimension:   * For a GET response, this value contains the tags.   * For a PUT request, use this property to update tags for     the dimension. The PUT response returns all of the tags for the     specified dimension. The section [Tags Criteria](https://developers.signalfx.com/metrics/metrics_metadata_overview.html#_tags_criteria)     lists the requirements for tags.
 	Tags []string `json:"tags,omitempty"`
 	// A SignalFx user ID:<br>   * For a GET request: The user that created the dimension.   * For a PUT request, the ID of the user that's making the     request; the response echoes the request value.

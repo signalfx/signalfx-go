@@ -228,3 +228,16 @@ func TestDeleteMissingTag(t *testing.T) {
 	err := client.DeleteTag("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
 }
+
+func TestUpdateCreateTag(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "PUT", http.StatusOK, nil, "metrics_metadata/create_update_tag_success.json"))
+
+	result, err := client.CreateUpdateTag("string", &metrics_metadata.CreateUpdateTagRequest{
+		Description: "string",
+	})
+	assert.NoError(t, err, "Unexpected error updating tag")
+	assert.Equal(t, "string", result.Name, "Key does not match")
+}

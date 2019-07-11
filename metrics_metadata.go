@@ -113,6 +113,7 @@ func (c *Client) SearchMetric(query string, orderBy string, limit int, offset in
 	return finalMetrics, err
 }
 
+// GetMetric retrieves a single metric by name.
 func (c *Client) GetMetric(name string) (*metrics_metadata.Metric, error) {
 	resp, err := c.doRequest("GET", MetricAPIURL+"/"+name, nil, nil)
 	if err != nil {
@@ -132,6 +133,7 @@ func (c *Client) GetMetric(name string) (*metrics_metadata.Metric, error) {
 	return finalMetric, err
 }
 
+// GetMetricTimeSeries retrieves a metric time series by id.
 func (c *Client) GetMetricTimeSeries(id string) (*metrics_metadata.MetricTimeSeries, error) {
 	resp, err := c.doRequest("GET", MetricTimeSeriesAPIURL+"/"+id, nil, nil)
 	if err != nil {
@@ -194,6 +196,7 @@ func (c *Client) SearchTag(query string, orderBy string, limit int, offset int) 
 	return finalTags, err
 }
 
+// GetTag gets a tag by name
 func (c *Client) GetTag(name string) (*metrics_metadata.Tag, error) {
 	resp, err := c.doRequest("GET", TagAPIURL+"/"+name, nil, nil)
 	if err != nil {
@@ -227,4 +230,29 @@ func (c *Client) DeleteTag(id string) error {
 	}
 
 	return nil
+}
+
+// CreateUpdateTag creates or updates a dimension.
+func (c *Client) CreateUpdateTag(name string, cutr *metrics_metadata.CreateUpdateTagRequest) (*metrics_metadata.Tag, error) {
+	payload, err := json.Marshal(cutr)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.doRequest("PUT", TagAPIURL+"/"+name, nil, bytes.NewReader(payload))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
+	finalTag := &metrics_metadata.Tag{}
+
+	err = json.NewDecoder(resp.Body).Decode(finalTag)
+
+	return finalTag, err
 }

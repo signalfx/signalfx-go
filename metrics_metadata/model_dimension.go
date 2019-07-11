@@ -18,7 +18,7 @@ type Dimension struct {
 	// The description for the dimension. You can use up to 1024 UTF-8 characters.
 	Description string `json:"description,omitempty"`
 	// The custom properties for the dimension, in the form of a JSON object (dictionary) containing custom property key-value pairs. Custom property names and values have these requirements: <br> **Name:** <br>   * UTF-8 string, maximum length of 128 characters (512 bytes)   * Must start with an uppercase or lowercase letter. The rest of     the name can contain letters, numbers, underscores (`_`) and     hyphens (`-`).   * Must not start with the underscore character (`_`) <br> **Value:** <br>   * String: Maximum length 256 UTF-8 characters (1024 bytes)   * Integer or float: Maximum length 8192 bits (1024 bytes)
-	CustomProperties map[string]interface{} `json:"customProperties,omitempty"`
+	CustomProperties map[string]string `json:"customProperties,omitempty"`
 	// The tags for the dimension, in the form of an array that contains one string for each tag. <br> Each tag is a UTF-8 string, starting with an uppercase or lowercase alphabetic character. The maximum length is expressed in characters; if a string consists solely of single-byte UTF-8 entities, 1024 characters are available. <br> **NOTE:** You can't have more than 50 tags per MTS
 	Tags []string `json:"tags,omitempty"`
 	// The SignalFx user ID of the user that created the dimension.
