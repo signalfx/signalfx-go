@@ -145,6 +145,27 @@ func TestGetMissingMetricTimeSeries(t *testing.T) {
 	assert.Nil(t, result, "Should have gotten a nil result from a missing metric time series")
 }
 
+func TestSearchMetricTimeSeries(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	query := "foo:*"
+	limit := 10
+	offset := 2
+	orderBy := "bar"
+	params := url.Values{}
+	params.Add("orderBy", orderBy)
+	params.Add("query", query)
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/metrictimeseries", verifyRequest(t, "GET", http.StatusOK, params, "metrics_metadata/metric_time_series_search_success.json"))
+
+	results, err := client.SearchMetricTimeSeries(query, orderBy, limit, offset)
+	assert.NoError(t, err, "Unexpected error search metric time series")
+	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+}
+
 func TestSearchTag(t *testing.T) {
 	teardown := setup()
 	defer teardown()

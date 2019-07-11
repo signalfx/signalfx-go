@@ -24,90 +24,6 @@ const MetricTimeSeriesAPIURL = "/v2/metrictimeseries"
 // TagAPIURL is the base URL for interacting with dimensions.
 const TagAPIURL = "/v2/tag"
 
-// // CreateDetector creates a detector.
-// func (c *Client) CreateDetector(detectorRequest *detector.CreateUpdateDetectorRequest) (*detector.Detector, error) {
-// 	payload, err := json.Marshal(detectorRequest)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	resp, err := c.doRequest("POST", DetectorAPIURL, nil, bytes.NewReader(payload))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer resp.Body.Close()
-//
-// 	if resp.StatusCode != http.StatusOK {
-// 		message, _ := ioutil.ReadAll(resp.Body)
-// 		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
-// 	}
-//
-// 	finalDetector := &detector.Detector{}
-//
-// 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
-//
-// 	return finalDetector, err
-// }
-//
-// // DeleteDetector deletes a detector.
-// func (c *Client) DeleteDetector(id string) error {
-// 	resp, err := c.doRequest("DELETE", DetectorAPIURL+"/"+id, nil, nil)
-//
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer resp.Body.Close()
-//
-// 	if resp.StatusCode != http.StatusNoContent {
-// 		message, _ := ioutil.ReadAll(resp.Body)
-// 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
-// 	}
-//
-// 	return nil
-// }
-//
-// // DisableDetector disables a detector.
-// func (c *Client) DisableDetector(id string, labels []string) error {
-// 	payload, err := json.Marshal(labels)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/disable", nil, bytes.NewReader(payload))
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer resp.Body.Close()
-//
-// 	if resp.StatusCode != http.StatusNoContent {
-// 		message, _ := ioutil.ReadAll(resp.Body)
-// 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
-// 	}
-//
-// 	return nil
-// }
-//
-// // EnableDetector enables a detector.
-// func (c *Client) EnableDetector(id string, labels []string) error {
-// 	payload, err := json.Marshal(labels)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/enable", nil, bytes.NewReader(payload))
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer resp.Body.Close()
-//
-// 	if resp.StatusCode != http.StatusNoContent {
-// 		message, _ := ioutil.ReadAll(resp.Body)
-// 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
-// 	}
-//
-// 	return nil
-// }
-
 // GetDimension gets a dimension.
 func (c *Client) GetDimension(key string, value string) (*metrics_metadata.Dimension, error) {
 	resp, err := c.doRequest("GET", DimensionAPIURL+"/"+key+"/"+value, nil, nil)
@@ -232,6 +148,28 @@ func (c *Client) GetMetricTimeSeries(id string) (*metrics_metadata.MetricTimeSer
 
 	err = json.NewDecoder(resp.Body).Decode(finalMetricTimeSeries)
 	return finalMetricTimeSeries, err
+}
+
+// SearchMetricTimeSeries searches for metric time series, given a query string in `query`.
+func (c *Client) SearchMetricTimeSeries(query string, orderBy string, limit int, offset int) (*metrics_metadata.MetricTimeSeriesRetrieveResponseModel, error) {
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("orderBy", orderBy)
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+
+	resp, err := c.doRequest("GET", MetricTimeSeriesAPIURL, params, nil)
+
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	finalMTS := &metrics_metadata.MetricTimeSeriesRetrieveResponseModel{}
+
+	err = json.NewDecoder(resp.Body).Decode(finalMTS)
+
+	return finalMTS, err
 }
 
 // SearchTag searches for tags, given a query string in `query`.
