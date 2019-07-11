@@ -1,6 +1,7 @@
 # 1.1.0, in progress
 
 ## Added
+* Added `DashboardConfigs` to `CreateUpdateDashboardRequest`
 
 ## Updated
 * Many types have been changed to pointers to add (de)serialization
