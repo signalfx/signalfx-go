@@ -3,8 +3,11 @@
 ## Added
 
 ## Updated
+* Many types have been changed to pointers to add (de)serialization
+* Moved `StringOrSlice` into a `util` package, cuz all projects must have one
 
 ## Bugfixes
+* Switched to `StringOrSlice` for some fields that needed it.
 
 ## Removed
 
