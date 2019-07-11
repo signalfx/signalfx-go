@@ -1,0 +1,13 @@
+{
+  "created": 1557743430000,
+  "creator": "string",
+  "customProperties": {},
+  "dimensions": {},
+  "lastUpdated": 1557916230000,
+  "lastUpdatedBy": "string",
+  "metric": "string",
+  "tags": [
+    "string"
+  ],
+  "type": "GAUGE"
+}
