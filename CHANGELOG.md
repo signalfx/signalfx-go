@@ -2,6 +2,7 @@
 
 ## Added
 * Added `DashboardConfigs` to `CreateUpdateDashboardRequest`
+* `DashboardGroupCreate` now has an option to create an empty group.
 
 ## Updated
 * Many types have been changed to pointers to add (de)serialization
