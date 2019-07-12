@@ -20,7 +20,23 @@ func TestCreateDashboardGroup(t *testing.T) {
 
 	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
-	})
+	}, false)
+	assert.NoError(t, err, "Unexpected error creating dashboard group")
+	assert.Equal(t, "string", result.Name, "Name does not match")
+}
+
+func TestCreateEmptyDashboardGroup(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	params := url.Values{}
+	params.Add("empty", "true")
+
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", http.StatusOK, params, "dashboardgroup/create_success.json"))
+
+	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
+		Name: "string",
+	}, true)
 	assert.NoError(t, err, "Unexpected error creating dashboard group")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
@@ -33,7 +49,7 @@ func TestCreateBadDashboardGroup(t *testing.T) {
 
 	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
-	})
+	}, false)
 	assert.Error(t, err, "Should get an error from bad dashboard group")
 	assert.Nil(t, result, "Should get nil result from bad dashboard group")
 }
