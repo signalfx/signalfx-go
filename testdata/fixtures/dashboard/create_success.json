@@ -47,7 +47,7 @@
     ],
     "time": {
       "end": "string",
-      "start": "string"
+      "start": 1234
     },
     "variables": [
       {

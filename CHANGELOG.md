@@ -9,6 +9,7 @@
 
 ## Bugfixes
 * Switched to `StringOrSlice` for some fields that needed it.
+* Added `StringOrInteger` to handle failures in some Chart filter responses, thanks to (doctornkz)[https://github.com/doctornkz] for flagging!
 
 ## Removed
 
