@@ -1,3 +1,13 @@
+# 1.2.0, In Progress
+
+## Added
+
+## Updated
+
+## Bugfixes
+
+## Removed
+
 # 1.1.0, 2019-07-15
 
 ## Added
