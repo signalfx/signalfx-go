@@ -4,6 +4,8 @@
 
 ## Updated
 
+* Many numeric properties have been adjusted to pointers to play better with Go's JSON (un)marshaling.
+
 ## Bugfixes
 
 ## Removed
