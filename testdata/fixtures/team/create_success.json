@@ -28,7 +28,6 @@
       {
         "type": "OpsGenie",
         "credentialId": "string",
-        "credentialName": "string",
         "responderName": "string",
         "responderId": "string",
         "responderType": "string"
