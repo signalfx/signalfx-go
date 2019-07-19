@@ -2,9 +2,8 @@
 
 ## Added
 
-## Updated
-
-## Bugfixes
+* Added OpenAPI code for integrations, experimental for now.
+* Add `*AwsCloudWatchIntegration` functions to client.
 
 ## Removed
 

@@ -1,0 +1,47 @@
+{
+  "created": 1556361030000,
+  "creator": "string",
+  "enabled": true,
+  "id": "string",
+  "lastUpdated": 1556620230000,
+  "lastUpdatedBy": "string",
+  "name": "string",
+  "type": "AWSCloudWatch",
+  "authMethod": "ExternalId",
+  "customCloudWatchNamespaces": "string",
+  "customNamespaceSyncRules": [
+    {
+      "defaultAction": "Exclude",
+      "filter": {
+        "action": "Exclude",
+        "source": "string"
+      },
+      "namespace": "string"
+    }
+  ],
+  "enableAwsUsage": true,
+  "enableCheckLargeVolume": true,
+  "externalId": "string",
+  "importCloudWatch": true,
+  "isLargeVolume": true,
+  "key": "string",
+  "namespaceSyncRules": [
+    {
+      "defaultAction": "Exclude",
+      "filter": {
+        "action": "Exclude",
+        "source": "string"
+      },
+      "namespace": "AWS/ApiGateway"
+    }
+  ],
+  "pollRate": 60000,
+  "regions": [
+    "ap-northeast-1"
+  ],
+  "roleArn": "string",
+  "services": [
+    "AWS/ApiGateway"
+  ],
+  "token": "string"
+}
