@@ -11,8 +11,8 @@ package integration
 
 // Specifies AWS custom namespaces and the filters that SignalFx uses to retrieve metrics from the namespaces.
 type AwsCustomNameSpaceSyncRule struct {
-	DefaultAction *AwsSyncRuleFilterAction `json:"defaultAction,omitempty"`
-	Filter        *AwsSyncRuleFilter       `json:"filter,omitempty"`
+	DefaultAction AwsSyncRuleFilterAction `json:"defaultAction,omitempty"`
+	Filter        *AwsSyncRuleFilter      `json:"filter,omitempty"`
 	// An AWS custom namespace having custom AWS metrics that you want to sync with SignalFx. See the AWS documentation on publishing metrics for more information.
 	Namespace string `json:"namespace,omitempty"`
 }
