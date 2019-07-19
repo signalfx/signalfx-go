@@ -11,7 +11,7 @@ package integration
 
 // Filter that SignalFx applies to data coming in from an AWS namespace. This gives you more fine-grained control over the incoming data. If you don't specify a filter, SignalFx brings in all the data from the namespace.
 type AwsSyncRuleFilter struct {
-	Action *AwsSyncRuleFilterAction `json:"action,omitempty"`
+	Action AwsSyncRuleFilterAction `json:"action,omitempty"`
 	// Expression that selects the data that SignalFx should sync for the custom namespace associated with this sync rule.<br> The expression uses the syntax defined for the SignalFlow `filter()`  function; it can be any valid SignalFlow filter expression.<br> **NOTE:** Some filter options aren't visible in the web UI for AWS filters. The SignalFlow expression for a filter that SignalFx can't display in the filters UI appears in the web UI, but you can only edit it with API calls.<br> You can refer to AWS tags by prefacing the tag name with the string `aws_tag_`. The value doesn't need a preface.<br> To refer to AWS metrics, preface the metric name with the string `sf_metric`. The value doesn't need a preface. See the topic [Integrating With AWS](https://developers.signalfx.com/integrating/aws_integration_overview.html) for more information.
 	Source string `json:"source,omitempty"`
 }
