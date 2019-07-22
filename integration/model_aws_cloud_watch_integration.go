@@ -47,7 +47,7 @@ type AwsCloudWatchIntegration struct {
 	// Role ARN that you add to an existing AWS integration object.<br> When you create an AWS integration object and specify \"ExternalId\" a he authentication method, SignalFx responds with an external ID. You provide this ID to AWS, which responds with a role ARN.<br> To finish the connection between SignalFx and AWS, you update the AWS integration object using a PUT request. In this request, you specify the \"roleArn\" property using the value you obtained from AWS. <br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
 	RoleArn string `json:"roleArn,omitempty"`
 	// Array of AWS services that you want SignalFx to monitor. Each element is a string designating an AWS service
-	Services []*AwsService `json:"services,omitempty"`
+	Services []AwsService `json:"services,omitempty"`
 	// If you specify `\"authMethod\": \"SecurityToken\"` in your request to create an AWS integration object, use this property to specify the token.
 	Token string `json:"token,omitempty"`
 	// Flag that controls how SignalFx checks for large amounts of data for this AWS integration. If `true`, SignalFx checks to see if the integration is returning a large amount of data.
