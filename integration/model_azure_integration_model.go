@@ -16,7 +16,7 @@ type AzureIntegrationModel struct {
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -25,11 +25,11 @@ type AzureIntegrationModel struct {
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
 	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
+	Type Type   `json:"type"`
 	// Azure application ID for the SignalFx app. To learn how to get this ID, see the topic (https://docs.signalfx.com/en/latest/getting-started/send-data.html#connect-to-microsoft-azure)[Connect to Microsoft Azure] in the product documentation.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
-	AppId string `json:"appId,omitempty"`
+	AppId            string           `json:"appId,omitempty"`
 	AzureEnvironment AzureEnvironment `json:"azureEnvironment,omitempty"`
-	PollRate PollRate `json:"pollRate,omitempty"`
+	PollRate         PollRate         `json:"pollRate,omitempty"`
 	// Azure secret key that associates the SignalFx app in Azure with the Azure tenant ID. To learn how to get this ID, see the topic (https://docs.signalfx.com/en/latest/getting-started/send-data.html#connect-to-microsoft-azure)[Connect to Microsoft Azure] in the product documentation.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
 	SecretKey string `json:"secretKey,omitempty"`
 	// Array of Microsoft Azure service names for the Azure services you want SignalFx to monitor. SignalFx only supports certain services, and if you specify an unsupported one, you receive an API error.  The supported services are:   * microsoft.sql/servers/elasticpools   * microsoft.storage/storageaccounts   * microsoft.storage/storageaccountsservices/tableservices   * microsoft.storage/storageaccountsservices/blobservices   * microsoft.storage/storageaccounts/queueservices   * microsoft.storage/storageaccounts/fileservices   * microsoft.compute/virtualmachinescalesets   * microsoft.compute/virtualmachinescalesets/virtualmachines   * microsoft.compute/virtualmachines   * microsoft.devices/iothubs   * microsoft.eventHub/namespaces   * microsoft.batch/batchaccounts   * microsoft.sql/servers/databases   * microsoft.cache/redis   * microsoft.logic/workflows

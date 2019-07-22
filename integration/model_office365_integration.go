@@ -10,13 +10,13 @@
 package integration
 
 // Specifies the properties of a notification service integration between Microsoft Office 365 and SignalFx, in the form of a JSON object.<br> **NOTE:**<br> You can't use the API to add a Microsoft Office 365 integration. Use the web UI to add the integration.<br> In addition, you can use the API to:<br>   * Update some of the integration properties.   * Retrieve all of the integration properties.   * Delete a Microsoft Office 365 integration.
-type Office365IntegrationModel struct {
+type Office365Integration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -25,7 +25,7 @@ type Office365IntegrationModel struct {
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
 	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
+	Type Type   `json:"type"`
 	// A Webhook URL provided by Microsoft when you integrate Office 365 with SignalFx.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects. In addition, you can't update it in a **PUT** request. It's described here for informational purposes only.
 	WebhookUrl string `json:"webhookUrl,omitempty"`
 }

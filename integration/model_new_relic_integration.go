@@ -10,13 +10,13 @@
 package integration
 
 // Specifies the data collection integration between NewRelic and SignalFx, in the form of a JSON object.
-type NewRelicIntegrationModel struct {
+type NewRelicIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -25,12 +25,12 @@ type NewRelicIntegrationModel struct {
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
 	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
+	Type Type   `json:"type"`
 	// The API key you get from NewRelic. This key lets SignalFx connect with NewRelic.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
 	ApiKey string `json:"apiKey,omitempty"`
 	// List of NewRelic products you want to use with this integration, in the form of a JSON array. The allowed values are:<br>   * APM   * Mobile   * Servers
-	Products []string `json:"products,omitempty"`
-	ApmFilters NewRelicIntegrationFilterObject `json:"apmFilters,omitempty"`
+	Products      []string                        `json:"products,omitempty"`
+	ApmFilters    NewRelicIntegrationFilterObject `json:"apmFilters,omitempty"`
 	MobileFilters NewRelicIntegrationFilterObject `json:"mobileFilters,omitempty"`
 	ServerFilters NewRelicIntegrationFilterObject `json:"serverFilters,omitempty"`
 }

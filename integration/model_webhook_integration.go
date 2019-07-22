@@ -9,14 +9,14 @@
 
 package integration
 
-// Specifies the properties of a notification service integration between xMatters and SignalFx, in the form of a JSON object
-type XMattersIntegrationModel struct {
+// Specifies the properties of a notification service integration between a Webhook URL and SignalFx, in the form of a JSON object
+type WebhookIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -25,7 +25,9 @@ type XMattersIntegrationModel struct {
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
 	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
-	// Webhook URL that connects the integration to your xMatters account. You get this URL from your xMatters account. To learn how, see the \"SignalFx\" topic in the \"Integrations\" section of the xMatters website.
-	Url string `json:"url,omitempty"`
+	Type Type   `json:"type"`
+	// Webhook URL
+	Url          string                 `json:"url,omitempty"`
+	SharedSecret string                 `json:"sharedSecret,omitempty"`
+	Headers      map[string]interface{} `json:"headers,omitempty"`
 }

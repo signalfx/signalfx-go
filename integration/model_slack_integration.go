@@ -9,14 +9,14 @@
 
 package integration
 
-// Specifies the properties of a notification service integration between VictorOps and SignalFx, in the form of a JSON object
-type VictorOpsIntegrationModel struct {
+// Specifies the properties of a notification service integration between Slack and SignalFx, in the form of a JSON object
+type SlackIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -25,7 +25,19 @@ type VictorOpsIntegrationModel struct {
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
 	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
-	// VictorOps API integration URL.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
-	PostUrl string `json:"postUrl,omitempty"`
+	Type Type   `json:"type"`
+	// Indicates the authentication method you want to use for integrating with the Slack API. The allowed values are:<br>   * Webhook   * OAuth
+	Method string `json:"method,omitempty"`
+	// If you set the \"method\" property to \"Webhook\", use \"webhookUrl\" to specify the incoming Webhook URL.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
+	WebhookUrl string `json:"webhookUrl,omitempty"`
+	// If you set the \"method\" property to \"OAuth\", use \"scope\" to specify the Slack OAuth scope string associated with this integration.
+	Scope string `json:"scope,omitempty"`
+	// If you set the \"method\" property to \"OAuth\", use \"slackTeamName\"  to specify the name of the Slack team you've approved for this integration.
+	SlackTeamName string `json:"slackTeamName,omitempty"`
+	// If you set the \"method\" property to \"OAuth\", use \"slackTeamId\" to specify the Slack ID for the Slack team you've approved for this integration.
+	SlackTeamId string `json:"slackTeamId,omitempty"`
+	// If you set the \"method\" property to \"OAuth\", use \"slackUserId\" to specify the Slack ID for the Slack user that approved this integration.
+	SlackUserId string `json:"slackUserId,omitempty"`
+	// If you set the \"method\" property to \"OAuth\", \"accessTokenUpdated\" contains the last time that Slack refreshed or updated the access token. The value is in Unix time UTC-relative
+	AccessTokenUpdated int64 `json:"accessTokenUpdated,omitempty"`
 }

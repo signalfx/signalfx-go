@@ -9,14 +9,14 @@
 
 package integration
 
-// Specifies the SAML integration between Google Cloud Identity Integration Model and SignalFx, in the form of a JSON object.
-type GoogleCloudIdentityIntegrationModel struct {
+// Specifies the data collection integration between Google Cloud Platform and SignalFx, in the form of a JSON object.
+type GcpIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -24,12 +24,13 @@ type GoogleCloudIdentityIntegrationModel struct {
 	// SignalFx-assigned ID of the last user who updated the integration. If the last update was by the system, the value is \"AAAAAAAAAA\". This value is \"read-only\".
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
-	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
-	// File name of the SAML metadata XML file for the integration: `FederationMetadata.xml`
-	Metadata string `json:"metadata,omitempty"`
-	// Contents of the `certificate.pem` file for the public key associated with the SAML integration
-	PublicKey string `json:"publicKey,omitempty"`
-	// URL of the entity that issued the certificate for the SAML
-	IssuerUrl map[string]interface{} `json:"issuerUrl,omitempty"`
+	Name     string   `json:"name,omitempty"`
+	Type     Type     `json:"type"`
+	PollRate PollRate `json:"pollRate,omitempty"`
+	// Array of GCP services that you want SignalFx to monitor. SignalFx only supports certain services, and if you specify an unsupported one, you receive an API error. The supported services are: <br>   * appengine   * bigquery   * bigtable   * cloudfunctions   * cloudiot   * cloudsql   * cloudtasks   * compute   * container   * dataflow   * datastore   * firebasedatabase   * firebasehosting   * interconnect   * loadbalancing   * logging   * ml   * monitoring   * pubsub   * router   * serviceruntime   * spanner   * storage   * vpn
+	Services []string `json:"services,omitempty"`
+	// List of GCP project that you want SignalFx to monitor, in the form of a JSON array of objects
+	ProjectServiceKeys []*GcpProject `json:"projectServiceKeys,omitempty"`
+	// List of GCP metadata names that you want SignalFx to collect from the data incoming from the GCP integration, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to whitelist.
+	Whitelist []string `json:"whitelist,omitempty"`
 }

@@ -9,14 +9,14 @@
 
 package integration
 
-// Specifies the properties of a notification service integration between ServiceNow and SignalFx, in the form of a JSON object
-type ServiceNowIntegrationModel struct {
+// Specifies the properties of a notification service integration between Opsgenie and SignalFx, in the form of a JSON object
+type OpsgenieIntegrationModel struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
 	Creator string `json:"creator,omitempty"`
 	// Flag that indicates the state of the integration object. If  `true`, the integration is enabled. If `false`, the integration is disabled, and you must enable it by setting \"enabled\" to `true` in a **PUT** request that updates the object. <br> **NOTE:** SignalFx always sets the flag to `true` when you call  **POST** `/integration` to create an integration.
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// SignalFx-assigned ID of an integration you create in the web UI or API. Use this property to retrieve an integration using the **GET**, **PUT**, or **DELETE** `/integration/{id}` endpoints or the **GET** `/integration/validate{id}/` endpoint, as described in this topic.
 	Id string `json:"id,omitempty"`
 	// The last time the integration was updated, in Unix time UTC-relative. This value is \"read-only\".
@@ -25,13 +25,9 @@ type ServiceNowIntegrationModel struct {
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
 	Name string `json:"name,omitempty"`
-	Type Type `json:"type"`
-	// Name of the ServiceNow instance, for example `myInstances.service-now.com`. To learn more, see the topic (https://docs.signalfx.com/en/latest/admin-guide/integrate-notifications.html#servicenow)[Integrate with ServiceNow]  in the SignalFx product documentation.
-	InstanceName string `json:"instanceName,omitempty"`
-	// Describe the type of issue, using standard **ITIL** terminology. The allowed values are:<br>   * Incident   * Problem
-	IssueType string `json:"issueType,omitempty"`
-	// Username you created in ServiceNow for the SignalFx integration.<br> **NOTE:** In ServiceNow, you have to assign the roles  `web_service_admin` and `itil` to this username.
-	Username string `json:"username,omitempty"`
-	// Password associated with the `username` you created for this integration.
-	Password string `json:"password,omitempty"`
+	Type Type   `json:"type"`
+	// An Opsgenie API key for sending alerts to an Opsgenie team or teams.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
+	ApiKey string `json:"apiKey"`
+	// Your Opsgenie API URL
+	ApiUrl string `json:"apiUrl"`
 }
