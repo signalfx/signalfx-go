@@ -100,7 +100,7 @@ func (c *Client) GetAWSCloudWatchIntegration(id string) (*integration.AwsCloudWa
 
 // UpdateAWSCloudWatchIntegration updates an AWS CloudWatch integration.
 func (c *Client) UpdateAWSCloudWatchIntegration(id string, acwi *integration.AwsCloudWatchIntegration) (*integration.AwsCloudWatchIntegration, error) {
-	acwi, err := json.Marshal(acwi)
+	payload, err := json.Marshal(acwi)
 	if err != nil {
 		return nil, err
 	}
