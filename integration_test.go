@@ -92,7 +92,7 @@ func TestDeleteAWSCloudWatchIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
 
 	err := client.DeleteAWSCloudWatchIntegration("id")
 	assert.NoError(t, err, "Unexpected error creating integration")
