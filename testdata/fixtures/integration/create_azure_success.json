@@ -1,0 +1,21 @@
+{
+  "created": 1556361030000,
+  "creator": "string",
+  "enabled": true,
+  "id": "string",
+  "lastUpdated": 1556620230000,
+  "lastUpdatedBy": "string",
+  "name": "string",
+  "type": "Azure",
+  "appId": "string",
+  "azureEnvironment": "AZURE",
+  "pollRate": 60000,
+  "secretKey": "string",
+  "services": [
+    "microsoft.sql/servers/elasticpools"
+  ],
+  "subscriptions": [
+    "string"
+  ],
+  "tenantId": "string"
+}

@@ -10,7 +10,7 @@
 package integration
 
 // Specifies the data collection integration between Microsoft Azure and SignalFx, in the form of a JSON object.
-type AzureIntegrationModel struct {
+type AzureIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
