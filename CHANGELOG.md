@@ -5,6 +5,7 @@
 ## Updated
 
 ## Bugfixes
+* Properly recognize the SignalFlow keep alive event message and ignore it.
 
 ## Removed
 
