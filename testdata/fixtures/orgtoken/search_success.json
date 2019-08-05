@@ -1,0 +1,59 @@
+{
+  "count": 2,
+  "results": [
+    {
+      "created": 1556746230000,
+      "creator": "string",
+      "description": "string",
+      "disabled": true,
+      "expiry": 1558474230000,
+      "lastUpdated": 1557696630000,
+      "lastUpdatedBy": "string",
+      "latestRotation": 1556832630000,
+      "limits": {
+        "categoryNotificationThreshold": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "categoryQuota": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "name": "string",
+      "notifications": [
+        {
+          "credentialId": "string",
+          "type": "BigPanda"
+        }
+      ],
+      "secret": "string"
+    },
+    {
+      "created": 1556746230000,
+      "creator": "string",
+      "description": "string",
+      "disabled": true,
+      "expiry": 1558474230000,
+      "lastUpdated": 1557696630000,
+      "lastUpdatedBy": "string",
+      "latestRotation": 1556832630000,
+      "limits": {
+        "dpmNotificationThreshold": 1234,
+        "dpmQuota": 1234
+      },
+      "name": "string",
+      "notifications": [
+        {
+          "credentialId": "string",
+          "type": "BigPanda"
+        }
+      ],
+      "secret": "string"
+    }
+  ]
+}
