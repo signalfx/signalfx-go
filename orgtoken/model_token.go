@@ -20,7 +20,7 @@ type Token struct {
 	// An extended description of the token
 	Description string `json:"description,omitempty"`
 	// Specifies org token limits and thresholds. Use the form that corresponds to your pricing model: <br>   * For DPM pricing, use \"dpmQuota\"   * For host-based pricing, use \"categoryQuota\"<br>   You can only set limits if you have an Enterprise-level account.
-	Limits *HostOrUsageLimit `json:"limits,omitempty"`
+	Limits *Limit `json:"limits,omitempty"`
 	// Array of notification settings. Each element defines a notification that SignalFx sends when your organization is within 90% of exceeding an org token limit. You can specify more than one object, and each object can be of a different type. <br>  To send email notifications:<br>   * For one or more individual users, use \"type\": \"Email\"   * For one or more entire SignalFx teams, use \"type\": \"TeamEmail\"   * For one or more members of a single team, use \"type\": \"Team\"   * For one or more members of multiple teams, use \"type\": \"TeamEmail\"   * To send emails to a team, the team must already exist.   * To send email to specific members of a team, the team must     already exist, and you must specify the team members who will     receive emails.
 	Notifications []*notification.Notification `json:"notifications,omitempty"`
 	// Authentication secret key that protects the org token
