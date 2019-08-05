@@ -1,10 +1,11 @@
-# 1.5.0, In Progress
+# 1.5.0, 2019-08-05
 
 ## Added
 
 * Add OrgToken methods
 
 ## Bugfixes
+
 * Properly recognize the SignalFlow keep alive event message and ignore it.
 
 ## Updated
