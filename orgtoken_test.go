@@ -16,8 +16,14 @@ func TestCreateOrgToken(t *testing.T) {
 
 	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", http.StatusOK, nil, "orgtoken/create_success.json"))
 
+	quota := int32(1234)
+	quotaThreshold := int32(1235)
 	result, err := client.CreateOrgToken(&orgtoken.CreateUpdateTokenRequest{
 		Name: "string",
+		Limits: &orgtoken.Limit{
+			DpmQuota:                 &quota,
+			DpmNotificationThreshold: &quotaThreshold,
+		},
 	})
 	assert.NoError(t, err, "Unexpected error creating orgtoken")
 	assert.Equal(t, "string", result.Name, "Name does not match")
