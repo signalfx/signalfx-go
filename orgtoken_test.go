@@ -94,7 +94,7 @@ func TestSearchOrgToken(t *testing.T) {
 
 	results, err := client.SearchOrgTokens(limit, name, offset)
 	assert.NoError(t, err, "Unexpected error search token")
-	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(2), results.Count, "Incorrect number of results")
 }
 
 func TestUpdateOrgToken(t *testing.T) {

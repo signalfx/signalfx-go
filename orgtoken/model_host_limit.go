@@ -10,7 +10,7 @@
 package orgtoken
 
 // Specifies the limits and thresholds to set on an org token when you use host-based pricing. <br> **NOTE:** Use this object only when your organization uses host-based pricing. For any other pricing model, using this object causes your request to fail.
-type HostLimit struct {
+type HostOrUsageLimit struct {
 	CategoryQuota                 *UsageLimits `json:"categoryQuota"`
 	CategoryNotificationThreshold *UsageLimits `json:"categoryNotificationThreshold,omitempty"`
 }
