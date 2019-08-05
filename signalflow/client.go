@@ -151,10 +151,12 @@ func (c *Client) ensureInitialized() error {
 	var err error
 	if !c.isInitialized {
 		err = c.initialize()
-		// The mutex also acts as a memory barrier to ensure this write will be
-		// seen by any goroutine that obtains the lock after the last Unlock,
-		// see https://golang.org/ref/mem#tmp_8.
-		c.isInitialized = true
+		if err == nil {
+			// The mutex also acts as a memory barrier to ensure this write will be
+			// seen by any goroutine that obtains the lock after the last Unlock,
+			// see https://golang.org/ref/mem#tmp_8.
+			c.isInitialized = true
+		}
 	}
 	return err
 }
