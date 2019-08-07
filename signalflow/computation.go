@@ -64,6 +64,9 @@ func (c *Computation) Channel() *Channel {
 
 // Handle of the computation
 func (c *Computation) Handle() string {
+	if err := c.waitForMetadata(func() bool { return c.handle != "" }); err != nil {
+		return ""
+	}
 	return c.handle
 }
 
