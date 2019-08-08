@@ -30,7 +30,7 @@ func TestBuffersDataMessages(t *testing.T) {
 	})
 	defer comp.cancel()
 	ch.AcceptMessage(&messages.DataMessage{
-		Payloads: []messages.BinaryPayload{
+		Payloads: []messages.DataPayload{
 			{
 				TSID: idtool.ID(4000),
 			},
@@ -48,7 +48,7 @@ func TestBuffersDataMessages(t *testing.T) {
 	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
 
 	ch.AcceptMessage(&messages.DataMessage{
-		Payloads: []messages.BinaryPayload{
+		Payloads: []messages.DataPayload{
 			{
 				TSID: idtool.ID(4001),
 			},
