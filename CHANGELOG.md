@@ -6,7 +6,13 @@ Tagged!
 
 ## Updated
 
+* SignalFlow computation Handle() method wait for handle to come in until
+  returning (with timeout).
+
 ## Bugfixes
+
+* SignalFlow client initialization tweak to prevent deadlock with multiple back
+  to back init failures.
 
 ## Removed
 
