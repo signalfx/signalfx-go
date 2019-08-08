@@ -3,6 +3,15 @@
 ## Updated
 
 * `Detector.Rules` now uses `Notification` as it's type instead of an untyped `[]map[string]interface{}`.
+* SignalFlow computation Handle() method wait for handle to come in until
+  returning (with timeout).
+
+## Bugfixes
+
+* SignalFlow client initialization tweak to prevent deadlock with multiple back
+  to back init failures.
+
+## Removed
 
 # 1.5.0, 2019-08-05
 
