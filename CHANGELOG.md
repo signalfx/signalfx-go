@@ -5,11 +5,14 @@
 * `Detector.Rules` now uses `Notification` as it's type instead of an untyped `[]map[string]interface{}`.
 * SignalFlow computation Handle() method wait for handle to come in until
   returning (with timeout).
+* Renamed `BinaryPayload` to `DataPayload` in the `messages` package.
+* Exported `BinaryMessageHeader` and `DataMessageHeader` from `messages`
+  package to facilitate low-level SignalFlow parsing.
 
 ## Bugfixes
 
-* SignalFlow client initialization tweak to prevent deadlock with multiple back
-  to back init failures.
+* SignalFlow client connection handling was refactored to prevent deadlocks
+  that could occur on reconnects and bad authentication.
 
 ## Removed
 

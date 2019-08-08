@@ -142,7 +142,11 @@ func (c *Computation) watchMessages() {
 		case <-c.ctx.Done():
 			close(c.dataCh)
 			return
-		case m := <-c.channel.Messages():
+		case m, ok := <-c.channel.Messages():
+			if !ok {
+				c.cancel()
+				continue
+			}
 			c.processMessage(m)
 		}
 	}
