@@ -10,7 +10,7 @@
 package integration
 
 // Specifies the data collection integration between Google Cloud Platform and SignalFx, in the form of a JSON object.
-type GcpIntegration struct {
+type GCPIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
 	Created int64 `json:"created,omitempty"`
 	// SignalFx-assigned user ID of the user that created the integration object. If the system created the object, the value is \"AAAAAAAAAA\". The system sets this value, and you can't modify it.
@@ -30,7 +30,7 @@ type GcpIntegration struct {
 	// Array of GCP services that you want SignalFx to monitor. SignalFx only supports certain services, and if you specify an unsupported one, you receive an API error. The supported services are: <br>   * appengine   * bigquery   * bigtable   * cloudfunctions   * cloudiot   * cloudsql   * cloudtasks   * compute   * container   * dataflow   * datastore   * firebasedatabase   * firebasehosting   * interconnect   * loadbalancing   * logging   * ml   * monitoring   * pubsub   * router   * serviceruntime   * spanner   * storage   * vpn
 	Services []string `json:"services,omitempty"`
 	// List of GCP project that you want SignalFx to monitor, in the form of a JSON array of objects
-	ProjectServiceKeys []*GcpProject `json:"projectServiceKeys,omitempty"`
+	ProjectServiceKeys []*GCPProject `json:"projectServiceKeys,omitempty"`
 	// List of GCP metadata names that you want SignalFx to collect from the data incoming from the GCP integration, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to whitelist.
 	Whitelist []string `json:"whitelist,omitempty"`
 }
