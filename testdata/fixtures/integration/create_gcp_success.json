@@ -1,0 +1,23 @@
+{
+  "created": 1556361030000,
+  "creator": "string",
+  "enabled": true,
+  "id": "string",
+  "lastUpdated": 1556620230000,
+  "lastUpdatedBy": "string",
+  "name": "string",
+  "type": "GCP",
+  "pollRate": 60000,
+  "projectServiceKeys": [
+    {
+      "projectId": "string",
+      "projectKey": "string"
+    }
+  ],
+  "services": [
+    "appengine"
+  ],
+  "whitelist": [
+    "string"
+  ]
+}
