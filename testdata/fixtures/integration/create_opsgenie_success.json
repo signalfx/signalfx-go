@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "id": "string",
+  "name": "string",
+  "type": "Opsgenie",
+  "apiKey": "string",
+  "apiUrl": "https://api.opsgenie.com/"
+}

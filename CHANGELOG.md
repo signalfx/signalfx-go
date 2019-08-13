@@ -2,10 +2,10 @@
 
 ## Added
 
-* Add
-* `*GCPIntegration` methods
-* `*PagerDutyIntegration` methods
-* `*SlackIntegration` methods
+* Added `*GCPIntegration` methods
+* Added `*OpsGenie` methods
+* Added `*PagerDutyIntegration` methods
+* Added `*SlackIntegration` methods
 
 ## Updated
 

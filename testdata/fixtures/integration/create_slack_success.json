@@ -1,7 +1,9 @@
 {
   "enabled": true,
+  "id": "string",
   "name": "string",
   "type": "Slack",
+  "accessTokenUpdated": 1555929030000,
   "method": "Webhook",
   "scope": "string",
   "slackTeamId": "string",

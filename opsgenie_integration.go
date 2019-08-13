@@ -10,9 +10,9 @@ import (
 	"github.com/signalfx/signalfx-go/integration"
 )
 
-// CreateSlackIntegration creates a Slack integration.
-func (c *Client) CreateSlackIntegration(si *integration.SlackIntegration) (*integration.SlackIntegration, error) {
-	payload, err := json.Marshal(si)
+// CreateOpsgenieIntegration creates an Opsgenie integration.
+func (c *Client) CreateOpsgenieIntegration(oi *integration.OpsgenieIntegration) (*integration.OpsgenieIntegration, error) {
+	payload, err := json.Marshal(oi)
 	if err != nil {
 		return nil, err
 	}
@@ -29,15 +29,15 @@ func (c *Client) CreateSlackIntegration(si *integration.SlackIntegration) (*inte
 		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
-	finalIntegration := integration.SlackIntegration{}
+	finalIntegration := integration.OpsgenieIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
 
 	return &finalIntegration, err
 }
 
-// GetSlackIntegration retrieves a Slack integration.
-func (c *Client) GetSlackIntegration(id string) (*integration.SlackIntegration, error) {
+// GetOpsgenieIntegration retrieves an Opsgenie integration.
+func (c *Client) GetOpsgenieIntegration(id string) (*integration.OpsgenieIntegration, error) {
 	resp, err := c.doRequest("GET", IntegrationAPIURL+"/"+id, nil, nil)
 
 	if err != nil {
@@ -50,16 +50,16 @@ func (c *Client) GetSlackIntegration(id string) (*integration.SlackIntegration, 
 		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
-	finalIntegration := integration.SlackIntegration{}
+	finalIntegration := integration.OpsgenieIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
 
 	return &finalIntegration, err
 }
 
-// UpdateSlackIntegration updates a Slack integration.
-func (c *Client) UpdateSlackIntegration(id string, si *integration.SlackIntegration) (*integration.SlackIntegration, error) {
-	payload, err := json.Marshal(si)
+// UpdateOpsgenieIntegration updates an Opsgenie integration.
+func (c *Client) UpdateOpsgenieIntegration(id string, oi *integration.OpsgenieIntegration) (*integration.OpsgenieIntegration, error) {
+	payload, err := json.Marshal(oi)
 	if err != nil {
 		return nil, err
 	}
@@ -76,15 +76,15 @@ func (c *Client) UpdateSlackIntegration(id string, si *integration.SlackIntegrat
 		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
-	finalIntegration := integration.SlackIntegration{}
+	finalIntegration := integration.OpsgenieIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
 
 	return &finalIntegration, err
 }
 
-// DeleteSlackIntegration deletes a Slack integration.
-func (c *Client) DeleteSlackIntegration(id string) error {
+// DeleteOpsgenieIntegration deletes an Opsgenie integration.
+func (c *Client) DeleteOpsgenieIntegration(id string) error {
 	resp, err := c.doRequest("DELETE", IntegrationAPIURL+"/"+id, nil, nil)
 
 	if err != nil {

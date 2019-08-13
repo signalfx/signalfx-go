@@ -11,8 +11,8 @@ import (
 )
 
 // CreatePagerDutyIntegration creates a PagerDuty integration.
-func (c *Client) CreatePagerDutyIntegration(acwi *integration.PagerDutyIntegration) (*integration.PagerDutyIntegration, error) {
-	payload, err := json.Marshal(acwi)
+func (c *Client) CreatePagerDutyIntegration(pdi *integration.PagerDutyIntegration) (*integration.PagerDutyIntegration, error) {
+	payload, err := json.Marshal(pdi)
 	if err != nil {
 		return nil, err
 	}

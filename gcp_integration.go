@@ -11,8 +11,8 @@ import (
 )
 
 // CreateGCPIntegration creates a GCP integration.
-func (c *Client) CreateGCPIntegration(acwi *integration.GCPIntegration) (*integration.GCPIntegration, error) {
-	payload, err := json.Marshal(acwi)
+func (c *Client) CreateGCPIntegration(gcpi *integration.GCPIntegration) (*integration.GCPIntegration, error) {
+	payload, err := json.Marshal(gcpi)
 	if err != nil {
 		return nil, err
 	}

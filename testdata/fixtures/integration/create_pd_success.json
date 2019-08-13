@@ -1,5 +1,6 @@
 {
   "enabled": true,
+  "id": "string",
   "name": "string",
   "type": "PagerDuty",
   "apiKey": "string"
