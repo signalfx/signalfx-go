@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "name": "string",
+  "type": "Slack",
+  "method": "Webhook",
+  "scope": "string",
+  "slackTeamId": "string",
+  "slackTeamName": "string",
+  "slackUserId": "string",
+  "webhookUrl": "string"
+}

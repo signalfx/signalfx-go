@@ -3,8 +3,9 @@
 ## Added
 
 * Add
-* `*GCPIntegration` methods to client
-* `*PagerDutyIntegration` methods to client
+* `*GCPIntegration` methods
+* `*PagerDutyIntegration` methods
+* `*SlackIntegration` methods
 
 ## Updated
 
