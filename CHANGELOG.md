@@ -1,5 +1,10 @@
 # 1.6.0, Unreleased
 
+## Added
+
+* Added `*GCPIntegration` methods to client
+* Renamed `integration.GcpIntegration` and it's sub-types to `GCP`, fixing case.
+
 ## Updated
 
 * `Detector.Rules` now uses `Notification` as it's type instead of an untyped `[]map[string]interface{}`.
