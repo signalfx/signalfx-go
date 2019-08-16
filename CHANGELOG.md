@@ -1,3 +1,14 @@
+# 1.6.1, Unreleased
+
+## Added
+
+## Updated
+
+## Bugfixes
+
+## Removed
+
+
 # 1.6.0, 2019-08-16
 
 ## Added
