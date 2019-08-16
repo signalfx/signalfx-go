@@ -3,7 +3,7 @@
 ## Added
 
 * Added `*GCPIntegration` methods
-* Added `*OpsGenie` methods
+* Added `*Opsgenie` methods
 * Added `*PagerDutyIntegration` methods
 * Added `*SlackIntegration` methods
 
@@ -47,7 +47,7 @@
 
 ## Removed
 
-* Removed `credentialName` from OpsGenie notifications, not a real field in the API.
+* Removed `credentialName` from Opsgenie notifications, not a real field in the API.
 
 # 1.2.0, 2019-07-16
 
