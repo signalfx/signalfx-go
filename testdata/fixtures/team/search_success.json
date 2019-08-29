@@ -29,7 +29,7 @@
         ],
         "major": [
           {
-            "type": "OpsGenie",
+            "type": "Opsgenie",
             "credentialId": "string",
             "responderName": "string",
             "responderId": "string",
