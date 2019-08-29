@@ -30,7 +30,7 @@ func TestBuffersDataMessages(t *testing.T) {
 	})
 	defer comp.cancel()
 	ch.AcceptMessage(&messages.DataMessage{
-		Payloads: []messages.BinaryPayload{
+		Payloads: []messages.DataPayload{
 			{
 				TSID: idtool.ID(4000),
 			},
@@ -48,7 +48,7 @@ func TestBuffersDataMessages(t *testing.T) {
 	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
 
 	ch.AcceptMessage(&messages.DataMessage{
-		Payloads: []messages.BinaryPayload{
+		Payloads: []messages.DataPayload{
 			{
 				TSID: idtool.ID(4001),
 			},
@@ -132,4 +132,19 @@ func TestLagMetadata(t *testing.T) {
 	}`), true)))
 
 	require.Equal(t, 3500*time.Millisecond, comp.Lag())
+}
+
+func TestHandle(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		"type": "control-message",
+		"event": "JOB_START",
+		"handle": "AAAABBBB"
+	}`), true)))
+
+	require.Equal(t, "AAAABBBB", comp.Handle())
 }

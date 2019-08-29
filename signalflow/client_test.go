@@ -1,139 +1,24 @@
 package signalflow
 
 import (
-	"context"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
-	"net/http/httptest"
-	"strings"
+	"math/rand"
 	"testing"
 	"time"
 
-	"github.com/gorilla/websocket"
+	"github.com/signalfx/signalfx-go/idtool"
+	"github.com/signalfx/signalfx-go/signalflow/messages"
 	"github.com/stretchr/testify/require"
 )
 
-const sampleDataMsgBase64 = "AQUBAGNoYW5uZWwtMQAAAAAAAAAfiwgAAAAAAAAAY2BgjDM0fuPAwMAgwAQkGLa3Hbjh0DrjDBCcBQtcPh/M4LDtCIjJABaYfOodp8PhzM3GQAAWqGwI9XYIB/MhAq90Xk10WC6QBgJggdXf6vQdWgsQZtx+ep7doXU3QovGzqWLHdoXIbTw8FivdNi2AiEQrvdtt8PSmwiHndJlvOXgloZQ4Xd05iyHKZEIQ513nVntcOAfQgW7n42tw/kGHrgZ+pvL9B3aryAcFp27rM1hMT9YCwAua3WrHAEAAA=="
-
-func dataMsgForChannel(ch string) []byte {
-	msg, _ := base64.StdEncoding.DecodeString(sampleDataMsgBase64)
-	for i, j := 4, 0; i < 16; i, j = i+1, j+1 {
-		if len(ch) < j {
-			msg[i] = ch[j]
-		} else {
-			msg[i] = 0
-		}
-	}
-
-	return msg
-}
-
-var upgrader = websocket.Upgrader{} // use default options
-
-type mockHandler struct {
-	received         []map[string]interface{}
-	validAccessToken string
-}
-
-func (s *mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithCancel(context.Background())
-
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		panic(err)
-	}
-	defer c.Close()
-	defer cancel()
-
-	textMsgs := make(chan string)
-	binMsgs := make(chan []byte)
-	go func() {
-		for {
-			var err error
-			select {
-			case m := <-textMsgs:
-				err = c.WriteMessage(websocket.TextMessage, []byte(m))
-			case m := <-binMsgs:
-				err = c.WriteMessage(websocket.BinaryMessage, m)
-			case <-ctx.Done():
-				return
-			}
-			if err != nil {
-				log.Printf("Could not write message: %v", err)
-			}
-		}
-	}()
-
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read err:", err)
-			break
-		}
-
-		var in map[string]interface{}
-		if err := json.Unmarshal(message, &in); err != nil {
-			log.Println("error unmarshalling: ", err)
-		}
-		s.received = append(s.received, in)
-
-		typ, ok := in["type"].(string)
-		if !ok {
-			_ = c.WriteMessage(mt, []byte(`{"type": "error"}`))
-			continue
-		}
-
-		switch typ {
-		case "authenticate":
-			token, _ := in["token"].(string)
-			if s.validAccessToken == "" || token == s.validAccessToken {
-				textMsgs <- `{"type": "authenticated"}`
-			} else {
-				textMsgs <- `{"type": "error", "message": "Invalid auth token"}`
-				return
-			}
-		case "execute":
-			ch, _ := in["channel"].(string)
-			resMs, _ := in["resolution"].(float64)
-			if resMs == 0 {
-				resMs = 1000
-			}
-			textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "STREAM_START"}`, ch)
-			textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "JOB_START", "handle": "asdf"}`, ch)
-			textMsgs <- fmt.Sprintf(`{"type": "message", "channel": "%s", "logicalTimestampMs": 1464736034000, "message": {"contents": {"resolutionMs" : %d}, "messageCode": "JOB_RUNNING_RESOLUTION", "timestampMs": 1464736033000}}`, ch, int64(resMs))
-			go func() {
-				t := time.NewTicker(1 * time.Second)
-				for {
-					select {
-					case <-ctx.Done():
-						return
-					case <-t.C:
-						binMsgs <- dataMsgForChannel(ch)
-					}
-				}
-			}()
-		}
-	}
-}
-
-type closeFunc func()
-
-func runMockServer() (*mockHandler, string, closeFunc) {
-	handler := &mockHandler{}
-	s := httptest.NewServer(handler)
-	return handler, strings.Replace(s.URL, "http", "ws", 1), s.Close
-}
-
 func TestAuthenticationFlow(t *testing.T) {
-	handler, url, closer := runMockServer()
-	defer closer()
+	fakeBackend := NewRunningFakeBackend()
+	defer fakeBackend.Stop()
 
-	handler.validAccessToken = "testing123"
-	c, err := NewClient(StreamURL(url), AccessToken(handler.validAccessToken))
+	c, err := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
 	require.Nil(t, err)
+	defer c.Close()
 
 	comp, err := c.Execute(&ExecuteRequest{
 		Program: "data('cpu.utilization').publish()",
@@ -144,7 +29,7 @@ func TestAuthenticationFlow(t *testing.T) {
 
 	require.Equal(t, []map[string]interface{}{
 		{"type": "authenticate",
-			"token": "testing123"},
+			"token": fakeBackend.AccessToken},
 		{"type": "execute",
 			"channel":    "ch-1",
 			"immediate":  false,
@@ -154,16 +39,55 @@ func TestAuthenticationFlow(t *testing.T) {
 			"start":      0.,
 			"stop":       0.,
 			"timezone":   ""},
-	}, handler.received)
+	}, fakeBackend.received)
+}
+
+func TestBasicComputation(t *testing.T) {
+	fakeBackend := NewRunningFakeBackend()
+	defer fakeBackend.Stop()
+
+	c, err := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
+	require.Nil(t, err)
+	defer c.Close()
+
+	tsids := []idtool.ID{idtool.ID(rand.Int63()), idtool.ID(rand.Int63())}
+	for i, host := range []string{"host1", "host2"} {
+		fakeBackend.AddTSIDMetadata(tsids[i], &messages.MetadataProperties{
+			Metric: "jobs_queued",
+			CustomProperties: map[string]string{
+				"host": host,
+			},
+		})
+	}
+
+	for i, val := range []float64{5, 10} {
+		fakeBackend.SetTSIDFloatData(tsids[i], val)
+	}
+
+	program := "data('cpu.utilization').publish()"
+	fakeBackend.AddProgramTSIDs(program, tsids)
+
+	comp, err := c.Execute(&ExecuteRequest{
+		Program:    program,
+		Resolution: time.Duration(1001) * time.Second,
+	})
+	require.Nil(t, err)
+
+	require.Equal(t, time.Duration(1001)*time.Second, comp.Resolution())
+
+	dataMsg := <-comp.Data()
+	require.Len(t, dataMsg.Payloads, 2)
+	require.Equal(t, dataMsg.Payloads[0].Float64(), float64(5))
+	require.Equal(t, dataMsg.Payloads[1].Float64(), float64(10))
 }
 
 func TestMultipleComputations(t *testing.T) {
-	handler, url, closer := runMockServer()
-	defer closer()
+	fakeBackend := NewRunningFakeBackend()
+	defer fakeBackend.Stop()
 
-	handler.validAccessToken = "testing123"
-	c, err := NewClient(StreamURL(url), AccessToken(handler.validAccessToken))
+	c, err := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
 	require.Nil(t, err)
+	defer c.Close()
 
 	for i := 1; i < 50; i++ {
 		comp, err := c.Execute(&ExecuteRequest{
@@ -178,12 +102,12 @@ func TestMultipleComputations(t *testing.T) {
 }
 
 func TestShutdown(t *testing.T) {
-	handler, url, closer := runMockServer()
-	defer closer()
+	fakeBackend := NewRunningFakeBackend()
+	defer fakeBackend.Stop()
 
-	handler.validAccessToken = "testing123"
-	c, err := NewClient(StreamURL(url), AccessToken(handler.validAccessToken))
+	c, err := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
 	require.Nil(t, err)
+	defer c.Close()
 
 	var comps []*Computation
 	for i := 1; i < 3; i++ {
@@ -202,5 +126,185 @@ func TestShutdown(t *testing.T) {
 
 	for _, comp := range comps {
 		require.True(t, comp.IsFinished())
+	}
+}
+
+func TestReconnect(t *testing.T) {
+	fakeBackend := NewRunningFakeBackend()
+	defer fakeBackend.Stop()
+
+	c, err := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
+	require.Nil(t, err)
+	defer c.Close()
+
+	comp, err := c.Execute(&ExecuteRequest{
+		Program: "data('cpu.utilization').publish()",
+	})
+	require.Nil(t, err)
+
+	require.Equal(t, 1*time.Second, comp.Resolution())
+
+	require.Equal(t, []map[string]interface{}{
+		{"type": "authenticate",
+			"token": fakeBackend.AccessToken},
+		{"type": "execute",
+			"channel":    "ch-1",
+			"immediate":  false,
+			"maxDelay":   0.,
+			"program":    "data('cpu.utilization').publish()",
+			"resolution": 0.,
+			"start":      0.,
+			"stop":       0.,
+			"timezone":   ""},
+	}, fakeBackend.received)
+
+	fakeBackend.KillExistingConnections()
+
+	<-comp.Done()
+
+	comp, err = c.Execute(&ExecuteRequest{
+		Program: "data('cpu.utilization').publish()",
+	})
+	require.Nil(t, err)
+
+	require.Equal(t, 1*time.Second, comp.Resolution())
+
+	log.Printf("%v", fakeBackend.received)
+	require.Equal(t, []map[string]interface{}{
+		{"type": "authenticate",
+			"token": fakeBackend.AccessToken},
+		{"type": "execute",
+			"channel":    "ch-1",
+			"immediate":  false,
+			"maxDelay":   0.,
+			"program":    "data('cpu.utilization').publish()",
+			"resolution": 0.,
+			"start":      0.,
+			"stop":       0.,
+			"timezone":   ""},
+		{"type": "authenticate",
+			"token": fakeBackend.AccessToken},
+		{"type": "execute",
+			"channel":    "ch-2",
+			"immediate":  false,
+			"maxDelay":   0.,
+			"program":    "data('cpu.utilization').publish()",
+			"resolution": 0.,
+			"start":      0.,
+			"stop":       0.,
+			"timezone":   ""},
+	}, fakeBackend.received)
+}
+
+func TestReconnectAfterBackendDown(t *testing.T) {
+	fakeBackend := NewRunningFakeBackend()
+	defer fakeBackend.Stop()
+
+	c, err := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
+	require.Nil(t, err)
+
+	defer c.Close()
+
+	comp, err := c.Execute(&ExecuteRequest{
+		Program: "data('cpu.utilization').publish()",
+	})
+	require.Nil(t, err)
+
+	require.Equal(t, 1*time.Second, comp.Resolution())
+
+	require.Equal(t, []map[string]interface{}{
+		{"type": "authenticate",
+			"token": fakeBackend.AccessToken},
+		{"type": "execute",
+			"channel":    "ch-1",
+			"immediate":  false,
+			"maxDelay":   0.,
+			"program":    "data('cpu.utilization').publish()",
+			"resolution": 0.,
+			"start":      0.,
+			"stop":       0.,
+			"timezone":   ""},
+	}, fakeBackend.received)
+
+	fakeBackend.Stop()
+	<-comp.Done()
+
+	time.Sleep(7 * time.Second)
+	fakeBackend.Restart()
+
+	comp, err = c.Execute(&ExecuteRequest{
+		Program: "data('cpu.utilization').publish()",
+	})
+	require.Nil(t, err)
+
+	require.Equal(t, 1*time.Second, comp.Resolution())
+
+	require.Equal(t, []map[string]interface{}{
+		{"type": "authenticate",
+			"token": fakeBackend.AccessToken},
+		{"type": "execute",
+			"channel":    "ch-1",
+			"immediate":  false,
+			"maxDelay":   0.,
+			"program":    "data('cpu.utilization').publish()",
+			"resolution": 0.,
+			"start":      0.,
+			"stop":       0.,
+			"timezone":   ""},
+		{"type": "authenticate",
+			"token": fakeBackend.AccessToken},
+		{"type": "execute",
+			"channel":    "ch-2",
+			"immediate":  false,
+			"maxDelay":   0.,
+			"program":    "data('cpu.utilization').publish()",
+			"resolution": 0.,
+			"start":      0.,
+			"stop":       0.,
+			"timezone":   ""},
+	}, fakeBackend.received)
+}
+
+func Example() {
+	c, err := NewClient(
+		StreamURLForRealm("us1"),
+		AccessToken("MY_ORG_ACCESS_TOKEN"))
+	if err != nil {
+		log.Printf("Error creating client: %v", err)
+		return
+	}
+
+	comp, err := c.Execute(&ExecuteRequest{
+		Program: "data('cpu.utilization').publish()",
+	})
+	if err != nil {
+		log.Printf("Could not send execute request: %v", err)
+		return
+	}
+
+	fmt.Printf("Resolution: %v\n", comp.Resolution())
+	fmt.Printf("Max Delay: %v\n", comp.MaxDelay())
+	fmt.Printf("Detected Lag: %v\n", comp.Lag())
+
+	for msg := range comp.Data() {
+		// This will run as long as there is data, or until the websocket gets
+		// disconnected.  If a websocket error occurs, the job will NOT be
+		// automatically restarted.
+		if len(msg.Payloads) == 0 {
+			fmt.Printf("\rNo data available")
+			continue
+		}
+		for _, pl := range msg.Payloads {
+			meta := comp.TSIDMetadata(pl.TSID)
+			fmt.Printf("%s %v: %v\n", meta.OriginatingMetric, meta.CustomProperties, pl.Value())
+		}
+		fmt.Println("")
+	}
+
+	err = comp.Err()
+	if err != nil {
+		log.Printf("Error: %v", comp.Err())
+	} else {
+		log.Printf("Job completed")
 	}
 }

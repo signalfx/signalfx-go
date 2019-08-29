@@ -64,6 +64,9 @@ func (c *Computation) Channel() *Channel {
 
 // Handle of the computation
 func (c *Computation) Handle() string {
+	if err := c.waitForMetadata(func() bool { return c.handle != "" }); err != nil {
+		return ""
+	}
 	return c.handle
 }
 
@@ -139,7 +142,11 @@ func (c *Computation) watchMessages() {
 		case <-c.ctx.Done():
 			close(c.dataCh)
 			return
-		case m := <-c.channel.Messages():
+		case m, ok := <-c.channel.Messages():
+			if !ok {
+				c.cancel()
+				continue
+			}
 			c.processMessage(m)
 		}
 	}
