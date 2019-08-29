@@ -295,6 +295,12 @@ func (f *FakeBackend) SetTSIDFloatData(tsid idtool.ID, val float64) {
 	f.Unlock()
 }
 
+func (f *FakeBackend) RemoveTSIDData(tsid idtool.ID) {
+	f.Lock()
+	delete(f.dataByTSID, tsid)
+	f.Unlock()
+}
+
 func (f *FakeBackend) URL() string {
 	return strings.Replace(f.server.URL, "http", "ws", 1)
 }
