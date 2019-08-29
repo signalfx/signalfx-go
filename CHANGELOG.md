@@ -1,6 +1,4 @@
-# 1.6.0, Unreleased
-
-Tagged!
+# 1.6.2, Unreleased
 
 ## Added
 
@@ -8,6 +6,7 @@ Tagged!
 
 * SignalFlow computation Handle() method wait for handle to come in until
   returning (with timeout).
+* Adjusted `EventPublishLabelOptions.PalleteIndex` to an `*int32` to match other uses.
 
 ## Bugfixes
 
@@ -15,6 +14,26 @@ Tagged!
   to back init failures.
 
 ## Removed
+
+# 1.6.1, 2019-08-16
+
+## Updated
+
+* Adjusted detector.CreateUpdateDetectorRequest to use pointer for Rules
+
+# 1.6.0, 2019-08-16
+
+## Added
+
+* Added `*GCPIntegration` methods
+* Added `*Opsgenie` methods
+* Added `*PagerDutyIntegration` methods
+* Added `*SlackIntegration` methods
+
+## Updated
+
+* `Detector.Rules` now uses `Notification` as it's type instead of an untyped `[]map[string]interface{}`.
+* Renamed `integration.GcpIntegration` and it's sub-types to `GCP`, fixing case.
 
 # 1.5.0, 2019-08-05
 
@@ -51,7 +70,7 @@ Tagged!
 
 ## Removed
 
-* Removed `credentialName` from OpsGenie notifications, not a real field in the API.
+* Removed `credentialName` from Opsgenie notifications, not a real field in the API.
 
 # 1.2.0, 2019-07-16
 
