@@ -21,8 +21,13 @@ func main() {
 		return
 	}
 
+	program := os.Getenv("SIGNALFLOW_PROGRAM")
+	if program == "" {
+		program = "data('cpu.utilization').publish()"
+	}
+
 	comp, err := c.Execute(&signalflow.ExecuteRequest{
-		Program: "data('cpu.utilization').publish()",
+		Program: program,
 	})
 	if err != nil {
 		log.Printf("Could not send execute request: %v", err)
@@ -32,6 +37,12 @@ func main() {
 	fmt.Printf("Resolution: %v\n", comp.Resolution())
 	fmt.Printf("Max Delay: %v\n", comp.MaxDelay())
 	fmt.Printf("Detected Lag: %v\n", comp.Lag())
+
+	go func() {
+		for msg := range comp.Expirations() {
+			fmt.Printf("Got expiration notice for TSID %s", msg.TSID)
+		}
+	}()
 
 	for msg := range comp.Data() {
 		// This will run as long as there is data, or until the websocket gets

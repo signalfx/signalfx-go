@@ -58,6 +58,41 @@ func TestBuffersDataMessages(t *testing.T) {
 	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
 }
 
+func TestBuffersExpiryMessages(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(&messages.DataMessage{
+		Payloads: []messages.DataPayload{
+			{
+				TSID: idtool.ID(4000),
+			},
+		},
+	})
+	ch.AcceptMessage(&messages.MetadataMessage{
+		TSID: idtool.ID(4000),
+	})
+
+	require.NotNil(t, comp.TSIDMetadata(4000))
+
+	ch.AcceptMessage(&messages.InfoMessage{})
+
+	msg := waitForDataMsg(t, comp)
+	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
+
+	ch.AcceptMessage(&messages.DataMessage{
+		Payloads: []messages.DataPayload{
+			{
+				TSID: idtool.ID(4001),
+			},
+		},
+	})
+	msg = waitForDataMsg(t, comp)
+	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
+}
+
 func mustParse(m messages.Message, err error) messages.Message {
 	if err != nil {
 		panic(err)
