@@ -2,6 +2,8 @@
 
 ## Added
 
+* VictorOps integration functions
+
 ## Updated
 
 * Adjusted `EventPublishLabelOptions.PalleteIndex` to an `*int32` to match other uses.
