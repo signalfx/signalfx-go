@@ -14,9 +14,9 @@
   "lastUpdated": 1557513720143,
   "lastUpdatedBy": "X_xxxx5XXXX",
   "name": "string",
-  "password": null,
+  "password": "string",
   "projectKey": "GEN",
   "type": "Jira",
   "userEmail": "mtwain@example.com",
-  "username": null
+  "username": "string"
 }
