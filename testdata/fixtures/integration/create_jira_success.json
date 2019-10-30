@@ -1,0 +1,22 @@
+{
+  "apiToken": null,
+  "assignee": {
+    "displayName": "Mark Twain",
+    "name": "mtwain"
+  },
+  "authMethod": "EmailAndToken",
+  "baseUrl": "https://mycompany.atlassian.net",
+  "created": 1556728926015,
+  "creator": "X_xxxxXXXXX",
+  "enabled": true,
+  "id": "XXxxxXXXXXX",
+  "issueType": "Story",
+  "lastUpdated": 1557513720143,
+  "lastUpdatedBy": "X_xxxx5XXXX",
+  "name": "string",
+  "password": null,
+  "projectKey": "GEN",
+  "type": "Jira",
+  "userEmail": "mtwain@example.com",
+  "username": null
+}
