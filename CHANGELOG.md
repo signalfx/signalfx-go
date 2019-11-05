@@ -1,4 +1,4 @@
-# 1.6.7, Pending
+# 1.6.8, Pending
 
 ## Added
 
@@ -7,6 +7,12 @@
 ## Bugfixes
 
 ## Removed
+
+# 1.6.7, 2019-11-05
+
+## Bugfixes
+
+* Added `AuthorizedWriters` to Detector model
 
 # 1.6.6, 2019-11-05
 
