@@ -1,4 +1,4 @@
-# 1.6.6, Pending
+# 1.6.7, Pending
 
 ## Added
 
