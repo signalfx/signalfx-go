@@ -14,7 +14,7 @@ func TestCreateAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", http.StatusOK, nil, "alertmuting/create_success.json"))
+	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", http.StatusCreated, nil, "alertmuting/create_success.json"))
 
 	result, err := client.CreateAlertMutingRule(&alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
