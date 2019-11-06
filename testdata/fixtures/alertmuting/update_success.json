@@ -1,0 +1,16 @@
+{
+  "created": 1556825430000,
+  "creator": "AAXYAAAAAZ3",
+  "description": "string",
+  "filters": [
+    {
+      "property": "apptype",
+      "propertyValue": "server5"
+    }
+  ],
+  "id": "string",
+  "lastUpdated": 1557689430000,
+  "lastUpdatedBy": "string",
+  "startTime": 0,
+  "stopTime": 0
+}
