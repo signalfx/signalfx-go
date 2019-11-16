@@ -1,6 +1,7 @@
 # 1.6.9, Pending
 
 ## Added
+ - New datapoint and span writer for high volume output
 
 ## Updated
 
