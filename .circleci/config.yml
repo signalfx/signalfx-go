@@ -14,21 +14,24 @@ jobs:
     steps:
       - checkout
       - run: |
-          go get ./...
-          go get github.com/stretchr/testify/assert
-          go get github.com/stretchr/testify/require
-          go test ./...
+          go mod download
+
+          # Used for code generation
+          go get github.com/mauricelam/genny
+          go get golang.org/x/tools/cmd/goimports
+
+          go generate ./...
+          go test ./... -parallel 4
 workflows:
   version: 2
   build:
     jobs:
-      - test:
-          name: "Go 1.10"
-          go_version: "1.10"
-          dir: /go/src/github.com/signalfx/signalfx-go
       - test:
           name: "Go 1.11"
           go_version: "1.11"
       - test:
           name: "Go 1.12"
           go_version: "1.12"
+      - test:
+          name: "Go 1.13"
+          go_version: "1.13"
