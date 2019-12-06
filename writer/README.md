@@ -1,6 +1,6 @@
 # Writers
 
-See the [godoc](https://godoc.org/github.com/signalfx/golib/writer) for
+See the [godoc](https://godoc.org/github.com/signalfx/signalfx-go/writer) for
 information on what they are and how to use them.
 
 ## Compiling
