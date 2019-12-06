@@ -5,8 +5,8 @@ information on what they are and how to use them.
 
 ## Compiling
 
-The buffer and writer are generated from a common template in the [`template`][./template]
-pacage.  This module has a `//go:generate` comment that will be recognized when you
+The buffer and writer are generated from a common template in the [`template`](./template)
+package.  This module has a `//go:generate` comment that will be recognized when you
 run `go generate ./...` on the repo.  For the generate script to work, you must
 install the code generation tool with `go get github.com/mauricelam/genny`.
 
