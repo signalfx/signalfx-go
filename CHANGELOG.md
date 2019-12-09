@@ -1,13 +1,20 @@
-# 1.6.9, Pending
+# 1.6.10, Pending
 
 ## Added
- - New datapoint and span writer for high volume output
 
 ## Updated
 
 ## Bugfixes
 
 ## Removed
+
+# 1.6.9, 2019-12-09
+
+## Added
+ - New datapoint and span writer for high volume output
+
+## Bugfixes
+- Token operations now URL encode the name.
 
 # 1.6.8, Pending
 
