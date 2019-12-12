@@ -9,13 +9,12 @@
   "propertyValue": "string",
   "targets": [
     {
-      "dashboardGroupId": "XxxXxXXXXXX",
-      "dashboardGroupName": "Docker Dashboard Group",
-      "dashboardId": "X9xxXXXXXXX",
-      "dashboardName": "Docker Dashboard",
+      "name": "Link to External Dashboard",
       "isDefault": true,
-      "name": "Link to Docker Dashboard",
-      "type": "INTERNAL_LINK"
+      "type": "SPLUNK_LINK",
+      "propertyKeyMapping": {
+        "foo": "bar"
+      }
     }
   ]
 }

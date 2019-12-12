@@ -9,13 +9,15 @@
   "propertyValue": "string",
   "targets": [
     {
-      "dashboardGroupId": "XxxXxXXXXXX",
-      "dashboardGroupName": "Docker Dashboard Group",
-      "dashboardId": "X9xxXXXXXXX",
-      "dashboardName": "Docker Dashboard",
+      "name": "Link to External Dashboard",
+      "minimumTimeWindow": 1576188134964,
       "isDefault": true,
-      "name": "Link to Docker Dashboard",
-      "type": "INTERNAL_LINK"
+      "type": "EXTERNAL_LINK",
+      "propertyKeyMapping": {
+        "foo": "bar"
+      },
+      "timeFormat": "Epoch",
+      "url": "https://www.example.com"
     }
   ]
 }
