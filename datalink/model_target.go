@@ -10,6 +10,8 @@ type Target struct {
 	DashboardGroupName string `json:"dashboardGroupName,omitempty"`
 	// SignalFx-assigned ID of the dashboard link target
 	DashboardId string `json:"dashboardId,omitempty"`
+	// User-assigned name of the dashboard link target.
+	DashboardName string `json:"dashboardName,omitempty"`
 	// Flag that designates a target as the default for a data link object.
 	IsDefault bool `json:"isDefault,omitempty"`
 	// User-assigned target name.
