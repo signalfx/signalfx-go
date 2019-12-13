@@ -81,7 +81,9 @@ func (c *Client) doRequestWithToken(method string, path string, params url.Value
 		destURL.RawQuery = params.Encode()
 	}
 	req, err := http.NewRequest(method, destURL.String(), body)
-	req.Header.Set(AuthHeaderKey, token)
+	if token != "" {
+		req.Header.Set(AuthHeaderKey, token)
+	}
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
 		return nil, err

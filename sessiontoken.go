@@ -20,7 +20,9 @@ func (c *Client) CreateSessionToken(tokenRequest *sessiontoken.CreateTokenReques
 		return nil, err
 	}
 
-	resp, err := c.doRequest("POST", SessionTokenAPIURL, nil, bytes.NewReader(payload))
+	// we need to explicitly pass an empty token (which means it wont get set in the header)
+	// the API accepts either no token or a valid token, but not an empty token.
+	resp, err := c.doRequestWithToken("POST", SessionTokenAPIURL, nil, bytes.NewReader(payload), "")
 	if err != nil {
 		return nil, err
 	}
