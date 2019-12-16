@@ -22,4 +22,5 @@ type Target struct {
 	PropertyKeyMapping map[string]string `json:"propertyKeyMapping,omitempty"`
 	TimeFormat         TimeFormat        `json:"timeFormat,omitempty"`
 	URL                string            `json:"url,omitempty"`
+	InstanceURL        string            `json:"instance_url,omitempty"`
 }
