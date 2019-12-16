@@ -14,7 +14,7 @@ func TestCreateOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", http.StatusOK, nil, "orgtoken/create_success.json"))
+	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", true, http.StatusOK, nil, "orgtoken/create_success.json"))
 
 	quota := int32(1234)
 	quotaThreshold := int32(1235)
@@ -33,7 +33,7 @@ func TestCreateBadOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateOrgToken(&orgtoken.CreateUpdateTokenRequest{
 		Name: "string",
@@ -46,7 +46,7 @@ func TestDeleteOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteOrgToken("string/fart")
 	assert.NoError(t, err, "Unexpected error deleting token")
@@ -56,7 +56,7 @@ func TestDeleteMissingOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/token", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteOrgToken("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
@@ -66,7 +66,7 @@ func TestGetOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "GET", http.StatusOK, nil, "orgtoken/get_success.json"))
+	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "GET", true, http.StatusOK, nil, "orgtoken/get_success.json"))
 
 	result, err := client.GetOrgToken("string/fart")
 	assert.NoError(t, err, "Unexpected error getting token")
@@ -77,7 +77,7 @@ func TestGetMissingOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetOrgToken("string/fart")
 	assert.Error(t, err, "Should have gotten an error from a missing token")
@@ -96,7 +96,7 @@ func TestSearchOrgToken(t *testing.T) {
 	params.Add("name", url.PathEscape(name))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/token", verifyRequest(t, "GET", http.StatusOK, params, "orgtoken/search_success.json"))
+	mux.HandleFunc("/v2/token", verifyRequest(t, "GET", true, http.StatusOK, params, "orgtoken/search_success.json"))
 
 	results, err := client.SearchOrgTokens(limit, name, offset)
 	assert.NoError(t, err, "Unexpected error search token")
@@ -107,7 +107,7 @@ func TestUpdateOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "PUT", http.StatusOK, nil, "orgtoken/update_success.json"))
+	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "PUT", true, http.StatusOK, nil, "orgtoken/update_success.json"))
 
 	result, err := client.UpdateOrgToken("string/fart", &orgtoken.CreateUpdateTokenRequest{
 		Name: "string",
@@ -120,7 +120,7 @@ func TestUpdateMissingOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/token/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateOrgToken("string", &orgtoken.CreateUpdateTokenRequest{
 		Name: "string",

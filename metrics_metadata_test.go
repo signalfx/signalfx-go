@@ -15,7 +15,7 @@ func TestGetDimension(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dimension/string/string2", verifyRequest(t, "GET", http.StatusOK, nil, "metrics_metadata/get_dimension_success.json"))
+	mux.HandleFunc("/v2/dimension/string/string2", verifyRequest(t, "GET", true, http.StatusOK, nil, "metrics_metadata/get_dimension_success.json"))
 
 	result, err := client.GetDimension("string", "string2")
 	assert.NoError(t, err, "Unexpected error getting dimension")
@@ -26,7 +26,7 @@ func TestGetMissingDimension(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dimension/string/string2", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dimension/string/string2", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetDimension("string", "string2")
 	assert.Error(t, err, "Should have gotten an error from a missing dimension")
@@ -47,7 +47,7 @@ func TestSearchDimension(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/dimension", verifyRequest(t, "GET", http.StatusOK, params, "metrics_metadata/dimension_search_success.json"))
+	mux.HandleFunc("/v2/dimension", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/dimension_search_success.json"))
 
 	results, err := client.SearchDimension(query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search dimensions")
@@ -58,7 +58,7 @@ func TestUpdateDimension(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dimension/string/string", verifyRequest(t, "PUT", http.StatusOK, nil, "metrics_metadata/update_dimension_success.json"))
+	mux.HandleFunc("/v2/dimension/string/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "metrics_metadata/update_dimension_success.json"))
 
 	result, err := client.UpdateDimension("string", "string", &metrics_metadata.Dimension{
 		Key: "string",
@@ -71,7 +71,7 @@ func TestUpdateMissingDimension(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dimension/string/string2", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dimension/string/string2", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateDimension("string", "string2", &metrics_metadata.Dimension{
 		Key: "string",
@@ -84,7 +84,7 @@ func TestGetMetric(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/metric/string", verifyRequest(t, "GET", http.StatusOK, nil, "metrics_metadata/get_metric_success.json"))
+	mux.HandleFunc("/v2/metric/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "metrics_metadata/get_metric_success.json"))
 
 	result, err := client.GetMetric("string")
 	assert.NoError(t, err, "Unexpected error getting metric")
@@ -95,7 +95,7 @@ func TestGetMissingMetric(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/metric/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/metric/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetMetric("string")
 	assert.Error(t, err, "Should have gotten an error from a missing metric")
@@ -116,7 +116,7 @@ func TestSearchMetric(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/metric", verifyRequest(t, "GET", http.StatusOK, params, "metrics_metadata/metric_search_success.json"))
+	mux.HandleFunc("/v2/metric", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/metric_search_success.json"))
 
 	results, err := client.SearchMetric(query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search metrics")
@@ -127,7 +127,7 @@ func TestGetMetricTimeSeries(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/metrictimeseries/string", verifyRequest(t, "GET", http.StatusOK, nil, "metrics_metadata/get_metric_time_series_success.json"))
+	mux.HandleFunc("/v2/metrictimeseries/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "metrics_metadata/get_metric_time_series_success.json"))
 
 	result, err := client.GetMetricTimeSeries("string")
 	assert.NoError(t, err, "Unexpected error getting metric time series")
@@ -138,7 +138,7 @@ func TestGetMissingMetricTimeSeries(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/metrictimeseries/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/metrictimeseries/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetMetricTimeSeries("string")
 	assert.Error(t, err, "Should have gotten an error from a missing metric time series")
@@ -159,7 +159,7 @@ func TestSearchMetricTimeSeries(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/metrictimeseries", verifyRequest(t, "GET", http.StatusOK, params, "metrics_metadata/metric_time_series_search_success.json"))
+	mux.HandleFunc("/v2/metrictimeseries", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/metric_time_series_search_success.json"))
 
 	results, err := client.SearchMetricTimeSeries(query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search metric time series")
@@ -180,7 +180,7 @@ func TestSearchTag(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/tag", verifyRequest(t, "GET", http.StatusOK, params, "metrics_metadata/tag_search_success.json"))
+	mux.HandleFunc("/v2/tag", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/tag_search_success.json"))
 
 	results, err := client.SearchTag(query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search tags")
@@ -191,7 +191,7 @@ func TestGetTag(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "GET", http.StatusOK, nil, "metrics_metadata/get_tag_success.json"))
+	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "metrics_metadata/get_tag_success.json"))
 
 	result, err := client.GetTag("string")
 	assert.NoError(t, err, "Unexpected error getting Tag")
@@ -202,7 +202,7 @@ func TestGetMissingTag(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetTag("string")
 	assert.Error(t, err, "Should have gotten an error from a missing tag")
@@ -213,7 +213,7 @@ func TestDeleteTag(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteTag("string")
 	assert.NoError(t, err, "Unexpected error deleting tag")
@@ -223,7 +223,7 @@ func TestDeleteMissingTag(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/tag", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/tag", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteTag("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
@@ -233,7 +233,7 @@ func TestUpdateCreateTag(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "PUT", http.StatusOK, nil, "metrics_metadata/create_update_tag_success.json"))
+	mux.HandleFunc("/v2/tag/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "metrics_metadata/create_update_tag_success.json"))
 
 	result, err := client.CreateUpdateTag("string", &metrics_metadata.CreateUpdateTagRequest{
 		Description: "string",

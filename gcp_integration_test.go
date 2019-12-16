@@ -12,7 +12,7 @@ func TestCreateGCPIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", http.StatusOK, nil, "integration/create_gcp_success.json"))
+	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_gcp_success.json"))
 
 	result, err := client.CreateGCPIntegration(&integration.GCPIntegration{
 		Type: "GCP",
@@ -25,7 +25,7 @@ func TestGetGCPIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", http.StatusOK, nil, "integration/create_gcp_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_gcp_success.json"))
 
 	result, err := client.GetGCPIntegration("id")
 	assert.NoError(t, err, "Unexpected error getting integration")
@@ -36,7 +36,7 @@ func TestUpdateGCPIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", http.StatusOK, nil, "integration/create_gcp_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_gcp_success.json"))
 
 	result, err := client.UpdateGCPIntegration("id", &integration.GCPIntegration{
 		Type: "GCP",
@@ -49,7 +49,7 @@ func TestDeleteGCPIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteGCPIntegration("id")
 	assert.NoError(t, err, "Unexpected error creating integration")

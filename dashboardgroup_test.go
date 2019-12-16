@@ -16,7 +16,7 @@ func TestCreateDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", http.StatusOK, nil, "dashboardgroup/create_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", true, http.StatusOK, nil, "dashboardgroup/create_success.json"))
 
 	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
@@ -32,7 +32,7 @@ func TestCreateEmptyDashboardGroup(t *testing.T) {
 	params := url.Values{}
 	params.Add("empty", "true")
 
-	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", http.StatusOK, params, "dashboardgroup/create_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", true, http.StatusOK, params, "dashboardgroup/create_success.json"))
 
 	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
@@ -45,7 +45,7 @@ func TestCreateBadDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateDashboardGroup(&dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
@@ -58,7 +58,7 @@ func TestDeleteDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteDashboardGroup("string")
 	assert.NoError(t, err, "Unexpected error getting dashboard group")
@@ -68,7 +68,7 @@ func TestDeleteMissingDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "DELETE", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteDashboardGroup("string")
 	assert.Error(t, err, "Should get an error getting missing dashboard group")
@@ -78,7 +78,7 @@ func TestGetDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "GET", http.StatusOK, nil, "dashboardgroup/get_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "dashboardgroup/get_success.json"))
 
 	result, err := client.GetDashboardGroup("string")
 	assert.NoError(t, err, "Unexpected error getting dashboard group")
@@ -89,7 +89,7 @@ func TestGetMissingDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetDashboardGroup("string")
 	assert.Error(t, err, "Should get error getting missing dashboard group")
@@ -108,7 +108,7 @@ func TestSearchDashboardGroup(t *testing.T) {
 	params.Add("name", name)
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", http.StatusOK, params, "dashboardgroup/search_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", true, http.StatusOK, params, "dashboardgroup/search_success.json"))
 
 	results, err := client.SearchDashboardGroups(limit, name, offset)
 	assert.NoError(t, err, "Unexpected error search dashboard group")
@@ -119,7 +119,7 @@ func TestUpdateDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "PUT", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/string", verifyRequest(t, "PUT", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.UpdateDashboardGroup("string", &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",

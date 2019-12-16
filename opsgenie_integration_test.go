@@ -12,7 +12,7 @@ func TestCreateOpsgenieIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", http.StatusOK, nil, "integration/create_opsgenie_success.json"))
+	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_opsgenie_success.json"))
 
 	result, err := client.CreateOpsgenieIntegration(&integration.OpsgenieIntegration{
 		Type: "Opsgenie",
@@ -25,7 +25,7 @@ func TestGetOpsgenieIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", http.StatusOK, nil, "integration/create_opsgenie_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_opsgenie_success.json"))
 
 	result, err := client.GetOpsgenieIntegration("id")
 	assert.NoError(t, err, "Unexpected error getting integration")
@@ -36,7 +36,7 @@ func TestUpdateOpsgenieIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", http.StatusOK, nil, "integration/create_opsgenie_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_opsgenie_success.json"))
 
 	result, err := client.UpdateOpsgenieIntegration("id", &integration.OpsgenieIntegration{
 		Type: "Opsgenie",
@@ -49,7 +49,7 @@ func TestDeleteOpsgenieIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteOpsgenieIntegration("id")
 	assert.NoError(t, err, "Unexpected error creating integration")

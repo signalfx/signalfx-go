@@ -15,7 +15,7 @@ func TestGetOrganization(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", http.StatusOK, nil, "organization/get_success.json"))
+	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_success.json"))
 
 	result, err := client.GetOrganization("string")
 	assert.NoError(t, err, "Unexpected error getting organization")
@@ -26,7 +26,7 @@ func TestGetMissingOrganization(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetDetector("string")
 	assert.Error(t, err, "Should have gotten an error from a missing organization")
@@ -37,7 +37,7 @@ func TestGetMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "GET", http.StatusOK, nil, "organization/get_member_success.json"))
+	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_member_success.json"))
 
 	result, err := client.GetMember("string")
 	assert.NoError(t, err, "Unexpected error getting member")
@@ -48,7 +48,7 @@ func TestGetMissingMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetMember("string")
 	assert.Error(t, err, "Should have gotten an error from a missing member")
@@ -59,7 +59,7 @@ func TestInviteMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", http.StatusOK, nil, "organization/invite_member_success.json"))
+	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", true, http.StatusOK, nil, "organization/invite_member_success.json"))
 
 	results, err := client.InviteMember(&organization.CreateUpdateMemberRequest{
 		Email: "string",
@@ -72,7 +72,7 @@ func TestGetInviteMembers(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/members", verifyRequest(t, "POST", http.StatusOK, nil, "organization/invite_members_success.json"))
+	mux.HandleFunc("/v2/organization/members", verifyRequest(t, "POST", true, http.StatusOK, nil, "organization/invite_members_success.json"))
 
 	members := make([]*organization.Member, 1)
 	members[0] = &organization.Member{
@@ -99,7 +99,7 @@ func TestGetOrganizationMembers(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("orderBy", orderBy)
 
-	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", http.StatusOK, params, "organization/get_organization_members_success.json"))
+	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", true, http.StatusOK, params, "organization/get_organization_members_success.json"))
 
 	results, err := client.GetOrganizationMembers(limit, query, offset, orderBy)
 	assert.NoError(t, err, "Unexpected error getting members")
@@ -110,7 +110,7 @@ func TestDeleteMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteMember("string")
 	assert.NoError(t, err, "Unexpected error deleting member")
@@ -120,7 +120,7 @@ func TestDeleteMissingMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteMember("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
