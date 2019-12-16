@@ -1,0 +1,23 @@
+{
+  "id": "abc123",
+  "created": 1533676829319,
+  "creator": "\"AAAAAAAAAA\" if the system created the detector",
+  "lastUpdated": 1533676829319,
+  "lastUpdatedBy": "string",
+  "contextId": "string",
+  "propertyName": "string",
+  "propertyValue": "string",
+  "targets": [
+    {
+      "name": "Link to External Dashboard",
+      "minimumTimeWindow": 1576188134964,
+      "isDefault": true,
+      "type": "EXTERNAL_LINK",
+      "propertyKeyMapping": {
+        "foo": "bar"
+      },
+      "timeFormat": "Epoch",
+      "url": "https://www.example.com"
+    }
+  ]
+}

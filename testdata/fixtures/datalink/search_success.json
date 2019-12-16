@@ -1,0 +1,26 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "id": "abc123",
+      "created": 1533676829319,
+      "creator": "\"AAAAAAAAAA\" if the system created the detector",
+      "lastUpdated": 1533676829319,
+      "lastUpdatedBy": "string",
+      "contextId": "string",
+      "propertyName": "string",
+      "propertyValue": "string",
+      "targets": [
+        {
+          "dashboardGroupId": "XxxXxXXXXXX",
+          "dashboardGroupName": "Docker Dashboard Group",
+          "dashboardId": "X9xxXXXXXXX",
+          "dashboardName": "Docker Dashboard",
+          "isDefault": true,
+          "name": "Link to Docker Dashboard",
+          "type": "INTERNAL_LINK"
+        }
+      ]
+    }
+  ]
+}

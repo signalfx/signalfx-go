@@ -1,0 +1,20 @@
+{
+  "id": "abc123",
+  "created": 1533676829319,
+  "creator": "\"AAAAAAAAAA\" if the system created the detector",
+  "lastUpdated": 1533676829319,
+  "lastUpdatedBy": "string",
+  "contextId": "string",
+  "propertyName": "string",
+  "propertyValue": "string",
+  "targets": [
+    {
+      "name": "Link to External Dashboard",
+      "isDefault": true,
+      "type": "SPLUNK_LINK",
+      "propertyKeyMapping": {
+        "foo": "bar"
+      }
+    }
+  ]
+}
