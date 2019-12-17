@@ -14,7 +14,7 @@ func TestCreateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", http.StatusOK, nil, "datalink/create_success.json"))
+	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", true, http.StatusOK, nil, "datalink/create_success.json"))
 
 	result, err := client.CreateDataLink(&datalink.CreateUpdateDataLinkRequest{
 		PropertyName:  "string",
@@ -28,7 +28,7 @@ func TestBadCreateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateDataLink(&datalink.CreateUpdateDataLinkRequest{
 		PropertyName: "string",
@@ -41,7 +41,7 @@ func TestDeleteDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteDataLink("string")
 	assert.NoError(t, err, "Unexpected error deleting data link")
@@ -51,7 +51,7 @@ func TestDeleteMissingDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteDataLink("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
@@ -61,7 +61,7 @@ func TestGetDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "GET", http.StatusOK, nil, "datalink/get_success.json"))
+	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "datalink/get_success.json"))
 
 	result, err := client.GetDataLink("string")
 	assert.NoError(t, err, "Unexpected error getting data link")
@@ -72,7 +72,7 @@ func TestGetMissingDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetDataLink("string")
 	assert.Error(t, err, "Should have gotten an error from a missing data link")
@@ -91,7 +91,7 @@ func TestSearchDataLink(t *testing.T) {
 	params.Add("context", context)
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "GET", http.StatusOK, params, "datalink/search_success.json"))
+	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "GET", true, http.StatusOK, params, "datalink/search_success.json"))
 
 	results, err := client.SearchDataLinks(limit, context, offset)
 	assert.NoError(t, err, "Unexpected error search data link")
@@ -102,7 +102,7 @@ func TestUpdateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "PUT", http.StatusOK, nil, "datalink/update_success.json"))
+	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "datalink/update_success.json"))
 
 	result, err := client.UpdateDataLink("string", &datalink.CreateUpdateDataLinkRequest{
 		PropertyName: "string",
@@ -115,7 +115,7 @@ func TestUpdateMissingDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateDataLink("string", &datalink.CreateUpdateDataLinkRequest{
 		PropertyName: "string",
