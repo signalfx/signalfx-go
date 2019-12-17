@@ -12,7 +12,7 @@ func TestCreateSlackIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", http.StatusOK, nil, "integration/create_slack_success.json"))
+	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_slack_success.json"))
 
 	result, err := client.CreateSlackIntegration(&integration.SlackIntegration{
 		Type: "Slack",
@@ -25,7 +25,7 @@ func TestGetSlackIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", http.StatusOK, nil, "integration/create_slack_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_slack_success.json"))
 
 	result, err := client.GetSlackIntegration("id")
 	assert.NoError(t, err, "Unexpected error getting integration")
@@ -36,7 +36,7 @@ func TestUpdateSlackIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", http.StatusOK, nil, "integration/create_slack_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_slack_success.json"))
 
 	result, err := client.UpdateSlackIntegration("id", &integration.SlackIntegration{
 		Type: "Slack",
@@ -49,7 +49,7 @@ func TestDeleteSlackIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteSlackIntegration("id")
 	assert.NoError(t, err, "Unexpected error creating integration")

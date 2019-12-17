@@ -11,7 +11,7 @@ func TestDeleteIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteIntegration("string")
 	assert.NoError(t, err, "Unexpected error deleting integration")
@@ -21,7 +21,7 @@ func TestDeleteMissingIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "DELETE", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "DELETE", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteIntegration("string")
 	assert.Error(t, err, "Should get error error deleting missing integration")
@@ -31,7 +31,7 @@ func TestGetIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "GET", http.StatusOK, nil, "integration/get_success.json"))
+	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/get_success.json"))
 
 	result, err := client.GetIntegration("string")
 	assert.NoError(t, err, "Unexpected error getting integration")
@@ -43,7 +43,7 @@ func TestGetMissingIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/integration/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetIntegration("string")
 	assert.Error(t, err, "Should get an error getting missing integration")

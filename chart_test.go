@@ -14,7 +14,7 @@ func TestCreateChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart", verifyRequest(t, "POST", http.StatusOK, nil, "chart/create_success.json"))
+	mux.HandleFunc("/v2/chart", verifyRequest(t, "POST", true, http.StatusOK, nil, "chart/create_success.json"))
 
 	result, err := client.CreateChart(&chart.CreateUpdateChartRequest{
 		Name: "string",
@@ -27,7 +27,7 @@ func TestBadCreateChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/chart", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateChart(&chart.CreateUpdateChartRequest{
 		Name: "string",
@@ -40,7 +40,7 @@ func TestDeleteChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "DELETE", http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "DELETE", true, http.StatusOK, nil, ""))
 
 	err := client.DeleteChart("string")
 	assert.NoError(t, err, "Unexpected error deleting chart")
@@ -50,7 +50,7 @@ func TestDeleteMissingChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "DELETE", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "DELETE", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteChart("string")
 	assert.Error(t, err, "Expected error deleting missing chart")
@@ -60,7 +60,7 @@ func TestGetChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "GET", http.StatusOK, nil, "chart/get_success.json"))
+	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "chart/get_success.json"))
 
 	result, err := client.GetChart("string")
 	assert.NoError(t, err, "Unexpected error getting chart")
@@ -71,7 +71,7 @@ func TestGetMissingChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetChart("string")
 	assert.Error(t, err, "Expected error getting missing chart")
@@ -92,7 +92,7 @@ func TestSearchChart(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/chart", verifyRequest(t, "GET", http.StatusOK, params, "chart/search_success.json"))
+	mux.HandleFunc("/v2/chart", verifyRequest(t, "GET", true, http.StatusOK, params, "chart/search_success.json"))
 
 	results, err := client.SearchCharts(limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search chart")
@@ -103,7 +103,7 @@ func TestUpdateChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "PUT", http.StatusOK, nil, "chart/update_success.json"))
+	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "chart/update_success.json"))
 
 	result, err := client.UpdateChart("string", &chart.CreateUpdateChartRequest{
 		Name: "string",
@@ -116,7 +116,7 @@ func TestUpdateMissingChart(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateChart("string", &chart.CreateUpdateChartRequest{
 		Name: "string",

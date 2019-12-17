@@ -39,12 +39,14 @@ func setup() func() {
 }
 
 // TODO: Use HTTPSuccess from testify?
-func verifyRequest(t *testing.T, method string, status int, params url.Values, resultPath string) func(w http.ResponseWriter, r *http.Request) {
+func verifyRequest(t *testing.T, method string, expectToken bool, status int, params url.Values, resultPath string) (func(w http.ResponseWriter, r *http.Request)) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if val, ok := r.Header[AuthHeaderKey]; ok {
 			assert.Equal(t, []string{TestToken}, val, "Incorrect auth token in headers")
 		} else {
-			assert.Fail(t, "Failed to find auth token in headers")
+			if expectToken {
+				assert.Fail(t, "Failed to find auth token in headers")
+			}
 		}
 
 		if val, ok := r.Header["Content-Type"]; ok {

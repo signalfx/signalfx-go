@@ -1,0 +1,18 @@
+{
+  "accessToken": "mytokenvalue",
+  "authMethod": "UNDEFINED",
+  "createdBy": null,
+  "createdMs": 0,
+  "disabled": false,
+  "email": "testemail@test.com",
+  "expiryMs": 1578715941041,
+  "id": "test_id",
+  "organizationId": "test_orgid",
+  "personaId": "test_personaid",
+  "readOnly": false,
+  "sessionType": "ORG_USER",
+  "updatedBy": null,
+  "updatedMs": 0,
+  "userId": "test_userid",
+  "userName": null
+}

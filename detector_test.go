@@ -14,7 +14,7 @@ func TestCreateDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", http.StatusOK, nil, "detector/create_success.json"))
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", true, http.StatusOK, nil, "detector/create_success.json"))
 
 	result, err := client.CreateDetector(&detector.CreateUpdateDetectorRequest{
 		Name: "string",
@@ -27,7 +27,7 @@ func TestCreateBadDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateDetector(&detector.CreateUpdateDetectorRequest{
 		Name: "string",
@@ -40,7 +40,7 @@ func TestDeleteDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteDetector("string")
 	assert.NoError(t, err, "Unexpected error deleting detector")
@@ -50,7 +50,7 @@ func TestDeleteMissingDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteDetector("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
@@ -60,7 +60,7 @@ func TestDisableDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", true, http.StatusNoContent, nil, ""))
 
 	err := client.DisableDetector("string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
@@ -70,7 +70,7 @@ func TestDisableMissingDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	err := client.DisableDetector("string", []string{"example"})
 	assert.Error(t, err, "Should have gotten an error from a missing disable")
@@ -80,7 +80,7 @@ func TestEnableDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", true, http.StatusNoContent, nil, ""))
 
 	err := client.EnableDetector("string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
@@ -90,7 +90,7 @@ func TestEnableMissingDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	err := client.EnableDetector("string", []string{"example"})
 	assert.Error(t, err, "Should have gotten an error from a missing enable")
@@ -100,7 +100,7 @@ func TestGetDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", http.StatusOK, nil, "detector/get_success.json"))
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_success.json"))
 
 	result, err := client.GetDetector("string")
 	assert.NoError(t, err, "Unexpected error getting detector")
@@ -111,7 +111,7 @@ func TestGetMissingDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetDetector("string")
 	assert.Error(t, err, "Should have gotten an error from a missing detector")
@@ -132,7 +132,7 @@ func TestSearchDetector(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", http.StatusOK, params, "detector/search_success.json"))
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/search_success.json"))
 
 	results, err := client.SearchDetectors(limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search detector")
@@ -143,7 +143,7 @@ func TestUpdateDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", http.StatusOK, nil, "detector/update_success.json"))
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "detector/update_success.json"))
 
 	result, err := client.UpdateDetector("string", &detector.CreateUpdateDetectorRequest{
 		Name: "string",
@@ -156,7 +156,7 @@ func TestUpdateMissingDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateDetector("string", &detector.CreateUpdateDetectorRequest{
 		Name: "string",

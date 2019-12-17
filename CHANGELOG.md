@@ -1,6 +1,7 @@
 # 1.6.11, Pending
 
 ## Added
+- Support for creating and deleting tokens using the Session API
 
 ## Updated
 

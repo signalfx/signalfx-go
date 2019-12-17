@@ -14,7 +14,7 @@ func TestCreateAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", http.StatusCreated, nil, "alertmuting/create_success.json"))
+	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", true, http.StatusCreated, nil, "alertmuting/create_success.json"))
 
 	result, err := client.CreateAlertMutingRule(&alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
@@ -27,7 +27,7 @@ func TestCreateBadAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateAlertMutingRule(&alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
@@ -40,7 +40,7 @@ func TestDeleteAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteAlertMutingRule("string")
 	assert.NoError(t, err, "Unexpected error deleting alert muting rule")
@@ -50,7 +50,7 @@ func TestDeleteMissingAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteAlertMutingRule("example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
@@ -60,7 +60,7 @@ func TestGetAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "GET", http.StatusOK, nil, "alertmuting/get_success.json"))
+	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "alertmuting/get_success.json"))
 
 	result, err := client.GetAlertMutingRule("string")
 	assert.NoError(t, err, "Unexpected error getting alert mutnig rule")
@@ -71,7 +71,7 @@ func TestGetMissingAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "GET", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetAlertMutingRule("string")
 	assert.Error(t, err, "Should have gotten an error from a missing alert muting rule")
@@ -92,7 +92,7 @@ func TestSearchAlertMutingRule(t *testing.T) {
 	params.Add("name", name)
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "GET", http.StatusOK, params, "alertmuting/search_success.json"))
+	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "GET", true, http.StatusOK, params, "alertmuting/search_success.json"))
 
 	results, err := client.SearchAlertMutingRules(include, limit, name, offset)
 	assert.NoError(t, err, "Unexpected error search alert muting rule")
@@ -103,7 +103,7 @@ func TestUpdateAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "PUT", http.StatusOK, nil, "alertmuting/update_success.json"))
+	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "alertmuting/update_success.json"))
 
 	result, err := client.UpdateAlertMutingRule("string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
@@ -116,7 +116,7 @@ func TestUpdateMissingAlertMutingRule(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "PUT", http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateAlertMutingRule("string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",

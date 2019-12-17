@@ -12,7 +12,7 @@ func TestCreateJiraIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", http.StatusOK, nil, "integration/create_jira_success.json"))
+	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_jira_success.json"))
 
 	result, err := client.CreateJiraIntegration(&integration.JiraIntegration{
 		Type: "Jira",
@@ -25,7 +25,7 @@ func TestGetJiraIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", http.StatusOK, nil, "integration/create_jira_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_jira_success.json"))
 
 	result, err := client.GetJiraIntegration("id")
 	assert.NoError(t, err, "Unexpected error getting integration")
@@ -36,7 +36,7 @@ func TestUpdateJiraIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", http.StatusOK, nil, "integration/create_jira_success.json"))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_jira_success.json"))
 
 	result, err := client.UpdateJiraIntegration("id", &integration.JiraIntegration{
 		Type: "Jira",
@@ -49,7 +49,7 @@ func TestDeleteJiraIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteJiraIntegration("id")
 	assert.NoError(t, err, "Unexpected error creating integration")
