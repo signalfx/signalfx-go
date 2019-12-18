@@ -1,13 +1,18 @@
-# 1.6.11, Pending
+# 1.6.12, Pending
 
 ## Added
-- Support for creating and deleting tokens using the Session API
 
 ## Updated
 
 ## Bugfixes
 
 ## Removed
+
+# 1.6.11, 2019-12-18
+
+## Added
+
+* Support for creating and deleting tokens using the Session API
 
 # 1.6.10, 2019-12-16
 
