@@ -1,4 +1,4 @@
-# 1.6.12, Pending
+# 1.6.13, Pending
 
 ## Added
 
@@ -7,6 +7,12 @@
 ## Bugfixes
 
 ## Removed
+
+# 1.6.12, 2020-01-21
+
+## Added
+
+* Field `sfxAwsAccountArn` added to AWS response
 
 # 1.6.11, 2019-12-18
 
