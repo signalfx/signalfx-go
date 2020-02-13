@@ -44,5 +44,6 @@
     "AWS/ApiGateway"
   ],
   "sfxAwsAccountArn": "arn:aws:iam::1234567890:root",
-  "token": "string"
+  "token": "string",
+  "useGetMetricDataMethod": false
 }
