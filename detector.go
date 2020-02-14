@@ -167,3 +167,47 @@ func (c *Client) SearchDetectors(limit int, name string, offset int, tags string
 
 	return finalDetectors, err
 }
+
+// GetDetectorEvents gets a detector's events.
+func (c *Client) GetDetectorEvents(id string) ([]*detector.Event, error) {
+	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/events", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
+	var events []*detector.Event
+
+	err = json.NewDecoder(resp.Body).Decode(&events)
+	if err != nil {
+		fmt.Printf("+%v", err)
+	}
+	return events, err
+}
+
+// GetDetectorIncidents gets a detector's incidents.
+func (c *Client) GetDetectorIncidents(id string) ([]*detector.Incident, error) {
+	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/incidents", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
+	var incidents []*detector.Incident
+
+	err = json.NewDecoder(resp.Body).Decode(&incidents)
+	if err != nil {
+		fmt.Printf("+%v", err)
+	}
+	return incidents, err
+}
