@@ -164,3 +164,25 @@ func TestUpdateMissingDetector(t *testing.T) {
 	assert.Error(t, err, "Should have gotten an error from an update on a missing detector")
 	assert.Nil(t, result, "Should have gotten a nil result from an update on a missing detector")
 }
+
+func TestGetDetectorEvents(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/string/events", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_events.json"))
+
+	result, err := client.GetDetectorEvents("string")
+	assert.NoError(t, err, "Unexpected error getting detector")
+	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
+}
+
+func TestGetDetectorIncidents(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/string/incidents", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_incidents.json"))
+
+	result, err := client.GetDetectorIncidents("string")
+	assert.NoError(t, err, "Unexpected error getting detector")
+	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
+}

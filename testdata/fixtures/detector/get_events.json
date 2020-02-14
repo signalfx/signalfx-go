@@ -1,0 +1,17 @@
+[
+  {
+    "anomalyState": "ANOMALOUS",
+    "detectLabel": "string",
+    "detectorId": "string",
+    "detectorName": "string",
+    "event_annotations": {},
+    "id": "string",
+    "incidentId": "string",
+    "inputs": {
+      "A": 5,
+      "B": 6
+    },
+    "severity": "Critical",
+    "timestamp": 0
+  }
+]

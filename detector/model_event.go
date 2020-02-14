@@ -10,5 +10,5 @@ type Event struct {
 	IncidentId       string                  `json:"incidentId,omitempty"`
 	Inputs           *map[string]interface{} `json:"inputs,omitempty"`
 	Severity         string                  `json:"severity,omitempty"`
-	Timestamp        string                  `json:"timestamp,omitempty"`
+	Timestamp        int64                   `json:"timestamp,omitempty"`
 }
