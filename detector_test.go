@@ -164,3 +164,43 @@ func TestUpdateMissingDetector(t *testing.T) {
 	assert.Error(t, err, "Should have gotten an error from an update on a missing detector")
 	assert.Nil(t, result, "Should have gotten a nil result from an update on a missing detector")
 }
+
+func TestGetDetectorEvents(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	from := 1557534630000
+	to := 1557534640000
+	offset := 12
+	limit := 2
+
+	params := url.Values{}
+	params.Add("from", strconv.Itoa(from))
+	params.Add("to", strconv.Itoa(to))
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("limit", strconv.Itoa(limit))
+
+	mux.HandleFunc("/v2/detector/string/events", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/get_events.json"))
+
+	result, err := client.GetDetectorEvents("string", from, to, offset, limit)
+	assert.NoError(t, err, "Unexpected error getting detector")
+	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
+}
+
+func TestGetDetectorIncidents(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	offset := 12
+	limit := 2
+
+	params := url.Values{}
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("limit", strconv.Itoa(limit))
+
+	mux.HandleFunc("/v2/detector/string/incidents", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/get_incidents.json"))
+
+	result, err := client.GetDetectorIncidents("string", offset, limit)
+	assert.NoError(t, err, "Unexpected error getting detector")
+	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
+}
