@@ -169,8 +169,13 @@ func (c *Client) SearchDetectors(limit int, name string, offset int, tags string
 }
 
 // GetDetectorEvents gets a detector's events.
-func (c *Client) GetDetectorEvents(id string) ([]*detector.Event, error) {
-	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/events", nil, nil)
+func (c *Client) GetDetectorEvents(id string, from int, to int, offset int, limit int) ([]*detector.Event, error) {
+	params := url.Values{}
+	params.Add("from", strconv.Itoa(from))
+	params.Add("to", strconv.Itoa(to))
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("limit", strconv.Itoa(limit))
+	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/events", params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -191,8 +196,11 @@ func (c *Client) GetDetectorEvents(id string) ([]*detector.Event, error) {
 }
 
 // GetDetectorIncidents gets a detector's incidents.
-func (c *Client) GetDetectorIncidents(id string) ([]*detector.Incident, error) {
-	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/incidents", nil, nil)
+func (c *Client) GetDetectorIncidents(id string, offset int, limit int) ([]*detector.Incident, error) {
+	params := url.Values{}
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("limit", strconv.Itoa(limit))
+	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/incidents", params, nil)
 	if err != nil {
 		return nil, err
 	}

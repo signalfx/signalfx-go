@@ -169,9 +169,20 @@ func TestGetDetectorEvents(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/events", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_events.json"))
+	from := 1557534630000
+	to := 1557534640000
+	offset := 12
+	limit := 2
 
-	result, err := client.GetDetectorEvents("string")
+	params := url.Values{}
+	params.Add("from", strconv.Itoa(from))
+	params.Add("to", strconv.Itoa(to))
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("limit", strconv.Itoa(limit))
+
+	mux.HandleFunc("/v2/detector/string/events", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/get_events.json"))
+
+	result, err := client.GetDetectorEvents("string", from, to, offset, limit)
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
 }
@@ -180,9 +191,16 @@ func TestGetDetectorIncidents(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/detector/string/incidents", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_incidents.json"))
+	offset := 12
+	limit := 2
 
-	result, err := client.GetDetectorIncidents("string")
+	params := url.Values{}
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("limit", strconv.Itoa(limit))
+
+	mux.HandleFunc("/v2/detector/string/incidents", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/get_incidents.json"))
+
+	result, err := client.GetDetectorIncidents("string", offset, limit)
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
 }
