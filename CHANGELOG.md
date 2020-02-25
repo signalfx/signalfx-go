@@ -2,6 +2,8 @@
 
 ## Added
 
+* Webhook integration client functions
+
 ## Updated
 
 ## Bugfixes
