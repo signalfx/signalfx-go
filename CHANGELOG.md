@@ -1,14 +1,18 @@
-# 1.6.19, Pending
+# 1.6.20, Pending
 
 ## Added
-
-* Webhook integration client functions
 
 ## Updated
 
 ## Bugfixes
 
 ## Removed
+
+# 1.6.19, 2020-02-26
+
+## Added
+
+* Webhook integration client functions
 
 # 1.6.18, 2020-02-25
 
