@@ -1,0 +1,13 @@
+{
+  "created": 1556361030000,
+  "creator": "X_xxxx9XXXX",
+  "enabled": true,
+  "id": "XXxxxXXXXXX",
+  "lastUpdated": 1556620230000,
+  "lastUpdatedBy": "Y_yyyy0YYYY",
+  "name": "webhoooooook",
+  "headers": {},
+  "sharedSecret": "pa$$word",
+  "type": "Webhook",
+  "url": "https://webhook.site/<key>"
+}
