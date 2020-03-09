@@ -78,6 +78,8 @@ type DatapointWriter struct {
 	// risking overwriting in the middle of sending.
 	chunkSliceCache chan []*datapoint.Datapoint
 
+	_ int32
+
 	requestsActive int64
 	// Datapoints waiting to be sent but are blocked due to MaxRequests limit
 	totalWaiting int64
