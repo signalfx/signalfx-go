@@ -79,6 +79,8 @@ type SpanWriter struct {
 	// risking overwriting in the middle of sending.
 	chunkSliceCache chan []*trace.Span
 
+	_ int32
+
 	requestsActive int64
 	// Spans waiting to be sent but are blocked due to MaxRequests limit
 	totalWaiting int64

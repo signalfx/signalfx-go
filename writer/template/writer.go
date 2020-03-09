@@ -75,6 +75,8 @@ type InstanceWriter struct {
 	// risking overwriting in the middle of sending.
 	chunkSliceCache chan []*Instance
 
+	_ int32
+
 	requestsActive int64
 	// Instances waiting to be sent but are blocked due to MaxRequests limit
 	totalWaiting int64
