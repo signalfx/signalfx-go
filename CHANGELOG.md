@@ -1,3 +1,9 @@
+# 1.6.23, Pending
+
+## Bugfixes
+* Make the writer package work properly on 32-bit systems by aligning struct
+  fields on 64-bit boundaries.
+
 # 1.6.22, 2020-03-09
 
 ## Added
