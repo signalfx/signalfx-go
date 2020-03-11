@@ -1,4 +1,10 @@
-# 1.6.24, Pending
+# 1.6.25, Pending
+
+# 1.6.24, 2020-03-11
+
+## Bugfixes
+
+* Protect `Client` with a mutex so that multiple calls don't races. Thanks [rma-stripe](https://github.com/rma-stripe)! [#73](https://github.com/signalfx/signalfx-go/pull/73)
 
 # 1.6.23, 2020-03-10
 
