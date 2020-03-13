@@ -1,4 +1,10 @@
-# 1.6.25, Pending
+# 1.6.26, Pending
+
+# 1.6.25, 2020-03-13
+
+## Bugfixes
+
+* Fix typos in AWS service name for `AWS/VPN`
 
 # 1.6.24, 2020-03-11
 
