@@ -40,6 +40,24 @@ type Computation struct {
 	MetadataTimeout time.Duration
 }
 
+// ComputationError exposes the underlying metadata of a computation error
+type ComputationError struct {
+	Code      interface{}
+	Message   interface{}
+	ErrorType interface{}
+}
+
+func (e *ComputationError) Error() string {
+	err := fmt.Sprintf("%v", e.Code)
+	if e.ErrorType != nil {
+		err = fmt.Sprintf("%v (%v)", e.Code, e.ErrorType)
+	}
+	if e.Message != nil {
+		err = fmt.Sprintf("%v: %v", err, e.Message)
+	}
+	return err
+}
+
 func newComputation(ctx context.Context, channel *Channel, client *Client) *Computation {
 	newCtx, cancel := context.WithCancel(ctx)
 	comp := &Computation{
@@ -183,7 +201,13 @@ func (c *Computation) processMessage(m messages.Message) {
 			c.maxDelayMS = pointer.Int(v.MessageBlock.Contents.(messages.JobInitialMaxDelayContents).MaxDelayMS())
 		}
 	case *messages.ErrorMessage:
-		c.lastError = fmt.Errorf("error executing SignalFlow: %v", v.RawData())
+		rawData := v.RawData()
+		computationError := ComputationError{
+			Code:      rawData["error"],
+			Message:   rawData["message"],
+			ErrorType: rawData["errorType"],
+		}
+		c.lastError = &computationError
 		c.cancel()
 	case *messages.MetadataMessage:
 		c.tsidMetadata[v.TSID] = &v.Properties
