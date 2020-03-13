@@ -2,7 +2,6 @@ package signalflow
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -28,8 +27,7 @@ func waitForDataMsg(t *testing.T, comp *Computation) (messages.Message, error) {
 				return nil, err
 			}
 
-			t.Fatal("unepxeted empty error")
-			return nil, fmt.Errorf("data message didn't get buffered")
+			t.Fatal("data message didn't get buffered")
 		}
 	}
 }
