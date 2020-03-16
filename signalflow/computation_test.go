@@ -11,15 +11,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func waitForDataMsg(t *testing.T, comp *Computation) messages.Message {
+func waitForDataMsg(t *testing.T, comp *Computation) (messages.Message, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-	select {
-	case m := <-comp.Data():
-		return m
-	case <-ctx.Done():
-		t.Fatal("data message didn't get buffered")
-		return nil
+	for {
+		select {
+		case m := <-comp.Data():
+			if m == nil {
+				continue
+			}
+			return m, nil
+		case <-ctx.Done():
+			err := comp.Err()
+			if err != nil {
+				return nil, err
+			}
+
+			t.Fatal("data message didn't get buffered")
+		}
 	}
 }
 
@@ -44,7 +53,7 @@ func TestBuffersDataMessages(t *testing.T) {
 
 	ch.AcceptMessage(&messages.InfoMessage{})
 
-	msg := waitForDataMsg(t, comp)
+	msg, _ := waitForDataMsg(t, comp)
 	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
 
 	ch.AcceptMessage(&messages.DataMessage{
@@ -54,7 +63,7 @@ func TestBuffersDataMessages(t *testing.T) {
 			},
 		},
 	})
-	msg = waitForDataMsg(t, comp)
+	msg, _ = waitForDataMsg(t, comp)
 	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
 }
 
@@ -79,7 +88,7 @@ func TestBuffersExpiryMessages(t *testing.T) {
 
 	ch.AcceptMessage(&messages.InfoMessage{})
 
-	msg := waitForDataMsg(t, comp)
+	msg, _ := waitForDataMsg(t, comp)
 	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
 
 	ch.AcceptMessage(&messages.DataMessage{
@@ -89,7 +98,7 @@ func TestBuffersExpiryMessages(t *testing.T) {
 			},
 		},
 	})
-	msg = waitForDataMsg(t, comp)
+	msg, _ = waitForDataMsg(t, comp)
 	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
 }
 
@@ -182,4 +191,26 @@ func TestHandle(t *testing.T) {
 	}`), true)))
 
 	require.Equal(t, "AAAABBBB", comp.Handle())
+}
+
+func TestComputationError(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		"type": "error",
+		"error": 400,
+		"errorType": "ANALYTICS_PROGRAM_NAME_ERROR",
+		"message": "We hit some error"
+	}`), true)))
+
+	_, err := waitForDataMsg(t, comp)
+	if err == nil {
+		t.Fatal("Expected computation error")
+	}
+	require.Equal(t, 400, err.(*ComputationError).Code)
+	require.Equal(t, "ANALYTICS_PROGRAM_NAME_ERROR", err.(*ComputationError).ErrorType)
+	require.Equal(t, "We hit some error", err.(*ComputationError).Message)
 }
