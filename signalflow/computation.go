@@ -42,17 +42,17 @@ type Computation struct {
 
 // ComputationError exposes the underlying metadata of a computation error
 type ComputationError struct {
-	Code      interface{}
-	Message   interface{}
-	ErrorType interface{}
+	Code      int
+	Message   string
+	ErrorType string
 }
 
 func (e *ComputationError) Error() string {
 	err := fmt.Sprintf("%v", e.Code)
-	if e.ErrorType != nil {
+	if e.ErrorType != "" {
 		err = fmt.Sprintf("%v (%v)", e.Code, e.ErrorType)
 	}
-	if e.Message != nil {
+	if e.Message != "" {
 		err = fmt.Sprintf("%v: %v", err, e.Message)
 	}
 	return err
@@ -202,10 +202,15 @@ func (c *Computation) processMessage(m messages.Message) {
 		}
 	case *messages.ErrorMessage:
 		rawData := v.RawData()
-		computationError := ComputationError{
-			Code:      rawData["error"],
-			Message:   rawData["message"],
-			ErrorType: rawData["errorType"],
+		computationError := ComputationError{}
+		if code, ok := rawData["error"]; ok {
+			computationError.Code = int(code.(float64))
+		}
+		if msg, ok := rawData["message"]; ok {
+			computationError.Message = msg.(string)
+		}
+		if errType, ok := rawData["errorType"]; ok {
+			computationError.ErrorType = errType.(string)
 		}
 		c.lastError = &computationError
 		c.cancel()

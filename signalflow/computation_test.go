@@ -210,7 +210,7 @@ func TestComputationError(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expected computation error")
 	}
-	require.Equal(t, float64(400), err.(*ComputationError).Code)
+	require.Equal(t, 400, err.(*ComputationError).Code)
 	require.Equal(t, "ANALYTICS_PROGRAM_NAME_ERROR", err.(*ComputationError).ErrorType)
 	require.Equal(t, "We hit some error", err.(*ComputationError).Message)
 }
