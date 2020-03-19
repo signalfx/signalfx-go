@@ -1,5 +1,9 @@
 # 1.6.28, Pending
 
+## Improvements
+
+* Added `MatchedSize` and `LimitSize` to `Computation`. Thanks [rma-stripe](https://github.com/rma-stripe)! [#76](https://github.com/signalfx/signalfx-go/pull/76)
+
 # 1.6.27, 2020-03-16
 
 ## Bugfixes
