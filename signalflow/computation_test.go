@@ -178,6 +178,27 @@ func TestLagMetadata(t *testing.T) {
 	require.Equal(t, 3500*time.Millisecond, comp.Lag())
 }
 
+func TestFindLimitedResultSetMetadata(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		"type": "message",
+		"message": {
+			"messageCode": "FIND_LIMITED_RESULT_SET",
+			"contents": {
+				"matchedSize": 123456789,
+				"limitSize": 50000
+			}
+		}
+	}`), true)))
+
+	require.Equal(t, 123456789, comp.MatchedSize())
+	require.Equal(t, 50000, comp.LimitSize())
+}
+
 func TestHandle(t *testing.T) {
 	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{
