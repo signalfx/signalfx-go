@@ -1,4 +1,11 @@
-# 1.6.29, Pending
+# 1.6.30, Pending
+
+# 1.6.29, 2020-03-20
+
+## Bugfixes
+
+* Adjust Data Link targets to include isDefault even if "empty".
+* Don't set tags on detectors if an empty string. Thanks [rma-stripe](https://github.com/rma-stripe)! [#76](https://github.com/signalfx/signalfx-go/pull/77)
 
 # 1.6.28, 2020-03-19
 
