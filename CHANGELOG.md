@@ -1,4 +1,10 @@
-# 1.6.30, Pending
+# 1.6.31, Pending
+
+# 1.6.30, 2020-03-27
+
+## Bugfixes
+
+* Don't set tags on chart serawch if an empty string. Thanks [ChimeraCoder](https://github.com/ChimeraCoder)! [#79](https://github.com/signalfx/signalfx-go/pull/79)
 
 # 1.6.29, 2020-03-20
 
