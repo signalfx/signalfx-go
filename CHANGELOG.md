@@ -2,7 +2,7 @@
 
 # 1.6.33, 2020-04-29
 
-* Adjust behavior to more reliably close HTTP bodies with sketchy replies.
+* Adjust behavior to more reliably close HTTP bodies with sketchy replies. [#81](https://github.com/signalfx/signalfx-go/pull/81)
 
 # 1.6.32, 2020-04-13
 

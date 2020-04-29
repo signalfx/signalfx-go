@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -33,6 +34,7 @@ func (c *Client) CreateOpsgenieIntegration(oi *integration.OpsgenieIntegration) 
 	finalIntegration := integration.OpsgenieIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return &finalIntegration, err
 }
@@ -55,6 +57,7 @@ func (c *Client) GetOpsgenieIntegration(id string) (*integration.OpsgenieIntegra
 	finalIntegration := integration.OpsgenieIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return &finalIntegration, err
 }
@@ -82,6 +85,7 @@ func (c *Client) UpdateOpsgenieIntegration(id string, oi *integration.OpsgenieIn
 	finalIntegration := integration.OpsgenieIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return &finalIntegration, err
 }
@@ -100,6 +104,7 @@ func (c *Client) DeleteOpsgenieIntegration(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return err
 }

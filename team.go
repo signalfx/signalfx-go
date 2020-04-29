@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -39,6 +40,7 @@ func (c *Client) CreateTeam(t *team.CreateUpdateTeamRequest) (*team.Team, error)
 	finalTeam := &team.Team{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalTeam)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalTeam, err
 }
@@ -56,6 +58,7 @@ func (c *Client) DeleteTeam(id string) error {
 	if resp.StatusCode != http.StatusNoContent {
 		return errors.New("Unexpected status code: " + resp.Status)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -77,6 +80,7 @@ func (c *Client) GetTeam(id string) (*team.Team, error) {
 	finalTeam := &team.Team{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalTeam)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalTeam, err
 }
@@ -103,6 +107,7 @@ func (c *Client) UpdateTeam(id string, t *team.CreateUpdateTeamRequest) (*team.T
 	finalTeam := &team.Team{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalTeam)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalTeam, err
 }
@@ -126,6 +131,7 @@ func (c *Client) SearchTeam(limit int, name string, offset int, tags string) (*t
 	finalTeams := &team.SearchResults{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalTeams)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalTeams, err
 }

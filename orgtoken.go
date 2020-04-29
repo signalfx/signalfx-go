@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -38,6 +39,7 @@ func (c *Client) CreateOrgToken(tokenRequest *orgtoken.CreateUpdateTokenRequest)
 	finalToken := &orgtoken.Token{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalToken)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalToken, err
 }
@@ -57,11 +59,12 @@ func (c *Client) DeleteOrgToken(name string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
 
-// GetToken gets a token.
+// GetOrgToken gets a token.
 func (c *Client) GetOrgToken(id string) (*orgtoken.Token, error) {
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest("GET", TokenAPIURL+"/"+encodedName, nil, nil)
@@ -80,11 +83,12 @@ func (c *Client) GetOrgToken(id string) (*orgtoken.Token, error) {
 	finalToken := &orgtoken.Token{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalToken)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalToken, err
 }
 
-// UpdateToken updates a token.
+// UpdateOrgToken updates a token.
 func (c *Client) UpdateOrgToken(id string, tokenRequest *orgtoken.CreateUpdateTokenRequest) (*orgtoken.Token, error) {
 	payload, err := json.Marshal(tokenRequest)
 	if err != nil {
@@ -108,11 +112,12 @@ func (c *Client) UpdateOrgToken(id string, tokenRequest *orgtoken.CreateUpdateTo
 	finalToken := &orgtoken.Token{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalToken)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalToken, err
 }
 
-// SearchToken searches for tokens given a query string in `name`.
+// SearchOrgToken searches for tokens given a query string in `name`.
 func (c *Client) SearchOrgTokens(limit int, name string, offset int) (*orgtoken.SearchResults, error) {
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(limit))
@@ -130,6 +135,7 @@ func (c *Client) SearchOrgTokens(limit int, name string, offset int) (*orgtoken.
 	finalTokens := &orgtoken.SearchResults{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalTokens)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalTokens, err
 }

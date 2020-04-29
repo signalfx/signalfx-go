@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -33,6 +34,7 @@ func (c *Client) CreateSlackIntegration(si *integration.SlackIntegration) (*inte
 	finalIntegration := integration.SlackIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return &finalIntegration, err
 }
@@ -55,6 +57,7 @@ func (c *Client) GetSlackIntegration(id string) (*integration.SlackIntegration, 
 	finalIntegration := integration.SlackIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return &finalIntegration, err
 }
@@ -82,6 +85,7 @@ func (c *Client) UpdateSlackIntegration(id string, si *integration.SlackIntegrat
 	finalIntegration := integration.SlackIntegration{}
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return &finalIntegration, err
 }
@@ -100,6 +104,7 @@ func (c *Client) DeleteSlackIntegration(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return err
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -45,6 +46,7 @@ func (c *Client) CreateDashboardGroup(dashboardGroupRequest *dashboard_group.Cre
 	finalDashboardGroup := &dashboard_group.DashboardGroup{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroup)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboardGroup, err
 }
@@ -63,6 +65,7 @@ func (c *Client) DeleteDashboardGroup(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -85,6 +88,7 @@ func (c *Client) GetDashboardGroup(id string) (*dashboard_group.DashboardGroup, 
 	finalDashboardGroup := &dashboard_group.DashboardGroup{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroup)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboardGroup, err
 }
@@ -112,6 +116,7 @@ func (c *Client) UpdateDashboardGroup(id string, dashboardGroupRequest *dashboar
 	finalDashboardGroup := &dashboard_group.DashboardGroup{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroup)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboardGroup, err
 }
@@ -134,6 +139,7 @@ func (c *Client) SearchDashboardGroups(limit int, name string, offset int) (*das
 	finalDashboardGroups := &dashboard_group.SearchResult{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroups)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboardGroups, err
 }

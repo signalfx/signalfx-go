@@ -3,6 +3,7 @@ package signalfx
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -24,6 +25,7 @@ func (c *Client) DeleteIntegration(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -46,6 +48,7 @@ func (c *Client) GetIntegration(id string) (map[string]interface{}, error) {
 	finalIntegration := make(map[string]interface{})
 
 	err = json.NewDecoder(resp.Body).Decode(&finalIntegration)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalIntegration, err
 }

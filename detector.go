@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -38,6 +39,7 @@ func (c *Client) CreateDetector(detectorRequest *detector.CreateUpdateDetectorRe
 	finalDetector := &detector.Detector{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDetector, err
 }
@@ -56,6 +58,7 @@ func (c *Client) DeleteDetector(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -79,6 +82,7 @@ func (c *Client) DisableDetector(id string, labels []string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -102,6 +106,7 @@ func (c *Client) EnableDetector(id string, labels []string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -124,9 +129,8 @@ func (c *Client) GetDetector(id string) (*detector.Detector, error) {
 	finalDetector := &detector.Detector{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
-	if err != nil {
-		fmt.Printf("+%v", err)
-	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
 	return finalDetector, err
 }
 
@@ -153,11 +157,12 @@ func (c *Client) UpdateDetector(id string, detectorRequest *detector.CreateUpdat
 	finalDetector := &detector.Detector{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetector)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDetector, err
 }
 
-// SearchDetector searches for detectors, given a query string in `name`.
+// SearchDetectors searches for detectors, given a query string in `name`.
 func (c *Client) SearchDetectors(limit int, name string, offset int, tags string) (*detector.SearchResults, error) {
 	params := url.Values{}
 	params.Add("limit", strconv.Itoa(limit))
@@ -178,6 +183,7 @@ func (c *Client) SearchDetectors(limit int, name string, offset int, tags string
 	finalDetectors := &detector.SearchResults{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDetectors)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDetectors, err
 }
@@ -205,9 +211,8 @@ func (c *Client) GetDetectorEvents(id string, from int, to int, offset int, limi
 	var events []*detector.Event
 
 	err = json.NewDecoder(resp.Body).Decode(&events)
-	if err != nil {
-		fmt.Printf("+%v", err)
-	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
 	return events, err
 }
 
@@ -232,8 +237,7 @@ func (c *Client) GetDetectorIncidents(id string, offset int, limit int) ([]*dete
 	var incidents []*detector.Incident
 
 	err = json.NewDecoder(resp.Body).Decode(&incidents)
-	if err != nil {
-		fmt.Printf("+%v", err)
-	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
 	return incidents, err
 }

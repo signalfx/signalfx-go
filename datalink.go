@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -38,6 +39,7 @@ func (c *Client) CreateDataLink(dataLinkRequest *datalink.CreateUpdateDataLinkRe
 	finalDataLink := &datalink.DataLink{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDataLink)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDataLink, err
 }
@@ -58,6 +60,7 @@ func (c *Client) DeleteDataLink(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -80,6 +83,7 @@ func (c *Client) GetDataLink(id string) (*datalink.DataLink, error) {
 	finalDataLink := &datalink.DataLink{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDataLink)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDataLink, err
 }
@@ -108,6 +112,7 @@ func (c *Client) UpdateDataLink(id string, dataLinkRequest *datalink.CreateUpdat
 	finalDataLink := &datalink.DataLink{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDataLink)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDataLink, err
 }
@@ -130,6 +135,7 @@ func (c *Client) SearchDataLinks(limit int, context string, offset int) (*datali
 	finalDataLinks := &datalink.SearchResults{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDataLinks)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDataLinks, err
 }

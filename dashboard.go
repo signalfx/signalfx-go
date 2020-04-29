@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -40,6 +41,7 @@ func (c *Client) CreateDashboard(dashboardRequest *dashboard.CreateUpdateDashboa
 	finalDashboard := &dashboard.Dashboard{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboard)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboard, err
 }
@@ -58,6 +60,7 @@ func (c *Client) DeleteDashboard(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -80,6 +83,7 @@ func (c *Client) GetDashboard(id string) (*dashboard.Dashboard, error) {
 	finalDashboard := &dashboard.Dashboard{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboard)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboard, err
 }
@@ -107,6 +111,7 @@ func (c *Client) UpdateDashboard(id string, dashboardRequest *dashboard.CreateUp
 	finalDashboard := &dashboard.Dashboard{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboard)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboard, err
 }
@@ -130,6 +135,7 @@ func (c *Client) SearchDashboard(limit int, name string, offset int, tags string
 	finalDashboards := &dashboard.SearchResult{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDashboards)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalDashboards, err
 }

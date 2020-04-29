@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -38,6 +39,7 @@ func (c *Client) CreateSessionToken(tokenRequest *sessiontoken.CreateTokenReques
 	sessionToken := &sessiontoken.Token{}
 
 	err = json.NewDecoder(resp.Body).Decode(sessionToken)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return sessionToken, err
 }
@@ -56,6 +58,7 @@ func (c *Client) DeleteSessionToken(token string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -35,6 +36,7 @@ func (c *Client) GetOrganization(id string) (*organization.Organization, error) 
 	finalOrganization := &organization.Organization{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalOrganization)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalOrganization, err
 }
@@ -57,6 +59,7 @@ func (c *Client) GetMember(id string) (*organization.Member, error) {
 	finalMember := &organization.Member{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalMember)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalMember, err
 }
@@ -75,6 +78,7 @@ func (c *Client) DeleteMember(id string) error {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -102,6 +106,7 @@ func (c *Client) InviteMember(inviteRequest *organization.CreateUpdateMemberRequ
 	finalMember := &organization.Member{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalMember)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalMember, err
 }
@@ -129,6 +134,7 @@ func (c *Client) InviteMembers(inviteRequest *organization.InviteMembersRequest)
 	finalMembers := &organization.InviteMembersRequest{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalMembers)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalMembers, err
 }
@@ -152,6 +158,7 @@ func (c *Client) GetOrganizationMembers(limit int, query string, offset int, ord
 	finalMembers := &organization.MemberSearchResults{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalMembers)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalMembers, err
 }

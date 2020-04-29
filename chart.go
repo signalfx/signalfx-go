@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -39,6 +40,7 @@ func (c *Client) CreateChart(chartRequest *chart.CreateUpdateChartRequest) (*cha
 	finalChart := &chart.Chart{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalChart)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalChart, err
 }
@@ -56,6 +58,7 @@ func (c *Client) DeleteChart(id string) error {
 	if resp.StatusCode != http.StatusOK {
 		return errors.New("Unexpected status code: " + resp.Status)
 	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
@@ -78,6 +81,7 @@ func (c *Client) GetChart(id string) (*chart.Chart, error) {
 	finalChart := &chart.Chart{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalChart)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalChart, err
 }
@@ -105,6 +109,7 @@ func (c *Client) UpdateChart(id string, chartRequest *chart.CreateUpdateChartReq
 	finalChart := &chart.Chart{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalChart)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalChart, err
 }
@@ -132,6 +137,7 @@ func (c *Client) SearchCharts(limit int, name string, offset int, tags string) (
 	finalCharts := &chart.SearchResult{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalCharts)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return finalCharts, err
 }
