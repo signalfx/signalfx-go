@@ -18,11 +18,12 @@ func (c *Client) CreateJiraIntegration(ji *integration.JiraIntegration) (*integr
 	}
 
 	resp, err := c.doRequest("POST", IntegrationAPIURL, nil, bytes.NewReader(payload))
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -39,11 +40,12 @@ func (c *Client) CreateJiraIntegration(ji *integration.JiraIntegration) (*integr
 // GetJiraIntegration retrieves an Jira integration.
 func (c *Client) GetJiraIntegration(id string) (*integration.JiraIntegration, error) {
 	resp, err := c.doRequest("GET", IntegrationAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -65,11 +67,12 @@ func (c *Client) UpdateJiraIntegration(id string, ji *integration.JiraIntegratio
 	}
 
 	resp, err := c.doRequest("PUT", IntegrationAPIURL+"/"+id, nil, bytes.NewReader(payload))
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -86,11 +89,12 @@ func (c *Client) UpdateJiraIntegration(id string, ji *integration.JiraIntegratio
 // DeleteJiraIntegration deletes an Jira integration.
 func (c *Client) DeleteJiraIntegration(id string) error {
 	resp, err := c.doRequest("DELETE", IntegrationAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)

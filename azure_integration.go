@@ -18,11 +18,12 @@ func (c *Client) CreateAzureIntegration(acwi *integration.AzureIntegration) (*in
 	}
 
 	resp, err := c.doRequest("POST", IntegrationAPIURL, nil, bytes.NewReader(payload))
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -39,11 +40,12 @@ func (c *Client) CreateAzureIntegration(acwi *integration.AzureIntegration) (*in
 // GetAzureIntegration retrieves an Azure integration.
 func (c *Client) GetAzureIntegration(id string) (*integration.AzureIntegration, error) {
 	resp, err := c.doRequest("GET", IntegrationAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -65,11 +67,12 @@ func (c *Client) UpdateAzureIntegration(id string, acwi *integration.AzureIntegr
 	}
 
 	resp, err := c.doRequest("PUT", IntegrationAPIURL+"/"+id, nil, bytes.NewReader(payload))
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -86,11 +89,12 @@ func (c *Client) UpdateAzureIntegration(id string, acwi *integration.AzureIntegr
 // DeleteAzureIntegration deletes an Azure integration.
 func (c *Client) DeleteAzureIntegration(id string) error {
 	resp, err := c.doRequest("DELETE", IntegrationAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)

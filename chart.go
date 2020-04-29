@@ -24,10 +24,12 @@ func (c *Client) CreateChart(chartRequest *chart.CreateUpdateChartRequest) (*cha
 	}
 
 	resp, err := c.doRequest("POST", ChartAPIURL, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -44,11 +46,12 @@ func (c *Client) CreateChart(chartRequest *chart.CreateUpdateChartRequest) (*cha
 // DeleteChart deletes a chart.
 func (c *Client) DeleteChart(id string) error {
 	resp, err := c.doRequest("DELETE", ChartAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		return errors.New("Unexpected status code: " + resp.Status)
@@ -60,11 +63,12 @@ func (c *Client) DeleteChart(id string) error {
 // GetChart gets a chart.
 func (c *Client) GetChart(id string) (*chart.Chart, error) {
 	resp, err := c.doRequest("GET", ChartAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -86,10 +90,12 @@ func (c *Client) UpdateChart(id string, chartRequest *chart.CreateUpdateChartReq
 	}
 
 	resp, err := c.doRequest("PUT", ChartAPIURL+"/"+id, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -116,11 +122,12 @@ func (c *Client) SearchCharts(limit int, name string, offset int, tags string) (
 	}
 
 	resp, err := c.doRequest("GET", ChartAPIURL, params, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	finalCharts := &chart.SearchResult{}
 

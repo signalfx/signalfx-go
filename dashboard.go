@@ -25,10 +25,12 @@ func (c *Client) CreateDashboard(dashboardRequest *dashboard.CreateUpdateDashboa
 	}
 
 	resp, err := c.doRequest("POST", DashboardAPIURL, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -45,11 +47,12 @@ func (c *Client) CreateDashboard(dashboardRequest *dashboard.CreateUpdateDashboa
 // DeleteDashboard deletes a dashboard.
 func (c *Client) DeleteDashboard(id string) error {
 	resp, err := c.doRequest("DELETE", DashboardAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -62,11 +65,12 @@ func (c *Client) DeleteDashboard(id string) error {
 // GetDashboard gets a dashboard.
 func (c *Client) GetDashboard(id string) (*dashboard.Dashboard, error) {
 	resp, err := c.doRequest("GET", DashboardAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -88,10 +92,12 @@ func (c *Client) UpdateDashboard(id string, dashboardRequest *dashboard.CreateUp
 	}
 
 	resp, err := c.doRequest("PUT", DashboardAPIURL+"/"+id, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -114,11 +120,12 @@ func (c *Client) SearchDashboard(limit int, name string, offset int, tags string
 	params.Add("tags", tags)
 
 	resp, err := c.doRequest("GET", DashboardAPIURL, params, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	finalDashboards := &dashboard.SearchResult{}
 

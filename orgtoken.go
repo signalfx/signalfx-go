@@ -23,10 +23,12 @@ func (c *Client) CreateOrgToken(tokenRequest *orgtoken.CreateUpdateTokenRequest)
 	}
 
 	resp, err := c.doRequest("POST", TokenAPIURL, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -44,11 +46,12 @@ func (c *Client) CreateOrgToken(tokenRequest *orgtoken.CreateUpdateTokenRequest)
 func (c *Client) DeleteOrgToken(name string) error {
 	encodedName := url.PathEscape(name)
 	resp, err := c.doRequest("DELETE", TokenAPIURL+"/"+encodedName, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -62,10 +65,12 @@ func (c *Client) DeleteOrgToken(name string) error {
 func (c *Client) GetOrgToken(id string) (*orgtoken.Token, error) {
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest("GET", TokenAPIURL+"/"+encodedName, nil, nil)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -88,10 +93,12 @@ func (c *Client) UpdateOrgToken(id string, tokenRequest *orgtoken.CreateUpdateTo
 
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest("PUT", TokenAPIURL+"/"+encodedName, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -113,11 +120,12 @@ func (c *Client) SearchOrgTokens(limit int, name string, offset int) (*orgtoken.
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest("GET", TokenAPIURL, params, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	finalTokens := &orgtoken.SearchResults{}
 

@@ -30,10 +30,12 @@ func (c *Client) CreateDashboardGroup(dashboardGroupRequest *dashboard_group.Cre
 	}
 
 	resp, err := c.doRequest("POST", DashboardGroupAPIURL, params, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -50,11 +52,12 @@ func (c *Client) CreateDashboardGroup(dashboardGroupRequest *dashboard_group.Cre
 // DeleteDashboardGroup deletes a dashboard.
 func (c *Client) DeleteDashboardGroup(id string) error {
 	resp, err := c.doRequest("DELETE", DashboardGroupAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -67,11 +70,12 @@ func (c *Client) DeleteDashboardGroup(id string) error {
 // GetDashboardGroup gets a dashboard group.
 func (c *Client) GetDashboardGroup(id string) (*dashboard_group.DashboardGroup, error) {
 	resp, err := c.doRequest("GET", DashboardGroupAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -93,10 +97,12 @@ func (c *Client) UpdateDashboardGroup(id string, dashboardGroupRequest *dashboar
 	}
 
 	resp, err := c.doRequest("PUT", DashboardGroupAPIURL+"/"+id, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -118,11 +124,12 @@ func (c *Client) SearchDashboardGroups(limit int, name string, offset int) (*das
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest("GET", DashboardGroupAPIURL, params, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	finalDashboardGroups := &dashboard_group.SearchResult{}
 

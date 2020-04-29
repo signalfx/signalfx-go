@@ -18,11 +18,12 @@ func (c *Client) CreateOpsgenieIntegration(oi *integration.OpsgenieIntegration) 
 	}
 
 	resp, err := c.doRequest("POST", IntegrationAPIURL, nil, bytes.NewReader(payload))
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -39,11 +40,12 @@ func (c *Client) CreateOpsgenieIntegration(oi *integration.OpsgenieIntegration) 
 // GetOpsgenieIntegration retrieves an Opsgenie integration.
 func (c *Client) GetOpsgenieIntegration(id string) (*integration.OpsgenieIntegration, error) {
 	resp, err := c.doRequest("GET", IntegrationAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -65,11 +67,12 @@ func (c *Client) UpdateOpsgenieIntegration(id string, oi *integration.OpsgenieIn
 	}
 
 	resp, err := c.doRequest("PUT", IntegrationAPIURL+"/"+id, nil, bytes.NewReader(payload))
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -86,11 +89,12 @@ func (c *Client) UpdateOpsgenieIntegration(id string, oi *integration.OpsgenieIn
 // DeleteOpsgenieIntegration deletes an Opsgenie integration.
 func (c *Client) DeleteOpsgenieIntegration(id string) error {
 	resp, err := c.doRequest("DELETE", IntegrationAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)

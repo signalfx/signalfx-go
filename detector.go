@@ -23,10 +23,12 @@ func (c *Client) CreateDetector(detectorRequest *detector.CreateUpdateDetectorRe
 	}
 
 	resp, err := c.doRequest("POST", DetectorAPIURL, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -43,11 +45,12 @@ func (c *Client) CreateDetector(detectorRequest *detector.CreateUpdateDetectorRe
 // DeleteDetector deletes a detector.
 func (c *Client) DeleteDetector(id string) error {
 	resp, err := c.doRequest("DELETE", DetectorAPIURL+"/"+id, nil, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -65,10 +68,12 @@ func (c *Client) DisableDetector(id string, labels []string) error {
 	}
 
 	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/disable", nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -86,10 +91,12 @@ func (c *Client) EnableDetector(id string, labels []string) error {
 	}
 
 	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id+"/enable", nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -102,10 +109,12 @@ func (c *Client) EnableDetector(id string, labels []string) error {
 // GetDetector gets a detector.
 func (c *Client) GetDetector(id string) (*detector.Detector, error) {
 	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id, nil, nil)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -129,10 +138,12 @@ func (c *Client) UpdateDetector(id string, detectorRequest *detector.CreateUpdat
 	}
 
 	resp, err := c.doRequest("PUT", DetectorAPIURL+"/"+id, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -157,11 +168,12 @@ func (c *Client) SearchDetectors(limit int, name string, offset int, tags string
 	}
 
 	resp, err := c.doRequest("GET", DetectorAPIURL, params, nil)
-
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	finalDetectors := &detector.SearchResults{}
 
@@ -178,10 +190,12 @@ func (c *Client) GetDetectorEvents(id string, from int, to int, offset int, limi
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("limit", strconv.Itoa(limit))
 	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/events", params, nil)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
@@ -203,10 +217,12 @@ func (c *Client) GetDetectorIncidents(id string, offset int, limit int) ([]*dete
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("limit", strconv.Itoa(limit))
 	resp, err := c.doRequest("GET", DetectorAPIURL+"/"+id+"/incidents", params, nil)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		message, _ := ioutil.ReadAll(resp.Body)
