@@ -1,5 +1,10 @@
 # 1.6.36, Pending
 
+## Improvements
+
+* Add better resolution management to the fake SignalFlow backend for external
+  testing uses.
+
 # 1.6.35, 2020-05-12
 
 Fix some typos in Azure services

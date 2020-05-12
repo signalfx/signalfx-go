@@ -69,11 +69,11 @@ func TestBasicComputation(t *testing.T) {
 
 	comp, err := c.Execute(&ExecuteRequest{
 		Program:    program,
-		Resolution: time.Duration(1001) * time.Second,
+		Resolution: 1 * time.Second,
 	})
 	require.Nil(t, err)
 
-	require.Equal(t, time.Duration(1001)*time.Second, comp.Resolution())
+	require.Equal(t, 1*time.Second, comp.Resolution())
 
 	dataMsg := <-comp.Data()
 	require.Len(t, dataMsg.Payloads, 2)
