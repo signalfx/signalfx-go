@@ -127,7 +127,7 @@ func TestSearchDashboardGroupBad(t *testing.T) {
 	params.Add("name", name)
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "dashboardgroup/search_success.json"))
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchDashboardGroups(limit, name, offset)
 	assert.Error(t, err, "Unexpected error search dashboard group")

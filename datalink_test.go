@@ -110,7 +110,7 @@ func TestSearchDataLinkBad(t *testing.T) {
 	params.Add("context", context)
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "datalink/search_success.json"))
+	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchDataLinks(limit, context, offset)
 	assert.Error(t, err, "Unexpected error search data link")

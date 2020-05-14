@@ -113,7 +113,7 @@ func TestSearchDashboardBad(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "dashboard/search_success.json"))
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchDashboard(limit, name, offset, tags)
 	assert.Error(t, err, "Unexpected error search dashboard")

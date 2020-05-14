@@ -68,7 +68,7 @@ func TestSearchDimensionBad(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/dimension", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "metrics_metadata/dimension_search_success.json"))
+	mux.HandleFunc("/v2/dimension", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchDimension(query, orderBy, limit, offset)
 	assert.Error(t, err, "Unexpected error search dimensions")
@@ -157,7 +157,7 @@ func TestSearchMetricBad(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/metric", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "metrics_metadata/metric_search_success.json"))
+	mux.HandleFunc("/v2/metric", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchMetric(query, orderBy, limit, offset)
 	assert.Error(t, err, "Unexpected error search metrics")
@@ -220,7 +220,7 @@ func TestSearchMetricTimeSeriesBad(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/metrictimeseries", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "metrics_metadata/metric_time_series_search_success.json"))
+	mux.HandleFunc("/v2/metrictimeseries", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchMetricTimeSeries(query, orderBy, limit, offset)
 	assert.Error(t, err, "Unexpected error search metric time series")
@@ -261,7 +261,7 @@ func TestSearchTagBad(t *testing.T) {
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
-	mux.HandleFunc("/v2/tag", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "metrics_metadata/tag_search_success.json"))
+	mux.HandleFunc("/v2/tag", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchTag(query, orderBy, limit, offset)
 	assert.Error(t, err, "Unexpected error search tags")

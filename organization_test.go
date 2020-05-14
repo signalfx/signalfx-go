@@ -120,7 +120,7 @@ func TestGetOrganizationMembersBad(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("orderBy", orderBy)
 
-	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "organization/get_organization_members_success.json"))
+	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.GetOrganizationMembers(limit, query, offset, orderBy)
 	assert.Error(t, err, "Unexpected error getting members")
