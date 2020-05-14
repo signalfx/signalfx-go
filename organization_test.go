@@ -106,6 +106,26 @@ func TestGetOrganizationMembers(t *testing.T) {
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
+func TestGetOrganizationMembersBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	limit := 10
+	query := "foo"
+	offset := 2
+	orderBy := "bar"
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("query", query)
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("orderBy", orderBy)
+
+	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "organization/get_organization_members_success.json"))
+
+	_, err := client.GetOrganizationMembers(limit, query, offset, orderBy)
+	assert.Error(t, err, "Unexpected error getting members")
+}
+
 func TestDeleteMember(t *testing.T) {
 	teardown := setup()
 	defer teardown()

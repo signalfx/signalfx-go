@@ -103,6 +103,24 @@ func TestSearchOrgToken(t *testing.T) {
 	assert.Equal(t, int32(2), results.Count, "Incorrect number of results")
 }
 
+func TestSearchOrgTokenBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	limit := 10
+	name := "foo/fart"
+	offset := 2
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("name", url.PathEscape(name))
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/token", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
+
+	_, err := client.SearchOrgTokens(limit, name, offset)
+	assert.Error(t, err, "Unexpected error search token")
+}
+
 func TestUpdateOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
