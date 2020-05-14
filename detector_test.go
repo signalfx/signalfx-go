@@ -139,6 +139,26 @@ func TestSearchDetector(t *testing.T) {
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
+func TestSearchDetectorBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	limit := 10
+	name := "foo"
+	offset := 2
+	tags := "bar"
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("name", name)
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("tags", tags)
+
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "detector/search_success.json"))
+
+	_, err := client.SearchDetectors(limit, name, offset, tags)
+	assert.Error(t, err, "Unexpected error search detector")
+}
+
 func TestUpdateDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()

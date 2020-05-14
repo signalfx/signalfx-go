@@ -93,6 +93,11 @@ func (c *Client) SearchDimension(query string, orderBy string, limit int, offset
 		return nil, err
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
 	finalDimensions := &metrics_metadata.DimensionQueryResponseModel{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalDimensions)
@@ -115,6 +120,11 @@ func (c *Client) SearchMetric(query string, orderBy string, limit int, offset in
 	}
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
 	}
 
 	finalMetrics := &metrics_metadata.RetrieveMetricMetadataResponseModel{}

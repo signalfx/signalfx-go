@@ -98,6 +98,24 @@ func TestSearchDataLink(t *testing.T) {
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
+func TestSearchDataLinkBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	limit := 10
+	context := "foo"
+	offset := 2
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("context", context)
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "GET", true, http.StatusBadRequest, params, "datalink/search_success.json"))
+
+	_, err := client.SearchDataLinks(limit, context, offset)
+	assert.Error(t, err, "Unexpected error search data link")
+}
+
 func TestUpdateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
