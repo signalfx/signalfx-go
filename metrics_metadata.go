@@ -187,6 +187,11 @@ func (c *Client) SearchMetricTimeSeries(query string, orderBy string, limit int,
 		return nil, err
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	}
+
 	finalMTS := &metrics_metadata.MetricTimeSeriesRetrieveResponseModel{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalMTS)
@@ -209,6 +214,11 @@ func (c *Client) SearchTag(query string, orderBy string, limit int, offset int) 
 	}
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
 
 	finalTags := &metrics_metadata.TagRetrieveResponseModel{}
