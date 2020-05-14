@@ -99,6 +99,26 @@ func TestSearchTeam(t *testing.T) {
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
+func TestSearchTeamBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	limit := 10
+	name := "foo"
+	offset := 2
+	tags := "bar"
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("name", name)
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("tags", tags)
+
+	mux.HandleFunc("/v2/team", verifyRequest(t, "GET", true, http.StatusOK, params, ""))
+
+	_, err := client.SearchTeam(limit, name, offset, tags)
+	assert.Error(t, err, "Unexpected error search Team")
+}
+
 func TestUpdateTeam(t *testing.T) {
 	teardown := setup()
 	defer teardown()

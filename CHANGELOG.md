@@ -1,4 +1,10 @@
-# 1.6.36, Pending
+# 1.6.37, Pending
+
+# 1.6.36, 2020-05-14
+
+## Improvements
+
+Various `Search*` methods now verify the response code. [#83](https://github.com/signalfx/signalfx-go/issues/83)
 
 ## Improvements
 

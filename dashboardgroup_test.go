@@ -115,6 +115,24 @@ func TestSearchDashboardGroup(t *testing.T) {
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
 
+func TestSearchDashboardGroupBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	limit := 10
+	name := "foo"
+	offset := 2
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("name", name)
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
+
+	_, err := client.SearchDashboardGroups(limit, name, offset)
+	assert.Error(t, err, "Unexpected error search dashboard group")
+}
+
 func TestUpdateDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
