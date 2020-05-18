@@ -21,5 +21,4 @@ sed -i'' -e 's/instance\(s\?\)_/trace_span\1_/' ../span_writer.gen.go
 
 
 # Common cleanup
-sed -i'' -e '/go:generate/d' ../*.gen.go
 goimports -w ../*.gen.go
