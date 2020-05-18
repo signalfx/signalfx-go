@@ -1,4 +1,10 @@
-# 1.6.37, Pending
+# 1.6.38, Pending
+
+# 1.6.37, 2020-05-18
+
+## Improvements
+
+Added GCP service type to match the other integrations. [#86](https://github.com/signalfx/signalfx-go/pull/86)
 
 # 1.6.36, 2020-05-14
 
