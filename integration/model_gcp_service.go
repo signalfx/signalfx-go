@@ -33,7 +33,7 @@ const (
 	GCP_FILE             GcpService = "file"
 )
 
-var GCPServiceNames = map[string]GcpService{
+var GcpServiceNames = map[string]GcpService{
 	"appengine":        GCP_APPENGINE,
 	"bigquery":         GCP_BIGQUERY,
 	"bigtable":         GCP_BIGTABLE,
