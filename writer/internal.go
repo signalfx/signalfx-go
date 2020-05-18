@@ -25,6 +25,8 @@
 // point.
 package writer
 
+//go:generate sh -c "cd template && ./gen.sh"
+
 import (
 	"context"
 

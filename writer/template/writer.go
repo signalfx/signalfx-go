@@ -10,8 +10,6 @@ import (
 	"github.com/signalfx/golib/v3/sfxclient"
 )
 
-//go:generate sh ./gen.sh
-
 // InstancePreprocessor is used to filter out or otherwise change instances
 // before being sent.  If the return value is false, the instance won't be
 // sent.

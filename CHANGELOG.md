@@ -1,5 +1,10 @@
 # 1.6.38, Pending
 
+## Improvements
+
+* Removed the go:generate comment out of the writer codegen template to make it
+  easier to consume in external projects
+
 # 1.6.37, 2020-05-18
 
 ## Improvements
