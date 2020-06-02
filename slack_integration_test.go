@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -14,7 +15,7 @@ func TestCreateSlackIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_slack_success.json"))
 
-	result, err := client.CreateSlackIntegration(&integration.SlackIntegration{
+	result, err := client.CreateSlackIntegration(context.Background(), &integration.SlackIntegration{
 		Type: "Slack",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -27,7 +28,7 @@ func TestGetSlackIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_slack_success.json"))
 
-	result, err := client.GetSlackIntegration("id")
+	result, err := client.GetSlackIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error getting integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
@@ -38,7 +39,7 @@ func TestUpdateSlackIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_slack_success.json"))
 
-	result, err := client.UpdateSlackIntegration("id", &integration.SlackIntegration{
+	result, err := client.UpdateSlackIntegration(context.Background(), "id", &integration.SlackIntegration{
 		Type: "Slack",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -51,6 +52,6 @@ func TestDeleteSlackIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteSlackIntegration("id")
+	err := client.DeleteSlackIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error creating integration")
 }

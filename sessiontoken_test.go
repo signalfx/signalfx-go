@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,8 +20,8 @@ func TestCreateSessionToken(t *testing.T) {
 
 	mux.HandleFunc("/v2/session", verifyRequest(t, "POST", false, http.StatusOK, nil, "sessiontoken/create_success.json"))
 
-	result, err := client.CreateSessionToken(&sessiontoken.CreateTokenRequest{
-		Email: "testemail@test.com",
+	result, err := client.CreateSessionToken(context.Background(), &sessiontoken.CreateTokenRequest{
+		Email:    "testemail@test.com",
 		Password: "testpassword",
 	})
 	assert.NoError(t, err, "Unexpected error creating orgtoken")
@@ -36,7 +37,7 @@ func TestCreateBadCredentials(t *testing.T) {
 
 	mux.HandleFunc("/v2/session", verifyRequest(t, "POST", false, http.StatusBadRequest, nil, ""))
 
-	result, err := client.CreateSessionToken(&sessiontoken.CreateTokenRequest{
+	result, err := client.CreateSessionToken(context.Background(), &sessiontoken.CreateTokenRequest{
 		Email: "email",
 	})
 	assert.Error(t, err, "Should have gotten an error from a bad create")
@@ -49,7 +50,7 @@ func TestDeleteSessionToken(t *testing.T) {
 
 	mux.HandleFunc("/v2/session", verifyRequest(t, "DELETE", false, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteSessionToken(TestToken)
+	err := client.DeleteSessionToken(context.Background(), TestToken)
 	assert.NoError(t, err, "Unexpected error deleting token")
 }
 
@@ -59,7 +60,6 @@ func TestDeleteMissingSessionToken(t *testing.T) {
 
 	mux.HandleFunc("/v2/session", verifyRequest(t, "DELETE", false, http.StatusNotFound, nil, ""))
 
-	err := client.DeleteSessionToken(TestToken)
+	err := client.DeleteSessionToken(context.Background(), TestToken)
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
 }
-

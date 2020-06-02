@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -14,7 +15,7 @@ func TestCreateWebhookIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_webhook_success.json"))
 
-	result, err := client.CreateWebhookIntegration(&integration.WebhookIntegration{
+	result, err := client.CreateWebhookIntegration(context.Background(), &integration.WebhookIntegration{
 		Type: "Webhook",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -27,7 +28,7 @@ func TestGetWebhookIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_webhook_success.json"))
 
-	result, err := client.GetWebhookIntegration("id")
+	result, err := client.GetWebhookIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error getting integration")
 	assert.Equal(t, "webhoooooook", result.Name, "Name does not match")
 }
@@ -38,7 +39,7 @@ func TestUpdateWebhookIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_webhook_success.json"))
 
-	result, err := client.UpdateWebhookIntegration("id", &integration.WebhookIntegration{
+	result, err := client.UpdateWebhookIntegration(context.Background(), "id", &integration.WebhookIntegration{
 		Type: "Webhook",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -51,6 +52,6 @@ func TestDeleteWebhookIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteWebhookIntegration("id")
+	err := client.DeleteWebhookIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error creating integration")
 }

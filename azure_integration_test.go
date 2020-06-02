@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -14,7 +15,7 @@ func TestCreateAzureIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_azure_success.json"))
 
-	result, err := client.CreateAzureIntegration(&integration.AzureIntegration{
+	result, err := client.CreateAzureIntegration(context.Background(), &integration.AzureIntegration{
 		Type: "Azure",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -27,7 +28,7 @@ func TestGetAzureIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_azure_success.json"))
 
-	result, err := client.GetAzureIntegration("id")
+	result, err := client.GetAzureIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error getting integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
@@ -38,7 +39,7 @@ func TestUpdateAzureIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_azure_success.json"))
 
-	result, err := client.UpdateAzureIntegration("id", &integration.AzureIntegration{
+	result, err := client.UpdateAzureIntegration(context.Background(), "id", &integration.AzureIntegration{
 		Type: "Azure",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -51,6 +52,6 @@ func TestDeleteAzureIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteAzureIntegration("id")
+	err := client.DeleteAzureIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error creating integration")
 }

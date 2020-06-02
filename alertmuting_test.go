@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -16,7 +17,7 @@ func TestCreateAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", true, http.StatusCreated, nil, "alertmuting/create_success.json"))
 
-	result, err := client.CreateAlertMutingRule(&alertmuting.CreateUpdateAlertMutingRuleRequest{
+	result, err := client.CreateAlertMutingRule(context.Background(), &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating alert muting rule")
@@ -29,7 +30,7 @@ func TestCreateBadAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
-	result, err := client.CreateAlertMutingRule(&alertmuting.CreateUpdateAlertMutingRuleRequest{
+	result, err := client.CreateAlertMutingRule(context.Background(), &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
 	})
 	assert.Error(t, err, "Should have gotten an error from a bad create")
@@ -42,7 +43,7 @@ func TestDeleteAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteAlertMutingRule("string")
+	err := client.DeleteAlertMutingRule(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error deleting alert muting rule")
 }
 
@@ -52,7 +53,7 @@ func TestDeleteMissingAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
-	err := client.DeleteAlertMutingRule("example")
+	err := client.DeleteAlertMutingRule(context.Background(), "example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
 }
 
@@ -62,7 +63,7 @@ func TestGetAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "alertmuting/get_success.json"))
 
-	result, err := client.GetAlertMutingRule("string")
+	result, err := client.GetAlertMutingRule(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting alert mutnig rule")
 	assert.Equal(t, result.Description, "string", "Name does not match")
 }
@@ -73,7 +74,7 @@ func TestGetMissingAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.GetAlertMutingRule("string")
+	result, err := client.GetAlertMutingRule(context.Background(), "string")
 	assert.Error(t, err, "Should have gotten an error from a missing alert muting rule")
 	assert.Nil(t, result, "Should have gotten a nil result from a missing alert muting rule")
 }
@@ -94,7 +95,7 @@ func TestSearchAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "GET", true, http.StatusOK, params, "alertmuting/search_success.json"))
 
-	results, err := client.SearchAlertMutingRules(include, limit, name, offset)
+	results, err := client.SearchAlertMutingRules(context.Background(), include, limit, name, offset)
 	assert.NoError(t, err, "Unexpected error search alert muting rule")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
@@ -105,7 +106,7 @@ func TestUpdateAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "alertmuting/update_success.json"))
 
-	result, err := client.UpdateAlertMutingRule("string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
+	result, err := client.UpdateAlertMutingRule(context.Background(), "string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating alert muting rule")
@@ -118,7 +119,7 @@ func TestUpdateMissingAlertMutingRule(t *testing.T) {
 
 	mux.HandleFunc("/v2/alertmuting/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.UpdateAlertMutingRule("string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
+	result, err := client.UpdateAlertMutingRule(context.Background(), "string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
 	})
 	assert.Error(t, err, "Should have gotten an error from an update on a missing alert muting rule")
