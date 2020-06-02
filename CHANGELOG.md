@@ -1,4 +1,6 @@
-# 1.6.39, Pending
+# 1.6.40, Pending
+
+# 1.6.39, 2020-06-02
 
 ## Improvements
 
