@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -16,7 +17,7 @@ func TestCreateChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart", verifyRequest(t, "POST", true, http.StatusOK, nil, "chart/create_success.json"))
 
-	result, err := client.CreateChart(&chart.CreateUpdateChartRequest{
+	result, err := client.CreateChart(context.Background(), &chart.CreateUpdateChartRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating chart")
@@ -29,7 +30,7 @@ func TestBadCreateChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
-	result, err := client.CreateChart(&chart.CreateUpdateChartRequest{
+	result, err := client.CreateChart(context.Background(), &chart.CreateUpdateChartRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Expected error creating bad chart")
@@ -42,7 +43,7 @@ func TestDeleteChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "DELETE", true, http.StatusOK, nil, ""))
 
-	err := client.DeleteChart("string")
+	err := client.DeleteChart(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error deleting chart")
 }
 
@@ -52,7 +53,7 @@ func TestDeleteMissingChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "DELETE", true, http.StatusNotFound, nil, ""))
 
-	err := client.DeleteChart("string")
+	err := client.DeleteChart(context.Background(), "string")
 	assert.Error(t, err, "Expected error deleting missing chart")
 }
 
@@ -62,7 +63,7 @@ func TestGetChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "chart/get_success.json"))
 
-	result, err := client.GetChart("string")
+	result, err := client.GetChart(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting chart")
 	assert.Equal(t, result.Name, "string", "Name does not match")
 }
@@ -73,7 +74,7 @@ func TestGetMissingChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.GetChart("string")
+	result, err := client.GetChart(context.Background(), "string")
 	assert.Error(t, err, "Expected error getting missing chart")
 	assert.Nil(t, result, "Expected nil result getting chart")
 }
@@ -94,7 +95,7 @@ func TestSearchChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart", verifyRequest(t, "GET", true, http.StatusOK, params, "chart/search_success.json"))
 
-	results, err := client.SearchCharts(limit, name, offset, tags)
+	results, err := client.SearchCharts(context.Background(), limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search chart")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
@@ -115,7 +116,7 @@ func TestSearchChartBad(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
-	_, err := client.SearchCharts(limit, name, offset, tags)
+	_, err := client.SearchCharts(context.Background(), limit, name, offset, tags)
 	assert.Error(t, err, "Unexpected error search chart")
 }
 
@@ -125,7 +126,7 @@ func TestUpdateChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "chart/update_success.json"))
 
-	result, err := client.UpdateChart("string", &chart.CreateUpdateChartRequest{
+	result, err := client.UpdateChart(context.Background(), "string", &chart.CreateUpdateChartRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating chart")
@@ -138,7 +139,7 @@ func TestUpdateMissingChart(t *testing.T) {
 
 	mux.HandleFunc("/v2/chart/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.UpdateChart("string", &chart.CreateUpdateChartRequest{
+	result, err := client.UpdateChart(context.Background(), "string", &chart.CreateUpdateChartRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Expected error updating chart")

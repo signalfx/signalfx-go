@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -16,7 +17,7 @@ func TestCreateDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", true, http.StatusOK, nil, "detector/create_success.json"))
 
-	result, err := client.CreateDetector(&detector.CreateUpdateDetectorRequest{
+	result, err := client.CreateDetector(context.Background(), &detector.CreateUpdateDetectorRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating detector")
@@ -29,7 +30,7 @@ func TestCreateBadDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
-	result, err := client.CreateDetector(&detector.CreateUpdateDetectorRequest{
+	result, err := client.CreateDetector(context.Background(), &detector.CreateUpdateDetectorRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Should have gotten an error from a bad create")
@@ -42,7 +43,7 @@ func TestDeleteDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteDetector("string")
+	err := client.DeleteDetector(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error deleting detector")
 }
 
@@ -52,7 +53,7 @@ func TestDeleteMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
-	err := client.DeleteDetector("example")
+	err := client.DeleteDetector(context.Background(), "example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
 }
 
@@ -62,7 +63,7 @@ func TestDisableDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", true, http.StatusNoContent, nil, ""))
 
-	err := client.DisableDetector("string", []string{"example"})
+	err := client.DisableDetector(context.Background(), "string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
 }
 
@@ -72,7 +73,7 @@ func TestDisableMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/disable", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
-	err := client.DisableDetector("string", []string{"example"})
+	err := client.DisableDetector(context.Background(), "string", []string{"example"})
 	assert.Error(t, err, "Should have gotten an error from a missing disable")
 }
 
@@ -82,7 +83,7 @@ func TestEnableDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", true, http.StatusNoContent, nil, ""))
 
-	err := client.EnableDetector("string", []string{"example"})
+	err := client.EnableDetector(context.Background(), "string", []string{"example"})
 	assert.NoError(t, err, "Unexpected error disabling detector")
 }
 
@@ -92,7 +93,7 @@ func TestEnableMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/enable", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
-	err := client.EnableDetector("string", []string{"example"})
+	err := client.EnableDetector(context.Background(), "string", []string{"example"})
 	assert.Error(t, err, "Should have gotten an error from a missing enable")
 }
 
@@ -102,7 +103,7 @@ func TestGetDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_success.json"))
 
-	result, err := client.GetDetector("string")
+	result, err := client.GetDetector(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result.Name, "string", "Name does not match")
 }
@@ -113,7 +114,7 @@ func TestGetMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.GetDetector("string")
+	result, err := client.GetDetector(context.Background(), "string")
 	assert.Error(t, err, "Should have gotten an error from a missing detector")
 	assert.Nil(t, result, "Should have gotten a nil result from a missing detector")
 }
@@ -134,7 +135,7 @@ func TestSearchDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/search_success.json"))
 
-	results, err := client.SearchDetectors(limit, name, offset, tags)
+	results, err := client.SearchDetectors(context.Background(), limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search detector")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
@@ -155,7 +156,7 @@ func TestSearchDetectorBad(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
-	_, err := client.SearchDetectors(limit, name, offset, tags)
+	_, err := client.SearchDetectors(context.Background(), limit, name, offset, tags)
 	assert.Error(t, err, "Unexpected error search detector")
 }
 
@@ -165,7 +166,7 @@ func TestUpdateDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "detector/update_success.json"))
 
-	result, err := client.UpdateDetector("string", &detector.CreateUpdateDetectorRequest{
+	result, err := client.UpdateDetector(context.Background(), "string", &detector.CreateUpdateDetectorRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating detector")
@@ -178,7 +179,7 @@ func TestUpdateMissingDetector(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.UpdateDetector("string", &detector.CreateUpdateDetectorRequest{
+	result, err := client.UpdateDetector(context.Background(), "string", &detector.CreateUpdateDetectorRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Should have gotten an error from an update on a missing detector")
@@ -202,7 +203,7 @@ func TestGetDetectorEvents(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/events", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/get_events.json"))
 
-	result, err := client.GetDetectorEvents("string", from, to, offset, limit)
+	result, err := client.GetDetectorEvents(context.Background(), "string", from, to, offset, limit)
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
 }
@@ -220,7 +221,7 @@ func TestGetDetectorIncidents(t *testing.T) {
 
 	mux.HandleFunc("/v2/detector/string/incidents", verifyRequest(t, "GET", true, http.StatusOK, params, "detector/get_incidents.json"))
 
-	result, err := client.GetDetectorIncidents("string", offset, limit)
+	result, err := client.GetDetectorIncidents(context.Background(), "string", offset, limit)
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
 }

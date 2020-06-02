@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -16,7 +17,7 @@ func TestCreateTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team", verifyRequest(t, "POST", true, http.StatusOK, nil, "team/create_success.json"))
 
-	result, err := client.CreateTeam(&team.CreateUpdateTeamRequest{
+	result, err := client.CreateTeam(context.Background(), &team.CreateUpdateTeamRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error creating team")
@@ -29,7 +30,7 @@ func TestCreateBadTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
-	result, err := client.CreateTeam(&team.CreateUpdateTeamRequest{
+	result, err := client.CreateTeam(context.Background(), &team.CreateUpdateTeamRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Should get an error from bad tream")
@@ -42,7 +43,7 @@ func TestDeleteTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteTeam("string")
+	err := client.DeleteTeam(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting Team")
 }
 
@@ -52,7 +53,7 @@ func TestDeleteMissingTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "DELETE", true, http.StatusNotFound, nil, ""))
 
-	err := client.DeleteTeam("string")
+	err := client.DeleteTeam(context.Background(), "string")
 	assert.Error(t, err, "Should have gotten an error code for a missing team")
 }
 
@@ -62,7 +63,7 @@ func TestGetTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "team/get_success.json"))
 
-	result, err := client.GetTeam("string")
+	result, err := client.GetTeam(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting Team")
 	assert.Equal(t, result.Name, "string", "Name does not match")
 }
@@ -73,7 +74,7 @@ func TestGetMissingTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.GetTeam("string")
+	result, err := client.GetTeam(context.Background(), "string")
 	assert.Error(t, err, "Expected error getting missing team")
 	assert.Nil(t, result, "Expected nil result getting missing team")
 }
@@ -94,7 +95,7 @@ func TestSearchTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team", verifyRequest(t, "GET", true, http.StatusOK, params, "team/search_success.json"))
 
-	results, err := client.SearchTeam(limit, name, offset, tags)
+	results, err := client.SearchTeam(context.Background(), limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search Team")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
@@ -115,7 +116,7 @@ func TestSearchTeamBad(t *testing.T) {
 
 	mux.HandleFunc("/v2/team", verifyRequest(t, "GET", true, http.StatusOK, params, ""))
 
-	_, err := client.SearchTeam(limit, name, offset, tags)
+	_, err := client.SearchTeam(context.Background(), limit, name, offset, tags)
 	assert.Error(t, err, "Unexpected error search Team")
 }
 
@@ -125,7 +126,7 @@ func TestUpdateTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "team/update_success.json"))
 
-	result, err := client.UpdateTeam("string", &team.CreateUpdateTeamRequest{
+	result, err := client.UpdateTeam(context.Background(), "string", &team.CreateUpdateTeamRequest{
 		Name: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating Team")
@@ -138,7 +139,7 @@ func TestUpdateMissingTeam(t *testing.T) {
 
 	mux.HandleFunc("/v2/team/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.UpdateTeam("string", &team.CreateUpdateTeamRequest{
+	result, err := client.UpdateTeam(context.Background(), "string", &team.CreateUpdateTeamRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Should've gotten an error from a missing team update")

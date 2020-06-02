@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -14,7 +15,7 @@ func TestCreateJiraIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_jira_success.json"))
 
-	result, err := client.CreateJiraIntegration(&integration.JiraIntegration{
+	result, err := client.CreateJiraIntegration(context.Background(), &integration.JiraIntegration{
 		Type: "Jira",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -27,7 +28,7 @@ func TestGetJiraIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_jira_success.json"))
 
-	result, err := client.GetJiraIntegration("id")
+	result, err := client.GetJiraIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error getting integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
@@ -38,7 +39,7 @@ func TestUpdateJiraIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_jira_success.json"))
 
-	result, err := client.UpdateJiraIntegration("id", &integration.JiraIntegration{
+	result, err := client.UpdateJiraIntegration(context.Background(), "id", &integration.JiraIntegration{
 		Type: "Jira",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -51,6 +52,6 @@ func TestDeleteJiraIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteJiraIntegration("id")
+	err := client.DeleteJiraIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error creating integration")
 }

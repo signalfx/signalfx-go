@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -14,7 +15,7 @@ func TestCreatePagerDutyIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_pd_success.json"))
 
-	result, err := client.CreatePagerDutyIntegration(&integration.PagerDutyIntegration{
+	result, err := client.CreatePagerDutyIntegration(context.Background(), &integration.PagerDutyIntegration{
 		Type: "PagerDuty",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -27,7 +28,7 @@ func TestGetPagerDutyIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_pd_success.json"))
 
-	result, err := client.GetPagerDutyIntegration("id")
+	result, err := client.GetPagerDutyIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error getting integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
@@ -38,7 +39,7 @@ func TestUpdatePagerDutyIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_pd_success.json"))
 
-	result, err := client.UpdatePagerDutyIntegration("id", &integration.PagerDutyIntegration{
+	result, err := client.UpdatePagerDutyIntegration(context.Background(), "id", &integration.PagerDutyIntegration{
 		Type: "PagerDuty",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -51,6 +52,6 @@ func TestDeletePagerDutyIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeletePagerDutyIntegration("id")
+	err := client.DeletePagerDutyIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error creating integration")
 }

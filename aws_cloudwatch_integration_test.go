@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -14,7 +15,7 @@ func TestCreateAWSCloudWatchIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_aws_success.json"))
 
-	result, err := client.CreateAWSCloudWatchIntegration(&integration.AwsCloudWatchIntegration{
+	result, err := client.CreateAWSCloudWatchIntegration(context.Background(), &integration.AwsCloudWatchIntegration{
 		Type: "AWSCloudWatch",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -27,7 +28,7 @@ func TestGetAWSCloudWatchIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/create_aws_success.json"))
 
-	result, err := client.GetAWSCloudWatchIntegration("id")
+	result, err := client.GetAWSCloudWatchIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error getting integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
@@ -38,7 +39,7 @@ func TestUpdateAWSCloudWatchIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_aws_success.json"))
 
-	result, err := client.UpdateAWSCloudWatchIntegration("id", &integration.AwsCloudWatchIntegration{
+	result, err := client.UpdateAWSCloudWatchIntegration(context.Background(), "id", &integration.AwsCloudWatchIntegration{
 		Type: "AWSCloudWatch",
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
@@ -51,6 +52,6 @@ func TestDeleteAWSCloudWatchIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteAWSCloudWatchIntegration("id")
+	err := client.DeleteAWSCloudWatchIntegration(context.Background(), "id")
 	assert.NoError(t, err, "Unexpected error creating integration")
 }

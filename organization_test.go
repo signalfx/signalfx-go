@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -17,7 +18,7 @@ func TestGetOrganization(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_success.json"))
 
-	result, err := client.GetOrganization("string")
+	result, err := client.GetOrganization(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting organization")
 	assert.Equal(t, result.Id, "string", "Id does not match")
 }
@@ -28,7 +29,7 @@ func TestGetMissingOrganization(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.GetDetector("string")
+	result, err := client.GetDetector(context.Background(), "string")
 	assert.Error(t, err, "Should have gotten an error from a missing organization")
 	assert.Nil(t, result, "Should have gotten a nil result from a missing organization")
 }
@@ -39,7 +40,7 @@ func TestGetMember(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_member_success.json"))
 
-	result, err := client.GetMember("string")
+	result, err := client.GetMember(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting member")
 	assert.Equal(t, result.Id, "string", "Id does not match")
 }
@@ -50,7 +51,7 @@ func TestGetMissingMember(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
-	result, err := client.GetMember("string")
+	result, err := client.GetMember(context.Background(), "string")
 	assert.Error(t, err, "Should have gotten an error from a missing member")
 	assert.Nil(t, result, "Should have gotten a nil result from a missing member")
 }
@@ -61,7 +62,7 @@ func TestInviteMember(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", true, http.StatusOK, nil, "organization/invite_member_success.json"))
 
-	results, err := client.InviteMember(&organization.CreateUpdateMemberRequest{
+	results, err := client.InviteMember(context.Background(), &organization.CreateUpdateMemberRequest{
 		Email: "string",
 	})
 	assert.NoError(t, err, "Unexpected error inviting member")
@@ -78,7 +79,7 @@ func TestGetInviteMembers(t *testing.T) {
 	members[0] = &organization.Member{
 		Email: "string",
 	}
-	results, err := client.InviteMembers(&organization.InviteMembersRequest{
+	results, err := client.InviteMembers(context.Background(), &organization.InviteMembersRequest{
 		Members: members,
 	})
 	assert.NoError(t, err, "Unexpected error inviting members")
@@ -101,7 +102,7 @@ func TestGetOrganizationMembers(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", true, http.StatusOK, params, "organization/get_organization_members_success.json"))
 
-	results, err := client.GetOrganizationMembers(limit, query, offset, orderBy)
+	results, err := client.GetOrganizationMembers(context.Background(), limit, query, offset, orderBy)
 	assert.NoError(t, err, "Unexpected error getting members")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
@@ -122,7 +123,7 @@ func TestGetOrganizationMembersBad(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
-	_, err := client.GetOrganizationMembers(limit, query, offset, orderBy)
+	_, err := client.GetOrganizationMembers(context.Background(), limit, query, offset, orderBy)
 	assert.Error(t, err, "Unexpected error getting members")
 }
 
@@ -132,7 +133,7 @@ func TestDeleteMember(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
-	err := client.DeleteMember("string")
+	err := client.DeleteMember(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error deleting member")
 }
 
@@ -142,6 +143,6 @@ func TestDeleteMissingMember(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization/member", verifyRequest(t, "POST", true, http.StatusNotFound, nil, ""))
 
-	err := client.DeleteMember("example")
+	err := client.DeleteMember(context.Background(), "example")
 	assert.Error(t, err, "Should have gotten an error from a missing delete")
 }
