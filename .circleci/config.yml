@@ -27,9 +27,6 @@ workflows:
   build:
     jobs:
       - test:
-          name: "Go 1.12"
-          go_version: "1.12"
-      - test:
           name: "Go 1.13"
           go_version: "1.13"
       - test:
