@@ -161,7 +161,7 @@ func (c *Computation) LimitSize() int {
 	return *c.limitSize
 }
 
-// MatchedNoTimeseries query if it matched no active timeseries.
+// MatchedNoTimeseriesQuery if it matched no active timeseries.
 // This will wait for a short while for the limit
 // size message to come on the websocket, but will return "" after a timeout if
 // it does not come.
@@ -172,7 +172,7 @@ func (c *Computation) MatchedNoTimeseriesQuery() string {
 	return *c.matchedNoTimeseriesQuery
 }
 
-// GroupByMissingProperty if one or more timeseries don't contain the required dimentsion.
+// GroupByMissingProperties are timeseries that don't contain the required dimensions.
 // This will wait for a short while for the limit
 // size message to come on the websocket, but will return nil after a timeout if
 // it does not come.
