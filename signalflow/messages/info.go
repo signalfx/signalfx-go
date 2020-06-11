@@ -6,10 +6,12 @@ import (
 )
 
 const (
-	JobRunningResolution = "JOB_RUNNING_RESOLUTION"
-	JobDetectedLag       = "JOB_DETECTED_LAG"
-	JobInitialMaxDelay   = "JOB_INITIAL_MAX_DELAY"
-	FindLimitedResultSet = "FIND_LIMITED_RESULT_SET"
+	JobRunningResolution    = "JOB_RUNNING_RESOLUTION"
+	JobDetectedLag          = "JOB_DETECTED_LAG"
+	JobInitialMaxDelay      = "JOB_INITIAL_MAX_DELAY"
+	FindLimitedResultSet    = "FIND_LIMITED_RESULT_SET"
+	FindMatchedNoTimeseries = "FIND_MATCHED_NO_TIMESERIES"
+	GroupByMissingProperty  = "GROUPBY_MISSING_PROPERTY"
 )
 
 type MessageBlock struct {
