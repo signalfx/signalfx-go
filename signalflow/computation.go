@@ -26,13 +26,13 @@ type Computation struct {
 	updateSignal       updateSignal
 	lastError          error
 
-	resolutionMS           *int
-	lagMS                  *int
-	maxDelayMS             *int
-	matchedSize            *int
-	limitSize              *int
-	matchedNoTimeseries    *bool
-	groupByMissingProperty *bool
+	resolutionMS             *int
+	lagMS                    *int
+	maxDelayMS               *int
+	matchedSize              *int
+	limitSize                *int
+	matchedNoTimeseriesQuery *string
+	groupByMissingProperties []string
 
 	tsidMetadata map[idtool.ID]*messages.MetadataProperties
 
@@ -161,26 +161,26 @@ func (c *Computation) LimitSize() int {
 	return *c.limitSize
 }
 
-// MatchedNoTimeseries if query matched no active timeseries.
+// MatchedNoTimeseriesQuery if it matched no active timeseries.
 // This will wait for a short while for the limit
-// size message to come on the websocket, but will return false after a timeout if
+// size message to come on the websocket, but will return "" after a timeout if
 // it does not come.
-func (c *Computation) MatchedNoTimeseries() bool {
-	if err := c.waitForMetadata(func() bool { return c.matchedNoTimeseries != nil }); err != nil {
-		return false
+func (c *Computation) MatchedNoTimeseriesQuery() string {
+	if err := c.waitForMetadata(func() bool { return c.matchedNoTimeseriesQuery != nil }); err != nil {
+		return ""
 	}
-	return *c.matchedNoTimeseries
+	return *c.matchedNoTimeseriesQuery
 }
 
-// GroupByMissingProperty if one or more timeseries don't contain the required dimentsion.
+// GroupByMissingProperties are timeseries that don't contain the required dimensions.
 // This will wait for a short while for the limit
-// size message to come on the websocket, but will return false after a timeout if
+// size message to come on the websocket, but will return nil after a timeout if
 // it does not come.
-func (c *Computation) GroupByMissingProperty() bool {
-	if err := c.waitForMetadata(func() bool { return c.groupByMissingProperty != nil }); err != nil {
-		return false
+func (c *Computation) GroupByMissingProperties() []string {
+	if err := c.waitForMetadata(func() bool { return c.groupByMissingProperties != nil }); err != nil {
+		return nil
 	}
-	return *c.matchedNoTimeseries
+	return c.groupByMissingProperties
 }
 
 // TSIDMetadata for a particular tsid.  This will wait for a short while for
@@ -249,9 +249,9 @@ func (c *Computation) processMessage(m messages.Message) {
 			c.matchedSize = pointer.Int(v.MessageBlock.Contents.(messages.FindLimitedResultSetContents).MatchedSize())
 			c.limitSize = pointer.Int(v.MessageBlock.Contents.(messages.FindLimitedResultSetContents).LimitSize())
 		case messages.FindMatchedNoTimeseries:
-			c.matchedNoTimeseries = pointer.Bool(true)
+			c.matchedNoTimeseriesQuery = pointer.String(v.MessageBlock.Contents.(messages.FindMatchedNoTimeseriesContents).MatchedNoTimeseriesQuery())
 		case messages.GroupByMissingProperty:
-			c.groupByMissingProperty = pointer.Bool(true)
+			c.groupByMissingProperties = v.MessageBlock.Contents.(messages.GroupByMissingPropertyContents).GroupByMissingProperties()
 		}
 	case *messages.ErrorMessage:
 		rawData := v.RawData()
