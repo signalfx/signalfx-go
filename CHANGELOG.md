@@ -1,3 +1,6 @@
+# 1.7.4, 2020-06-11
+* Finish support for additional computation fields for job metadata. Thanks [shrivu-stripe](https://github.com/shrivu-stripe)! [#93](https://github.com/signalfx/signalfx-go/pull/93)
+
 # 1.7.3, 2020-06-11
 * Added additional computation fields for job metadata. Thanks [shrivu-stripe](https://github.com/shrivu-stripe)! [#92](https://github.com/signalfx/signalfx-go/pull/92)
 
