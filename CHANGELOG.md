@@ -1,3 +1,6 @@
+# 1.7.3, 2020-06-11
+* Added additional computation fields for job metadata. Thanks [shrivu-stripe](https://github.com/shrivu-stripe)! [#92](https://github.com/signalfx/signalfx-go/pull/92)
+
 # 1.7.2, 2020-06-10
 * Added `packageSpecifications` field to Detector`
 
