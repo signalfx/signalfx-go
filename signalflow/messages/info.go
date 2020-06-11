@@ -107,8 +107,11 @@ func (jm FindMatchedNoTimeseriesContents) MatchedNoTimeseriesQuery() string {
 type GroupByMissingPropertyContents map[string]interface{}
 
 func (jm GroupByMissingPropertyContents) GroupByMissingProperties() []string {
-	field, _ := jm["propertyNames"].([]string)
-	return field
+	propNames := make([]string, len(jm["propertyNames"].([]interface{})))
+	for i, v := range jm["propertyNames"].([]interface{}) {
+		propNames[i] = v.(string)
+	}
+	return propNames
 }
 
 // ExpiredTSIDMessage is received when a timeseries has expired and is no
