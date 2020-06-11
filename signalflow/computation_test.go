@@ -199,6 +199,44 @@ func TestFindLimitedResultSetMetadata(t *testing.T) {
 	require.Equal(t, 50000, comp.LimitSize())
 }
 
+func TestMatchedNoTimeseriesQueryMetaData(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		"type": "message",
+		"message": {
+			"messageCode": "FIND_MATCHED_NO_TIMESERIES",
+			"contents": {
+				"query": "abc"
+			}
+		}
+	}`), true)))
+
+	require.Equal(t, "abc", comp.MatchedNoTimeseriesQuery())
+}
+
+func TestGroupByMissingPropertyMetaData(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		"type": "message",
+		"message": {
+			"messageCode": "GROUPBY_MISSING_PROPERTY",
+			"contents": {
+				"propertyNames": ["x", "y", "z"]
+			}
+		}
+	}`), true)))
+
+	require.Equal(t, []string{"x", "y", "z"}, comp.GroupByMissingProperties())
+}
+
 func TestHandle(t *testing.T) {
 	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{

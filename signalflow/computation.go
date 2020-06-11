@@ -176,7 +176,7 @@ func (c *Computation) MatchedNoTimeseriesQuery() string {
 // This will wait for a short while for the limit
 // size message to come on the websocket, but will return nil after a timeout if
 // it does not come.
-func (c *Computation) GroupByMissingProperty() []string {
+func (c *Computation) GroupByMissingProperties() []string {
 	if err := c.waitForMetadata(func() bool { return c.groupByMissingProperties != nil }); err != nil {
 		return nil
 	}
