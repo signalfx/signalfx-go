@@ -204,9 +204,22 @@ func (w *DatapointWriter) processInput(ctx context.Context, insts []*datapoint.D
 
 // Start the writer processing loop
 func (w *DatapointWriter) Start(ctx context.Context) {
-	// Initialize the shutdownFlag in the same goroutine as the one calling
+	// Initialize the writer fields in the same goroutine as the one calling
 	// start to avoid data races when calling WaitForShutdown.
 	w.shutdownFlag = make(chan struct{})
+
+	if w.MaxBuffered == 0 {
+		w.MaxBuffered = DefaultDatapointMaxBuffered
+	}
+	if w.MaxRequests == 0 {
+		w.MaxRequests = DefaultDatapointMaxRequests
+	}
+	if w.MaxBatchSize == 0 {
+		w.MaxBatchSize = DefaultDatapointMaxBatchSize
+	}
+
+	w.buff = NewDatapointRingBuffer(w.MaxBuffered)
+
 	go func() {
 		w.run(ctx)
 		close(w.shutdownFlag)
@@ -227,18 +240,6 @@ func (w *DatapointWriter) handleRequestDone(ctx context.Context, count int64) {
 // canceled.
 //nolint: dupl
 func (w *DatapointWriter) run(ctx context.Context) {
-	if w.MaxBuffered == 0 {
-		w.MaxBuffered = DefaultDatapointMaxBuffered
-	}
-	if w.MaxRequests == 0 {
-		w.MaxRequests = DefaultDatapointMaxRequests
-	}
-	if w.MaxBatchSize == 0 {
-		w.MaxBatchSize = DefaultDatapointMaxBatchSize
-	}
-
-	w.buff = NewDatapointRingBuffer(w.MaxBuffered)
-
 	// Make the slice copy cache and prime it with preallocated slices
 	w.chunkSliceCache = make(chan []*datapoint.Datapoint, w.MaxRequests)
 	for i := 0; i < w.MaxRequests; i++ {

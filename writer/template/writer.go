@@ -199,9 +199,22 @@ func (w *InstanceWriter) processInput(ctx context.Context, insts []*Instance) {
 
 // Start the writer processing loop
 func (w *InstanceWriter) Start(ctx context.Context) {
-	// Initialize the shutdownFlag in the same goroutine as the one calling
+	// Initialize the writer fields in the same goroutine as the one calling
 	// start to avoid data races when calling WaitForShutdown.
 	w.shutdownFlag = make(chan struct{})
+
+	if w.MaxBuffered == 0 {
+		w.MaxBuffered = DefaultInstanceMaxBuffered
+	}
+	if w.MaxRequests == 0 {
+		w.MaxRequests = DefaultInstanceMaxRequests
+	}
+	if w.MaxBatchSize == 0 {
+		w.MaxBatchSize = DefaultInstanceMaxBatchSize
+	}
+
+	w.buff = NewInstanceRingBuffer(w.MaxBuffered)
+
 	go func() {
 		w.run(ctx)
 		close(w.shutdownFlag)
@@ -222,18 +235,6 @@ func (w *InstanceWriter) handleRequestDone(ctx context.Context, count int64) {
 // canceled.
 //nolint: dupl
 func (w *InstanceWriter) run(ctx context.Context) {
-	if w.MaxBuffered == 0 {
-		w.MaxBuffered = DefaultInstanceMaxBuffered
-	}
-	if w.MaxRequests == 0 {
-		w.MaxRequests = DefaultInstanceMaxRequests
-	}
-	if w.MaxBatchSize == 0 {
-		w.MaxBatchSize = DefaultInstanceMaxBatchSize
-	}
-
-	w.buff = NewInstanceRingBuffer(w.MaxBuffered)
-
 	// Make the slice copy cache and prime it with preallocated slices
 	w.chunkSliceCache = make(chan []*Instance, w.MaxRequests)
 	for i := 0; i < w.MaxRequests; i++ {
