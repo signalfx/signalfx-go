@@ -118,6 +118,8 @@ func (c *Computation) Resolution() time.Duration {
 	if err := c.waitForMetadata(func() bool { return c.resolutionMS != nil }); err != nil {
 		return 0
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return time.Duration(*c.resolutionMS) * time.Millisecond
 }
 
@@ -128,6 +130,8 @@ func (c *Computation) Lag() time.Duration {
 	if err := c.waitForMetadata(func() bool { return c.lagMS != nil }); err != nil {
 		return 0
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return time.Duration(*c.lagMS) * time.Millisecond
 }
 
@@ -138,6 +142,8 @@ func (c *Computation) MaxDelay() time.Duration {
 	if err := c.waitForMetadata(func() bool { return c.maxDelayMS != nil }); err != nil {
 		return 0
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return time.Duration(*c.maxDelayMS) * time.Millisecond
 }
 
@@ -148,6 +154,8 @@ func (c *Computation) MatchedSize() int {
 	if err := c.waitForMetadata(func() bool { return c.matchedSize != nil }); err != nil {
 		return 0
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return *c.matchedSize
 }
 
@@ -158,6 +166,8 @@ func (c *Computation) LimitSize() int {
 	if err := c.waitForMetadata(func() bool { return c.limitSize != nil }); err != nil {
 		return 0
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return *c.limitSize
 }
 
@@ -169,6 +179,8 @@ func (c *Computation) MatchedNoTimeseriesQuery() string {
 	if err := c.waitForMetadata(func() bool { return c.matchedNoTimeseriesQuery != nil }); err != nil {
 		return ""
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return *c.matchedNoTimeseriesQuery
 }
 
@@ -180,6 +192,8 @@ func (c *Computation) GroupByMissingProperties() []string {
 	if err := c.waitForMetadata(func() bool { return c.groupByMissingProperties != nil }); err != nil {
 		return nil
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return c.groupByMissingProperties
 }
 
@@ -190,6 +204,8 @@ func (c *Computation) TSIDMetadata(tsid idtool.ID) *messages.MetadataProperties 
 	if err := c.waitForMetadata(func() bool { return c.tsidMetadata[tsid] != nil }); err != nil {
 		return nil
 	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	return c.tsidMetadata[tsid]
 }
 
@@ -223,7 +239,8 @@ func (c *Computation) watchMessages() {
 
 func (c *Computation) processMessage(m messages.Message) {
 	defer c.updateSignal.SignalAll()
-
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
 	switch v := m.(type) {
 	case *messages.JobStartControlMessage:
 		c.handle = v.Handle
