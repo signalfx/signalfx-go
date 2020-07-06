@@ -1,3 +1,7 @@
+# 1.7.6, Pending
+* Fix race condition in SignalFlow client Close operation that could cause
+  panics.
+
 # 1.7.5, 2020-06-11
 * Fix busted accessor.
 
