@@ -225,7 +225,6 @@ func (c *Computation) watchMessages() {
 	for {
 		select {
 		case <-c.ctx.Done():
-			close(c.dataCh)
 			return
 		case m, ok := <-c.channel.Messages():
 			if !ok {
@@ -301,6 +300,7 @@ func (c *Computation) bufferDataMessages() {
 			}
 			select {
 			case <-c.ctx.Done():
+				close(c.dataCh)
 				return
 			case c.dataCh <- nextMessage:
 				nextMessage = nil
