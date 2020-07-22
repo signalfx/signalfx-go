@@ -1,4 +1,4 @@
-# 1.7.6,  2020-07-22
+# 1.7.7,  2020-07-22
 * Added new fields to Azure integration.
 * Fix race condition in SignalFlow client Close operation that could cause
   panics.
