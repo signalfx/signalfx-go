@@ -9,6 +9,12 @@
   "type": "Azure",
   "appId": "string",
   "azureEnvironment": "AZURE",
+  "customNamespacesPerService": {
+    "Microsoft.Compute/virtualMachines": [
+      "monitoringAgent",
+      "customNamespace"
+    ]
+  },
   "pollRate": 60000,
   "secretKey": "string",
   "services": [
@@ -17,5 +23,6 @@
   "subscriptions": [
     "string"
   ],
+  "syncGuestOsNamespaces": false,
   "tenantId": "string"
 }
