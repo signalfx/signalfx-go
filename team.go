@@ -163,7 +163,7 @@ func (c *Client) LinkDetectorToTeam(ctx context.Context, id string, detectorID s
 }
 
 // UnLinkDetectorFromTeam unlinks a detector from a team.
-func (c *Client) UnLinkDetectorFromTeam(ctx context.Context, id string, detectorID string) error {
+func (c *Client) UnlinkDetectorFromTeam(ctx context.Context, id string, detectorID string) error {
 	targetURL := fmt.Sprintf("%s/%s/detector/%s", TeamAPIURL, id, detectorID)
 	resp, err := c.doRequest(ctx, "DELETE", targetURL, nil, nil)
 
@@ -214,7 +214,7 @@ func (c *Client) UnlinkDashboardGroupFromTeam(ctx context.Context, id string, da
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusNoContent {
 		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
 	}
