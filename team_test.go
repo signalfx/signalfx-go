@@ -145,3 +145,43 @@ func TestUpdateMissingTeam(t *testing.T) {
 	assert.Error(t, err, "Should've gotten an error from a missing team update")
 	assert.Nil(t, result, "Should've gotten a nil dashboard from a missing team update")
 }
+
+func TestLinkDetectorToTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string/detector/string2", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+
+	err := client.LinkDetectorToTeam(context.Background(), "string", "string2")
+	assert.NoError(t, err, "Unexpected error linking team")
+}
+
+func TestUnlinkDetectorFromTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string/detector/string2", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
+
+	err := client.UnlinkDetectorFromTeam(context.Background(), "string", "string2")
+	assert.NoError(t, err, "Unexpected error unlinking team")
+}
+
+func TestLinkDashboardGroupToTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string/dashboardgroup/string2", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+
+	err := client.LinkDashboardGroupToTeam(context.Background(), "string", "string2")
+	assert.NoError(t, err, "Unexpected error linking dashboard group")
+}
+
+func TestUnlinkDashboardGroupFromTeam(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/team/string/dashboardgroup/string2", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
+
+	err := client.UnlinkDashboardGroupFromTeam(context.Background(), "string", "string2")
+	assert.NoError(t, err, "Unexpected error linking dashboard group")
+}
