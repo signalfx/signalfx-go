@@ -5,6 +5,12 @@
   "members": [
     "string"
   ],
+  "dashboardGroups": [
+    "string"
+  ],
+  "detectors": [
+    "string"
+  ],
   "notificationLists": {
     "default": [
       {
