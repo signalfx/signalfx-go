@@ -2,6 +2,7 @@
 * Added `detectorName` to incident model. Thanks [choo-stripe](https://github.com/choo-stripe)! [#103](https://github.com/signalfx/signalfx-go/pull/103)
 * Clean up some resources when a context is canceled during Signalflow computations. Thanks [kerbyhughes](https://github.com/kerbyhughes)! [#104](https://github.com/signalfx/signalfx-go/pull/104)
 * Add new team linking methods for detectors and dashboard groups. [#102](https://github.com/signalfx/signalfx-go/pull/102)
+* Add new team fields. [#105](https://github.com/signalfx/signalfx-go/pull/105)
 
 # 1.7.7, 2020-07-22
 * Added new fields to Azure integration.
