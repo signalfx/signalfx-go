@@ -1,4 +1,7 @@
-# 1.7.7,  2020-07-22
+# 1.7.8, 2020-08-06
+* Added `detectorName` to incident model. Thanks [choo-stripe](https://github.com/choo-stripe)! [#103](https://github.com/signalfx/signalfx-go/pull/103)
+
+# 1.7.7, 2020-07-22
 * Added new fields to Azure integration.
 * Fix race condition in SignalFlow client Close operation that could cause
   panics.
