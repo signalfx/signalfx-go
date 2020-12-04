@@ -273,3 +273,38 @@ func TestComputationError(t *testing.T) {
 	require.Equal(t, "ANALYTICS_PROGRAM_NAME_ERROR", err.(*ComputationError).ErrorType)
 	require.Equal(t, "We hit some error", err.(*ComputationError).Message)
 }
+
+func TestComputationFinish(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	go func() {
+		ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+			"type": "control-message",
+			"event": "JOB_START",
+			"handle": "AAAABBBB"
+		}`), true)))
+
+		ch.AcceptMessage(&messages.MetadataMessage{
+			TSID: idtool.ID(4000),
+		})
+
+		ch.AcceptMessage(&messages.DataMessage{
+			Payloads: []messages.DataPayload{
+				{
+					TSID: idtool.ID(4000),
+				},
+			},
+		})
+
+		ch.AcceptMessage(&messages.EndOfChannelControlMessage{})
+	}()
+
+	for msg := range comp.Data() {
+		require.Equal(t, idtool.ID(4000), msg.Payloads[0].TSID)
+	}
+
+	// The for loop should exit when the end of channel message comes through
+}

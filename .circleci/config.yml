@@ -21,7 +21,7 @@ jobs:
           go get golang.org/x/tools/cmd/goimports
 
           go generate ./...
-          go test ./... -parallel 4
+          go test ./... -parallel 4 -timeout 2m
 workflows:
   version: 2
   build:
@@ -32,3 +32,6 @@ workflows:
       - test:
           name: "Go 1.14"
           go_version: "1.14"
+      - test:
+          name: "Go 1.15"
+          go_version: "1.15"
