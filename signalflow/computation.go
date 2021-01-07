@@ -273,7 +273,7 @@ func (c *Computation) processMessage(m messages.Message) {
 		if code, ok := rawData["error"]; ok {
 			computationError.Code = int(code.(float64))
 		}
-		if msg, ok := rawData["message"]; ok {
+		if msg, ok := rawData["message"]; ok && msg != nil {
 			computationError.Message = msg.(string)
 		}
 		if errType, ok := rawData["errorType"]; ok {
