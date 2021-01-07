@@ -274,6 +274,28 @@ func TestComputationError(t *testing.T) {
 	require.Equal(t, "We hit some error", err.(*ComputationError).Message)
 }
 
+func TestComputationErrorWithNullMessage(t *testing.T) {
+	ch := newChannel(context.Background(), "ch1")
+	comp := newComputation(context.Background(), ch, &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer comp.cancel()
+	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		"type": "error",
+		"error": 400,
+		"errorType": "ANALYTICS_INTERNAL_ERROR",
+		"message": null
+	}`), true)))
+
+	_, err := waitForDataMsg(t, comp)
+	if err == nil {
+		t.Fatal("Expected computation error")
+	}
+	require.Equal(t, 400, err.(*ComputationError).Code)
+	require.Equal(t, "ANALYTICS_INTERNAL_ERROR", err.(*ComputationError).ErrorType)
+	require.Equal(t, "", err.(*ComputationError).Message)
+}
+
 func TestComputationFinish(t *testing.T) {
 	ch := newChannel(context.Background(), "ch1")
 	comp := newComputation(context.Background(), ch, &Client{
