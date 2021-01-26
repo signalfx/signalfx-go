@@ -35,6 +35,7 @@ type Computation struct {
 	groupByMissingProperties []string
 
 	tsidMetadata map[idtool.ID]*messages.MetadataProperties
+	events       []*messages.EventMessage
 
 	handle string
 
@@ -283,6 +284,8 @@ func (c *Computation) processMessage(m messages.Message) {
 		c.cancel()
 	case *messages.MetadataMessage:
 		c.tsidMetadata[v.TSID] = &v.Properties
+	case *messages.EventMessage:
+		c.events = append(c.events, v)
 	}
 }
 
@@ -350,6 +353,11 @@ func (c *Computation) bufferExpirationMessages() {
 // Data returns the channel on which data messages come.
 func (c *Computation) Data() <-chan *messages.DataMessage {
 	return c.dataCh
+}
+
+// Events returns the results from events or alerts queries
+func (c *Computation) Events() []*messages.EventMessage {
+	return c.events
 }
 
 // Expirations returns a channel that will be sent messages about expired
