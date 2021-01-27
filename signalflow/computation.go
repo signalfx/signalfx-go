@@ -210,6 +210,16 @@ func (c *Computation) TSIDMetadata(tsid idtool.ID) *messages.MetadataProperties 
 	return c.tsidMetadata[tsid]
 }
 
+// Events returns the results from events or alerts queries.
+func (c *Computation) Events() []*messages.EventMessage {
+	if err := c.waitForMetadata(func() bool { return c.events != nil }); err != nil {
+		return nil
+	}
+	c.updateSignal.Lock()
+	defer c.updateSignal.Unlock()
+	return c.events
+}
+
 // Done passes through the computation context's Done channel for use in select
 // statements to know when the computation is finished or an error occurred.
 func (c *Computation) Done() <-chan struct{} {
@@ -353,11 +363,6 @@ func (c *Computation) bufferExpirationMessages() {
 // Data returns the channel on which data messages come.
 func (c *Computation) Data() <-chan *messages.DataMessage {
 	return c.dataCh
-}
-
-// Events returns the results from events or alerts queries
-func (c *Computation) Events() []*messages.EventMessage {
-	return c.events
 }
 
 // Expirations returns a channel that will be sent messages about expired
