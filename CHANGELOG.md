@@ -1,6 +1,7 @@
 # Unreleased
 
 ## Improvements
+* Added `TimeZone` property to Detector.
 * Added `hideMissingValues` to chart.Options to show or hide missing values in the chart. [#111](https://github.com/signalfx/signalfx-go/pull/111)
 * Added `minDelay` field to detector.
 * Added `PagerDutyIntegrationGetByName` method.
