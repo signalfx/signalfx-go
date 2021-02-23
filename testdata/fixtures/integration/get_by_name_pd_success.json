@@ -1,0 +1,11 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "id": "string",
+      "name": "string",
+      "type": "PagerDuty",
+      "enabled": true
+    }
+  ]
+}

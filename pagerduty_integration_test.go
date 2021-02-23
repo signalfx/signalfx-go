@@ -33,6 +33,17 @@ func TestGetPagerDutyIntegration(t *testing.T) {
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
+func TestGetPagerDutyIntegrationByName(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/integration", verifyRequest(t, "GET", true, http.StatusOK, nil, "integration/get_by_name_pd_success.json"))
+
+	result, err := client.GetPagerDutyIntegrationByName(context.Background(), "string")
+	assert.NoError(t, err, "Unexpected error getting integration")
+	assert.Equal(t, "string", result.Name)
+}
+
 func TestUpdatePagerDutyIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
