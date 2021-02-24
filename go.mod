@@ -1,4 +1,4 @@
-module github.com/signalfx/signalfx-go
+module github.com/jherbage-splunk/signalfx-go
 
 go 1.12
 
