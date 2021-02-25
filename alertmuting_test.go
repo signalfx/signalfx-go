@@ -85,17 +85,17 @@ func TestSearchAlertMutingRule(t *testing.T) {
 
 	include := "all"
 	limit := 10
-	name := "foo"
+	query := "creator:AAXYAAAAAZ3"
 	offset := 2
 	params := url.Values{}
 	params.Add("include", include)
 	params.Add("limit", strconv.Itoa(limit))
-	params.Add("name", name)
+	params.Add("query", query)
 	params.Add("offset", strconv.Itoa(offset))
 
 	mux.HandleFunc("/v2/alertmuting", verifyRequest(t, "GET", true, http.StatusOK, params, "alertmuting/search_success.json"))
 
-	results, err := client.SearchAlertMutingRules(context.Background(), include, limit, name, offset)
+	results, err := client.SearchAlertMutingRules(context.Background(), include, limit, query, offset)
 	assert.NoError(t, err, "Unexpected error search alert muting rule")
 	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
 }
