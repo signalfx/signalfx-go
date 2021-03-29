@@ -1,5 +1,9 @@
 # Unreleased
 
+# 1.7.18, 2021-03-29
+
+* Fix handling of client base URLs that have paths in them
+
 # 1.7.17, 2021-03-23
 
 * Update list of Azure services [#123](https://github.com/signalfx/signalfx-go/pull/123)
