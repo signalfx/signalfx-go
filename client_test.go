@@ -1,6 +1,7 @@
 package signalfx
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/signalfx/signalfx-go/chart"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +41,7 @@ func setup() func() {
 }
 
 // TODO: Use HTTPSuccess from testify?
-func verifyRequest(t *testing.T, method string, expectToken bool, status int, params url.Values, resultPath string) (func(w http.ResponseWriter, r *http.Request)) {
+func verifyRequest(t *testing.T, method string, expectToken bool, status int, params url.Values, resultPath string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if val, ok := r.Header[AuthHeaderKey]; ok {
 			assert.Equal(t, []string{TestToken}, val, "Incorrect auth token in headers")
@@ -71,4 +73,20 @@ func verifyRequest(t *testing.T, method string, expectToken bool, status int, pa
 			fmt.Fprintf(w, fixture(resultPath))
 		}
 	}
+}
+
+func TestPathHandling(t *testing.T) {
+	mux = http.NewServeMux()
+	server = httptest.NewServer(mux)
+	defer server.Close()
+
+	client, _ = NewClient(TestToken, APIUrl(server.URL+"/extra/path"))
+
+	mux.HandleFunc("/extra/path/v2/chart", verifyRequest(t, "POST", true, http.StatusOK, nil, "chart/create_success.json"))
+
+	result, err := client.CreateChart(context.Background(), &chart.CreateUpdateChartRequest{
+		Name: "string",
+	})
+	assert.NoError(t, err, "Unexpected error creating chart")
+	assert.Equal(t, "string", result.Name, "Name does not match")
 }
