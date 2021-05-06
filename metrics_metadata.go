@@ -111,7 +111,9 @@ func (c *Client) SearchDimension(ctx context.Context, query string, orderBy stri
 func (c *Client) SearchMetric(ctx context.Context, query string, orderBy string, limit int, offset int) (*metrics_metadata.RetrieveMetricMetadataResponseModel, error) {
 	params := url.Values{}
 	params.Add("query", query)
-	params.Add("orderBy", orderBy)
+	if orderBy != "" {
+		params.Add("orderBy", orderBy)
+	}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
@@ -186,7 +188,9 @@ func (c *Client) GetMetricTimeSeries(ctx context.Context, id string) (*metrics_m
 func (c *Client) SearchMetricTimeSeries(ctx context.Context, query string, orderBy string, limit int, offset int) (*metrics_metadata.MetricTimeSeriesRetrieveResponseModel, error) {
 	params := url.Values{}
 	params.Add("query", query)
-	params.Add("orderBy", orderBy)
+	if orderBy != "" {
+		params.Add("orderBy", orderBy)
+	}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
@@ -215,7 +219,9 @@ func (c *Client) SearchMetricTimeSeries(ctx context.Context, query string, order
 func (c *Client) SearchTag(ctx context.Context, query string, orderBy string, limit int, offset int) (*metrics_metadata.TagRetrieveResponseModel, error) {
 	params := url.Values{}
 	params.Add("query", query)
-	params.Add("orderBy", orderBy)
+	if orderBy != "" {
+		params.Add("orderBy", orderBy)
+	}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 
