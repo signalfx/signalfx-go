@@ -406,3 +406,16 @@ func TestUpdateCreateTag(t *testing.T) {
 	assert.NoError(t, err, "Unexpected error updating tag")
 	assert.Equal(t, "string", result.Name, "Key does not match")
 }
+
+func TestUpdateCreateMetric(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/metric/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "metrics_metadata/create_update_metric_success.json"))
+
+	result, err := client.CreateUpdateMetric(context.Background(), "string", &metrics_metadata.CreateUpdateMetricRequest{
+		Description: "string",
+	})
+	assert.NoError(t, err, "Unexpected error updating tag")
+	assert.Equal(t, "string", result.Name, "Key does not match")
+}

@@ -161,6 +161,34 @@ func (c *Client) GetMetric(ctx context.Context, name string) (*metrics_metadata.
 	return finalMetric, err
 }
 
+// UpdateMetric creates or updates a metric
+func (c *Client) CreateUpdateMetric(ctx context.Context, name string, cumr *metrics_metadata.CreateUpdateMetricRequest) (*metrics_metadata.Metric, error) {
+	payload, err := json.Marshal(cumr)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.doRequest(ctx, "PUT", MetricAPIURL+"/"+name, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
+	finalMetric := &metrics_metadata.Metric{}
+
+	err = json.NewDecoder(resp.Body).Decode(finalMetric)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
+	return finalMetric, err
+}
+
 // GetMetricTimeSeries retrieves a metric time series by id.
 func (c *Client) GetMetricTimeSeries(ctx context.Context, id string) (*metrics_metadata.MetricTimeSeries, error) {
 	resp, err := c.doRequest(ctx, "GET", MetricTimeSeriesAPIURL+"/"+id, nil, nil)
