@@ -62,7 +62,11 @@ func verifyRequest(t *testing.T, method string, expectToken bool, status int, pa
 		if params != nil {
 			incomingParams := r.URL.Query()
 			for k := range params {
+				assert.Contains(t, incomingParams, k, "Request is missing expected query parameter %q", k)
 				assert.Equal(t, params.Get(k), incomingParams.Get(k), "Params do match for parameter '"+k+"': '"+incomingParams.Get(k)+"'")
+			}
+			for k := range incomingParams {
+				assert.Contains(t, params, k, "Request contains unexpected query parameter %q", k)
 			}
 		}
 

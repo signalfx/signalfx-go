@@ -41,6 +41,26 @@ func TestSearchDimension(t *testing.T) {
 	query := "foo:*"
 	limit := 10
 	offset := 2
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/dimension", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/dimension_search_success.json"))
+
+	results, err := client.SearchDimension(context.Background(), query, "", limit, offset)
+	assert.NoError(t, err, "Unexpected error search dimensions")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
+}
+
+func TestSearchDimensionWithOrderBy(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	query := "foo:*"
+	limit := 10
+	offset := 2
 	orderBy := "bar"
 	params := url.Values{}
 	params.Add("orderBy", orderBy)
@@ -52,7 +72,8 @@ func TestSearchDimension(t *testing.T) {
 
 	results, err := client.SearchDimension(context.Background(), query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search dimensions")
-	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
 }
 
 func TestSearchDimensionBad(t *testing.T) {
@@ -72,7 +93,7 @@ func TestSearchDimensionBad(t *testing.T) {
 	mux.HandleFunc("/v2/dimension", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchDimension(context.Background(), query, orderBy, limit, offset)
-	assert.Error(t, err, "Unexpected error search dimensions")
+	assert.Error(t, err, "Didn't receive expected error for search dimensions")
 }
 
 func TestUpdateDimension(t *testing.T) {
@@ -130,6 +151,26 @@ func TestSearchMetric(t *testing.T) {
 	query := "foo:*"
 	limit := 10
 	offset := 2
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/metric", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/metric_search_success.json"))
+
+	results, err := client.SearchMetric(context.Background(), query, "", limit, offset)
+	assert.NoError(t, err, "Unexpected error search metrics")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
+}
+
+func TestSearchMetricWithOrderBy(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	query := "foo:*"
+	limit := 10
+	offset := 2
 	orderBy := "bar"
 	params := url.Values{}
 	params.Add("orderBy", orderBy)
@@ -141,7 +182,8 @@ func TestSearchMetric(t *testing.T) {
 
 	results, err := client.SearchMetric(context.Background(), query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search metrics")
-	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
 }
 
 func TestSearchMetricBad(t *testing.T) {
@@ -193,6 +235,26 @@ func TestSearchMetricTimeSeries(t *testing.T) {
 	query := "foo:*"
 	limit := 10
 	offset := 2
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/metrictimeseries", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/metric_time_series_search_success.json"))
+
+	results, err := client.SearchMetricTimeSeries(context.Background(), query, "", limit, offset)
+	assert.NoError(t, err, "Unexpected error search metric time series")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
+}
+
+func TestSearchMetricTimeSeriesWithOrderBy(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	query := "foo:*"
+	limit := 10
+	offset := 2
 	orderBy := "bar"
 	params := url.Values{}
 	params.Add("orderBy", orderBy)
@@ -204,7 +266,8 @@ func TestSearchMetricTimeSeries(t *testing.T) {
 
 	results, err := client.SearchMetricTimeSeries(context.Background(), query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search metric time series")
-	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
 }
 
 func TestSearchMetricTimeSeriesBad(t *testing.T) {
@@ -234,6 +297,26 @@ func TestSearchTag(t *testing.T) {
 	query := "foo:*"
 	limit := 10
 	offset := 2
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+
+	mux.HandleFunc("/v2/tag", verifyRequest(t, "GET", true, http.StatusOK, params, "metrics_metadata/tag_search_success.json"))
+
+	results, err := client.SearchTag(context.Background(), query, "", limit, offset)
+	assert.NoError(t, err, "Unexpected error search tags")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
+}
+
+func TestSearchTagWithOrderBy(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	query := "foo:*"
+	limit := 10
+	offset := 2
 	orderBy := "bar"
 	params := url.Values{}
 	params.Add("orderBy", orderBy)
@@ -245,7 +328,8 @@ func TestSearchTag(t *testing.T) {
 
 	results, err := client.SearchTag(context.Background(), query, orderBy, limit, offset)
 	assert.NoError(t, err, "Unexpected error search tags")
-	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(1), results.Count, "Incorrect results count")
+	assert.Equal(t, 1, len(results.Results), "Incorrect number of results")
 }
 
 func TestSearchTagBad(t *testing.T) {
