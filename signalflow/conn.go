@@ -77,14 +77,14 @@ func (c *wsConn) Run() {
 
 	for {
 		if conn == nil {
-			if c.ctx.Err() == context.Canceled {
-				log.Printf("Context cancelled, stop reconnecting.")
-				return
-			}
-
 			// This will get run on before the first connection as well.
 			if c.PostDisconnectCallback != nil {
 				c.PostDisconnectCallback()
+			}
+
+			if c.ctx.Err() == context.Canceled {
+				log.Printf("Context cancelled, stop reconnecting.")
+				return
 			}
 
 			var err error
