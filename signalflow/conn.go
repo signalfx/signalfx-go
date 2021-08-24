@@ -77,8 +77,7 @@ func (c *wsConn) Run() {
 
 	for {
 		if conn == nil {
-			select {
-			case <-c.ctx.Done():
+			if c.ctx.Err() == context.Canceled {
 				log.Printf("Context cancelled, stop reconnecting.")
 				return
 			}
