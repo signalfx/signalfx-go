@@ -77,6 +77,12 @@ func (c *wsConn) Run() {
 
 	for {
 		if conn == nil {
+			select {
+			case <-c.ctx.Done():
+				log.Printf("Context cancelled, stop reconnecting.")
+				return
+			}
+
 			// This will get run on before the first connection as well.
 			if c.PostDisconnectCallback != nil {
 				c.PostDisconnectCallback()
