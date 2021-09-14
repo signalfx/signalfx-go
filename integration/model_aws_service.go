@@ -181,6 +181,6 @@ var AWSServiceNames = map[string]AwsService{
 	"AWS/WorkMail":                AWSWORK_MAIL,
 	"AWS/WorkSpaces":              AWSWORK_SPACES,
 	"AWS/Neptune":                 AWSNEPTUNE,
-	"MediaLive":               AWSMEDIA_LIVE,
+	"MediaLive":                   AWSMEDIA_LIVE,
 	"System/Linux":                AWS_SYSTEM_LINUX,
 }
