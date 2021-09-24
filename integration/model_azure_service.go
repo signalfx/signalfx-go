@@ -73,6 +73,12 @@ const (
 	AZURE_MICROSOFT_NETWORK_AZUREFIREWALLS                       AzureService = "microsoft.network/azurefirewalls"
 	AZURE_MICROSOFT_MAPS_ACCOUNTS                                AzureService = "microsoft.maps/accounts"
 	AZURE_MICROSOFT_NETWORK_NETWORKINTERFACES                    AzureService = "microsoft.network/networkinterfaces"
+	AZURE_MICROSOFT_CDN_CDNWEBAPPLICATIONFIREWALLPOLICIES        AzureService = "microsoft.cdn/cdnwebapplicationfirewallpolicies"
+	AZURE_MICROSOFT_CONTAINERREGISTRY_REGISTRIES                 AzureService = "microsoft.containerregistry/registries"
+	AZURE_MICROSOFT_DEVICES_PROVISIONINGSERVICES                 AzureService = "microsoft.devices/provisioningservices"
+	AZURE_MICROSOFT_SIGNALRSERVICE_SIGNALR                       AzureService = "microsoft.signalrservice/signalr"
+	AZURE_MICROSOFT_SIGNALRSERVICE_WEBPUBSUB                     AzureService = "microsoft.signalrservice/webpubsub"
+	AZURE_MICROSOFT_SQL_MANAGED_INSTANCES                        AzureService = "microsoft.sql/managedinstances"
 )
 
 // AzureServiceNames is a list of Azure service names
@@ -145,4 +151,10 @@ var AzureServiceNames = map[string]AzureService{
 	"microsoft.network/azurefirewalls":                          AZURE_MICROSOFT_NETWORK_AZUREFIREWALLS,
 	"microsoft.maps/accounts":                                   AZURE_MICROSOFT_MAPS_ACCOUNTS,
 	"microsoft.network/networkinterfaces":                       AZURE_MICROSOFT_NETWORK_NETWORKINTERFACES,
+	"microsoft.cdn/cdnwebapplicationfirewallpolicies":           AZURE_MICROSOFT_CDN_CDNWEBAPPLICATIONFIREWALLPOLICIES,
+	"microsoft.containerregistry/registries":                    AZURE_MICROSOFT_CONTAINERREGISTRY_REGISTRIES,
+	"microsoft.devices/provisioningservices":                    AZURE_MICROSOFT_DEVICES_PROVISIONINGSERVICES,
+	"microsoft.signalrservice/signalr":                          AZURE_MICROSOFT_SIGNALRSERVICE_SIGNALR,
+	"microsoft.signalrservice/webpubsub":                        AZURE_MICROSOFT_SIGNALRSERVICE_WEBPUBSUB,
+	"microsoft.sql/managedinstances":                            AZURE_MICROSOFT_SQL_MANAGED_INSTANCES,
 }
