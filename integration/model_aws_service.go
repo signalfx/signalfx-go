@@ -20,6 +20,7 @@ const (
 	AWSAUTO_SCALING              AwsService = "AWS/AutoScaling"
 	AWSBILLING                   AwsService = "AWS/Billing"
 	AWSACP_PRIVATE_CA            AwsService = "AWS/ACMPrivateCA"
+	AWSCERT_MANAGER              AwsService = "AWS/CertificateManager"
 	AWSCLOUD_FRONT               AwsService = "AWS/CloudFront"
 	AWSCLOUD_HSM                 AwsService = "AWS/CloudHSM"
 	AWSCLOUD_SEARCH              AwsService = "AWS/CloudSearch"
@@ -106,6 +107,7 @@ var AWSServiceNames = map[string]AwsService{
 	"AWS/AutoScaling":             AWSAUTO_SCALING,
 	"AWS/Billing":                 AWSBILLING,
 	"AWS/ACMPrivateCA":            AWSACP_PRIVATE_CA,
+	"AWS/CertificateManager":      AWSCERT_MANAGER,
 	"AWS/CloudFront":              AWSCLOUD_FRONT,
 	"AWS/CloudHSM":                AWSCLOUD_HSM,
 	"AWS/CloudSearch":             AWSCLOUD_SEARCH,
