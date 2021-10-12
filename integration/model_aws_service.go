@@ -40,6 +40,7 @@ const (
 	AWSELASTIC_INTERFACE         AwsService = "AWS/ElasticInterface"
 	AWSEBS                       AwsService = "AWS/EBS"
 	AWSEFS                       AwsService = "AWS/EFS"
+	AWSEKS                       AwsService = "AWS/EKS"
 	AWSELB                       AwsService = "AWS/ELB"
 	AWSAPPLICATION_ELB           AwsService = "AWS/ApplicationELB"
 	AWSNETWORK_ELB               AwsService = "AWS/NetworkELB"
@@ -127,6 +128,7 @@ var AWSServiceNames = map[string]AwsService{
 	"AWS/ElasticInterface":        AWSELASTIC_INTERFACE,
 	"AWS/EBS":                     AWSEBS,
 	"AWS/EFS":                     AWSEFS,
+	"AWS/EKS":                     AWSEKS,
 	"AWS/ELB":                     AWSELB,
 	"AWS/ApplicationELB":          AWSAPPLICATION_ELB,
 	"AWS/NetworkELB":              AWSNETWORK_ELB,
