@@ -22,6 +22,7 @@ func TestCreateAlertMutingRule(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error creating alert muting rule")
 	assert.Equal(t, "string", result.Description, "Description does not match")
+	assert.Equal(t, "server5", result.Filters[0].PropertyValue.Values[0], "Property Value does not match")
 }
 
 func TestCreateBadAlertMutingRule(t *testing.T) {
@@ -66,6 +67,7 @@ func TestGetAlertMutingRule(t *testing.T) {
 	result, err := client.GetAlertMutingRule(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting alert mutnig rule")
 	assert.Equal(t, result.Description, "string", "Name does not match")
+	assert.Equal(t, "server6", result.Filters[0].PropertyValue.Values[1], "Property Value does not match")
 }
 
 func TestGetMissingAlertMutingRule(t *testing.T) {
@@ -97,7 +99,10 @@ func TestSearchAlertMutingRule(t *testing.T) {
 
 	results, err := client.SearchAlertMutingRules(context.Background(), include, limit, query, offset)
 	assert.NoError(t, err, "Unexpected error search alert muting rule")
-	assert.Equal(t, int32(1), results.Count, "Incorrect number of results")
+	assert.Equal(t, int32(2), results.Count, "Incorrect number of results")
+	assert.Equal(t, 2, len(results.Results), "Incorrect number of results in results")
+	assert.Equal(t, "server6", results.Results[0].Filters[0].PropertyValue.Values[1], "Property Value does not match")
+	assert.Equal(t, "server5", results.Results[1].Filters[0].PropertyValue.Values[0], "Property Value does not match")
 }
 
 func TestUpdateAlertMutingRule(t *testing.T) {

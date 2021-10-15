@@ -9,9 +9,53 @@
 
 package alertmuting
 
+import (
+	"encoding/json"
+)
+
 // Properties of an alert muting rule, in the form of a JSON object. **NOTE:** You can't create or update properties marked read-only. You receive read-only properties in response bodies for the following:    * **GET** `/alertmuting`   * **POST** `/alertmuting`   * **GET** `/alertmuting/{id}`   * **PUT** `/alertmuting/{id}`
 type AlertMutingRuleFilter struct {
-	NOT           bool   `json:"NOT,omitempty"`
-	Property      string `json:"property,omitempty"`
-	PropertyValue string `json:"propertyValue,omitempty"`
+	NOT           bool          `json:"NOT,omitempty"`
+	Property      string        `json:"property,omitempty"`
+	PropertyValue StringOrArray `json:"propertyValue,omitempty"`
+}
+
+type StringOrArray struct {
+	Values []string
+}
+
+func (soa *StringOrArray) UnmarshalJSON(b []byte) error {
+	if len(b) == 0 {
+		return nil // empty
+	}
+	// See if we can guess based on the first character
+	switch b[0] {
+	case '{':
+		return soa.unmarshalSingle(b)
+	case '"':
+		return soa.unmarshalSingle(b)
+	case '[':
+		return soa.unmarshalMany(b)
+	}
+	return nil
+}
+
+func (soa *StringOrArray) unmarshalSingle(b []byte) error {
+	var s string
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	soa.Values = []string{s}
+	return nil
+}
+
+func (soa *StringOrArray) unmarshalMany(b []byte) error {
+	var s []string
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	soa.Values = s
+	return nil
 }

@@ -1,9 +1,25 @@
 {
-  "count": 1,
+  "count": 2,
   "results": [
     {
       "created": 1556825430000,
       "creator": "AAXYAAAAAZ3",
+      "description": "string",
+      "filters": [
+        {
+          "property": "apptype",
+          "propertyValue": ["server5","server6"]
+        }
+      ],
+      "id": "string",
+      "lastUpdated": 1557689430000,
+      "lastUpdatedBy": "string",
+      "startTime": 0,
+      "stopTime": 0
+    },
+    {
+      "created": 1556825430001,
+      "creator": "AAXYAAAAAZ4",
       "description": "string",
       "filters": [
         {
