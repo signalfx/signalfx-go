@@ -11,6 +11,7 @@ package alertmuting
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 // Properties of an alert muting rule, in the form of a JSON object. **NOTE:** You can't create or update properties marked read-only. You receive read-only properties in response bodies for the following:    * **GET** `/alertmuting`   * **POST** `/alertmuting`   * **GET** `/alertmuting/{id}`   * **PUT** `/alertmuting/{id}`
@@ -22,6 +23,15 @@ type AlertMutingRuleFilter struct {
 
 type StringOrArray struct {
 	Values []string
+}
+
+func (soa *StringOrArray) MarshalJSON() ([]byte, error) {
+	if len(soa.Values) == 1 {
+		return json.Marshal(soa.Values[0])
+	} else if len(soa.Values) > 1 {
+		return json.Marshal(soa.Values)
+	}
+	return nil, errors.New("propertyValue has to be a string or array of strings")
 }
 
 func (soa *StringOrArray) UnmarshalJSON(b []byte) error {
