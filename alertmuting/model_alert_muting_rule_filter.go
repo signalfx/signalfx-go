@@ -12,6 +12,7 @@ package alertmuting
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 )
 
 // Properties of an alert muting rule, in the form of a JSON object. **NOTE:** You can't create or update properties marked read-only. You receive read-only properties in response bodies for the following:    * **GET** `/alertmuting`   * **POST** `/alertmuting`   * **GET** `/alertmuting/{id}`   * **PUT** `/alertmuting/{id}`
@@ -39,9 +40,8 @@ func (soa *StringOrArray) UnmarshalJSON(b []byte) error {
 		return nil // empty
 	}
 	// See if we can guess based on the first character
-	switch b[0] {
-	case '{':
-		return soa.unmarshalSingle(b)
+	trimmed := strings.TrimSpace(string(b))
+	switch trimmed[0] {
 	case '"':
 		return soa.unmarshalSingle(b)
 	case '[':

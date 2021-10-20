@@ -2,6 +2,8 @@ package signalfx
 
 import (
 	"context"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
