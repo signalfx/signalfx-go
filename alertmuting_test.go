@@ -130,3 +130,20 @@ func TestUpdateMissingAlertMutingRule(t *testing.T) {
 	assert.Error(t, err, "Should have gotten an error from an update on a missing alert muting rule")
 	assert.Nil(t, result, "Should have gotten a nil result from an update on a missing alert muting rule")
 }
+
+func TestAlertMutingCustomJSONMarshaling(t *testing.T) {
+
+	file, _ := ioutil.ReadFile("testdata/fixtures/alertmuting/update_success.json")
+	var muting alertmuting.AlertMutingRule
+	err := json.Unmarshal(file, &muting)
+	assert.Nil(t, err, "Unexpected error unmarshaling muting rules")
+	assert.Equal(t, "server5", muting.Filters[0].PropertyValue.Values[0], "Wrong propertyValue when unmarshalling")
+
+	// marshall it back
+	data, err := json.Marshal(muting)
+	assert.Nil(t, err, "Unexpected error marshaling muting rules")
+	// unmarshal again to check it
+	err = json.Unmarshal(data, &muting)
+	assert.Nil(t, err, "Unexpected error re-unmarshaling muting rule")
+	assert.Equal(t, "server5", muting.Filters[0].PropertyValue.Values[0], "Wrong propertyValue when unmarshalling the second time")
+}
