@@ -5,7 +5,7 @@
   "filters": [
     {
       "property": "apptype",
-      "propertyValue": "server5"
+      "propertyValue": ["server5","server6"]
     }
   ],
   "id": "string",
