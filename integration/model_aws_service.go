@@ -192,5 +192,5 @@ var AWSServiceNames = map[string]AwsService{
 	"AWS/Neptune":                 AWSNEPTUNE,
 	"MediaLive":                   AWSMEDIA_LIVE,
 	"System/Linux":                AWS_SYSTEM_LINUX,
-	"CWAgent":                     CWAGENT
+	"CWAgent":                     CWAGENT,
 }
