@@ -22,8 +22,9 @@ type Detector struct {
 	// Calendar Time Zone property of the detector. Denotes the geographic region associated with the time zone, (e.g. Australia/Sydney)
 	TimeZone string `json:"timezone,omitempty"`
 	// System-defined identifier for the detector
-	Id              string          `json:"id,omitempty"`
-	LabelResolution LabelResolution `json:"labelResolution,omitempty"`
+	Id string `json:"id,omitempty"`
+	// Key-value pairs that indicate how often data is analyzed to determine if an alert should be triggered, in the form of a JSON object containing properties. Each key is the label name of a call to publish() in the SignalFlow for the detector, and each value is the resolution time for that publish() block.
+	LabelResolutions *map[string]interface{} `json:"labelResolutions,omitempty"`
 	// The last time the detector was updated, in milliseconds (UTC) relative to the Unix epoch.
 	LastUpdated int64 `json:"lastUpdated,omitempty"`
 	// The user ID of the last person who updated the object. If the last update was by the system, the value is \"AAAAAAAAAA\" This value is always set by the system.

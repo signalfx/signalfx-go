@@ -12,8 +12,9 @@
   "customProperties": "string",
   "description": "string",
   "id": "string",
-  "labelResolution": {
-    "label": "string"
+  "labelResolutions": {
+    "DetectorA": 3000,
+    "DetectorB": 5000
   },
   "lastUpdated": 1533676829319,
   "lastUpdatedBy": "string",
