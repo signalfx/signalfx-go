@@ -305,6 +305,7 @@ func (c *Computation) bufferDataMessages() {
 	buffer := make([]*messages.DataMessage, 0)
 	var nextMessage *messages.DataMessage
 	for {
+
 		if len(buffer) > 0 {
 			if nextMessage == nil {
 				nextMessage, buffer = buffer[0], buffer[1:]
@@ -316,6 +317,7 @@ func (c *Computation) bufferDataMessages() {
 			case c.dataCh <- nextMessage:
 				nextMessage = nil
 			case msg := <-c.dataChBuffer:
+
 				buffer = append(buffer, msg)
 			}
 		} else {

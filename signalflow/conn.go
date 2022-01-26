@@ -48,8 +48,8 @@ func newWebsocketConn(ctx context.Context, streamURL *url.URL) *wsConn {
 		readErrCh:          make(chan error),
 		readCh:             make(chan struct{}),
 		connectedCh:        make(chan struct{}),
-		ReadTimeout:        1 * time.Minute,
-		WriteTimeout:       20 * time.Second,
+		ReadTimeout:        2 * time.Minute,
+		WriteTimeout:       60 * time.Second,
 	}
 	return ws
 }
@@ -119,6 +119,7 @@ func (c *wsConn) Run() {
 			conn = nil
 			time.Sleep(ReconnectDelay)
 		case msg := <-c.outgoingTextMsgs:
+			fmt.Println(string(msg.bytes))
 			err := c.writeMessage(conn, msg.bytes)
 			msg.resultCh <- err
 			if err != nil {
@@ -166,6 +167,7 @@ func (c *wsConn) readNextMessage(conn *websocket.Conn) {
 	}
 
 	typ, bytes, err := conn.ReadMessage()
+
 	if err != nil {
 		select {
 		case c.readErrCh <- err:
@@ -182,6 +184,7 @@ func (c *wsConn) readNextMessage(conn *websocket.Conn) {
 }
 
 func (c *wsConn) writeMessage(conn *websocket.Conn, msgBytes []byte) error {
+
 	err := conn.SetWriteDeadline(time.Now().Add(c.WriteTimeout))
 	if err != nil {
 		return fmt.Errorf("could not set write timeout for SignalFlow request: %v", err)

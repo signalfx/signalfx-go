@@ -177,6 +177,26 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 			resolutionMs = 1000
 		}
 
+		// use start and stop to control ending the fakebackend
+		var stopMs uint64
+		var startMs uint64
+		messageStopMs, _ := message["stop"].(float64)
+		if messageStopMs != 0.0 {
+			stopMs = uint64(messageStopMs)
+		}
+
+		if stopMs == 0 {
+			stopMs = uint64(time.Now().UnixNano() / (1000 * 1000))
+		}
+		messageStartMs, _ := message["start"].(float64)
+		if messageStartMs != 0.0 {
+			startMs = uint64(messageStartMs)
+		}
+
+		if stopMs == 0 {
+			startMs = uint64(time.Now().Add(-1*time.Minute).UnixNano() / (1000 * 1000))
+		}
+
 		textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "STREAM_START"}`, ch)
 		textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "JOB_START", "handle": "%s"}`, ch, handle)
 		textMsgs <- fmt.Sprintf(`{"type": "message", "channel": "%s", "logicalTimestampMs": 1464736034000, "message": {"contents": {"resolutionMs" : %d}, "messageCode": "JOB_RUNNING_RESOLUTION", "timestampMs": 1464736033000}}`, ch, int64(resolutionMs))
@@ -193,6 +213,7 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 		}
 
 		// Send data periodically until the connection is closed.
+		iterations := 0
 		go func() {
 			t := time.NewTicker(time.Duration(resolutionMs) * time.Millisecond)
 			for {
@@ -210,8 +231,16 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 							valsWithTSID = append(valsWithTSID, tsidVal{TSID: tsid, Val: *data})
 						}
 					}
-					binMsgs <- makeDataMessage(ch, valsWithTSID)
+					metricTime := startMs + uint64(iterations*resolutionMs)
+					if metricTime > stopMs {
+						// tell the client the computation is complete
+						textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "END_OF_CHANNEL", "handle": "%s"}`, ch, handle)
+					} else {
+						binMsgs <- makeDataMessage(ch, valsWithTSID, metricTime)
+					}
 					f.Unlock()
+					iterations++
+
 				}
 			}
 		}()
@@ -219,7 +248,7 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 	return nil
 }
 
-func makeDataMessage(channel string, valsWithTSID []tsidVal) []byte {
+func makeDataMessage(channel string, valsWithTSID []tsidVal, now uint64) []byte {
 	var ch [16]byte
 	copy(ch[:], channel)
 	header := messages.BinaryMessageHeader{
@@ -233,7 +262,7 @@ func makeDataMessage(channel string, valsWithTSID []tsidVal) []byte {
 	binary.Write(w, binary.BigEndian, &header)
 
 	dataHeader := messages.DataMessageHeader{
-		TimestampMillis: uint64(time.Now().Unix() * 1000),
+		TimestampMillis: now,
 		ElementCount:    uint32(len(valsWithTSID)),
 	}
 	binary.Write(w, binary.BigEndian, &dataHeader)

@@ -191,6 +191,7 @@ func (c *Client) run() {
 				log.Printf("Error handling SignalFlow binary message: %v", err)
 			}
 		case outMsg := <-c.outgoingCh:
+
 			outMsg.resultCh <- c.serializeAndWriteMessage(outMsg.msg)
 		}
 	}
@@ -232,7 +233,6 @@ func (c *Client) handleMessage(msgBytes []byte, msgTyp int) error {
 	if err != nil {
 		return fmt.Errorf("could not parse SignalFlow message: %v", err)
 	}
-
 	if cm, ok := message.(messages.ChannelMessage); ok {
 		channelName := cm.Channel()
 		c.Lock()
@@ -300,6 +300,7 @@ func (c *Client) Stop(req *StopRequest) error {
 	// connection is still active (i.e. we don't need to call ensureInitialized
 	// here).  If the websocket connection does drop, all jobs started by that
 	// connection get stopped automatically.
+	fmt.Println("stop")
 	return c.sendMessage(req)
 }
 
