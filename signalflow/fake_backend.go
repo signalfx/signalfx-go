@@ -185,16 +185,13 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 			stopMs = uint64(messageStopMs)
 		}
 
-		if stopMs == 0 {
-			stopMs = uint64(time.Now().UnixNano() / (1000 * 1000))
-		}
 		messageStartMs, _ := message["start"].(float64)
 		if messageStartMs != 0.0 {
 			startMs = uint64(messageStartMs)
 		}
 
-		if stopMs == 0 {
-			startMs = uint64(time.Now().Add(-1*time.Minute).UnixNano() / (1000 * 1000))
+		if startMs == 0 {
+			startMs = uint64(time.Now().UnixNano() / (1000 * 1000))
 		}
 
 		textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "STREAM_START"}`, ch)
@@ -232,7 +229,7 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 						}
 					}
 					metricTime := startMs + uint64(iterations*resolutionMs)
-					if metricTime > stopMs {
+					if stopMs != 0 && metricTime > stopMs {
 						// tell the client the computation is complete
 						textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "END_OF_CHANNEL", "handle": "%s"}`, ch, handle)
 					} else {
