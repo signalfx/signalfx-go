@@ -225,3 +225,43 @@ func TestGetDetectorIncidents(t *testing.T) {
 	assert.NoError(t, err, "Unexpected error getting detector")
 	assert.Equal(t, result[0].AnomalyState, "ANOMALOUS", "AnomalyState does not match")
 }
+
+func TestValidateDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/validate", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+
+	err := client.ValidateDetector(context.Background(), &detector.ValidateDetectorRequestModel{
+		Name:        "string",
+		ProgramText: "signal = data('cpu.utilization').mean(by=['sf_metric', 'sfx_realm']).publish(label='A'); detect(when(A > threshold(10), lasting='2m'), auto_resolve_after='3d').publish('Test detector validation')",
+		Rules: []*detector.Rule{
+			&detector.Rule{
+				Description: "Maximum > 10 for 2m",
+				DetectLabel: "Test detector validation",
+				Severity:    detector.INFO,
+			},
+		},
+	})
+	assert.NoError(t, err, "Unexpected error validating detector programText")
+}
+
+func TestValidateBadDetector(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+
+	err := client.ValidateDetector(context.Background(), &detector.ValidateDetectorRequestModel{
+		Name:        "string",
+		ProgramText: "signal = ('cpu.utilization').mean(by=['sf_metric', 'sfx_realm']).publish(label='A'); detect(when(A > threshold(10), lasting='2m'), auto_resolve_after='3d').publish('Test detector validation')",
+		Rules: []*detector.Rule{
+			&detector.Rule{
+				Description: "Maximum > 10 for 2m",
+				DetectLabel: "Test detector validation",
+				Severity:    detector.INFO,
+			},
+		},
+	})
+	assert.Error(t, err, "Should have gotten an error from invalid detector")
+}

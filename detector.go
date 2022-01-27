@@ -247,3 +247,27 @@ func (c *Client) GetDetectorIncidents(ctx context.Context, id string, offset int
 
 	return incidents, err
 }
+
+// ValidateDetector validates a detector.
+func (c *Client) ValidateDetector(ctx context.Context, detectorRequest *detector.ValidateDetectorRequestModel) error {
+	payload, err := json.Marshal(detectorRequest)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest(ctx, "POST", DetectorAPIURL+"/validate", nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusNoContent {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	}
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
+	return nil
+}
