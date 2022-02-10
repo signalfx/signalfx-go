@@ -46,6 +46,21 @@ func TestUpdateAWSCloudWatchIntegration(t *testing.T) {
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
+func TestUpdateAWSCloudWatchIntegrationMetricStreams(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_aws_metric_streams_success.json"))
+
+	result, err := client.UpdateAWSCloudWatchIntegration(context.Background(), "id", &integration.AwsCloudWatchIntegration{
+		Type: "AWSCloudWatch",
+		MetricStreamsSyncState: "ENABLED",
+	})
+	assert.NoError(t, err, "Unexpected error creating integration")
+	assert.Equal(t, "string", result.Name, "Name does not match")
+	assert.Equal(t, "ENABLED", result.MetricStreamsSyncState, "MetricStreamsSyncState does not match")
+}
+
 func TestDeleteAWSCloudWatchIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
