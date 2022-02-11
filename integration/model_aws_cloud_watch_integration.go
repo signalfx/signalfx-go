@@ -58,5 +58,7 @@ type AwsCloudWatchIntegration struct {
 	IsLargeVolume bool `json:"isLargeVolume,omitempty"`
 	// If `true`, this property indicates that SignalFx should use the GetMetricData API.
 	UseGetMetricDataMethod bool   `json:"useGetMetricDataMethod,omitempty"`
+	// If `ENABLED`, this property indicates that SignalFx should use Cloudwatch Metric Streams.
+	MetricStreamsSyncState string `json:"metricStreamsSyncState,omitempty"`
 	NamedToken             string `json:"namedToken,omitempty"`
 }
