@@ -15,5 +15,5 @@
   "roleArn": "string",
   "services": [],
   "sfxAwsAccountArn": "arn:aws:iam::1234567890:root",
-  "metricStreamsSyncState": "ENABLED"
+  "logsSyncState": "ENABLED"
 }
