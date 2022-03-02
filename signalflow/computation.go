@@ -304,15 +304,15 @@ func (c *Computation) processMessage(m messages.Message) {
 func (c *Computation) bufferDataMessages() {
 	buffer := make([]*messages.DataMessage, 0)
 	var nextMessage *messages.DataMessage
+	closeCh := false
 	for {
-		if len(buffer) > 0 {
+		if len(buffer) > 0 || nextMessage != nil {
 			if nextMessage == nil {
 				nextMessage, buffer = buffer[0], buffer[1:]
 			}
 			select {
 			case <-c.ctx.Done():
-				close(c.dataCh)
-				return
+				closeCh = true
 			case c.dataCh <- nextMessage:
 				nextMessage = nil
 			case msg := <-c.dataChBuffer:
@@ -321,10 +321,13 @@ func (c *Computation) bufferDataMessages() {
 		} else {
 			select {
 			case <-c.ctx.Done():
-				close(c.dataCh)
-				return
+				closeCh = true
 			case msg := <-c.dataChBuffer:
 				buffer = append(buffer, msg)
+			}
+			if closeCh {
+				close(c.dataCh)
+				return
 			}
 		}
 	}
@@ -335,15 +338,15 @@ func (c *Computation) bufferDataMessages() {
 func (c *Computation) bufferExpirationMessages() {
 	buffer := make([]*messages.ExpiredTSIDMessage, 0)
 	var nextMessage *messages.ExpiredTSIDMessage
+	closeCh := false
 	for {
-		if len(buffer) > 0 {
+		if len(buffer) > 0 || nextMessage != nil {
 			if nextMessage == nil {
 				nextMessage, buffer = buffer[0], buffer[1:]
 			}
-
 			select {
 			case <-c.ctx.Done():
-				return
+				closeCh = true
 			case c.expirationCh <- nextMessage:
 				nextMessage = nil
 			case msg := <-c.expirationChBuffer:
@@ -352,9 +355,13 @@ func (c *Computation) bufferExpirationMessages() {
 		} else {
 			select {
 			case <-c.ctx.Done():
-				return
+				closeCh = true
 			case msg := <-c.expirationChBuffer:
 				buffer = append(buffer, msg)
+			}
+			if closeCh {
+				close(c.expirationCh)
+				return
 			}
 		}
 	}
