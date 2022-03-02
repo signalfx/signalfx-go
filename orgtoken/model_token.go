@@ -17,6 +17,8 @@ import (
 type Token struct {
 	// A label ( a **name** ) you assign to the token
 	Name string `json:"name"`
+	// Specify the scope this token applies to ex: API, INGEST, RUM etc...
+	AuthScopes []string `json:"authScopes,omitempty"`
 	// An extended description of the token
 	Description string `json:"description,omitempty"`
 	// Specifies org token limits and thresholds. Use the form that corresponds to your pricing model: <br>   * For DPM pricing, use \"dpmQuota\"   * For host-based pricing, use \"categoryQuota\"<br>   You can only set limits if you have an Enterprise-level account.

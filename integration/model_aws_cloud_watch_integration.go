@@ -57,6 +57,13 @@ type AwsCloudWatchIntegration struct {
 	// If `true`, this property indicates that SignalFx is receiving a large volume of data and tags from AWS.
 	IsLargeVolume bool `json:"isLargeVolume,omitempty"`
 	// If `true`, this property indicates that SignalFx should use the GetMetricData API.
-	UseGetMetricDataMethod bool   `json:"useGetMetricDataMethod,omitempty"`
-	NamedToken             string `json:"namedToken,omitempty"`
+	UseGetMetricDataMethod bool `json:"useGetMetricDataMethod,omitempty"`
+	// List of statistics to ingest per AWS metric per AWS namespace, in a form of the JSON object.
+	MetricStatsToSync map[string]map[string][]string `json:"metricStatsToSync,omitempty"`
+	// If `ENABLED`, this property indicates that SignalFx should use Cloudwatch Metric Streams.
+	MetricStreamsSyncState string `json:"metricStreamsSyncState,omitempty"`
+	// If `ENABLED`, this property indicates that SignalFx should sync logs from supported AWS services.
+	LogsSyncState string `json:"logsSyncState,omitempty"`
+	// Name of an existing access token (org token) in your Observability Cloud organization. Used to track usage metrics.
+	NamedToken string `json:"namedToken,omitempty"`
 }
