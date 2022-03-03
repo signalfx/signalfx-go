@@ -304,6 +304,21 @@ func (c *Computation) processMessage(m messages.Message) {
 func (c *Computation) bufferDataMessages() {
 	buffer := make([]*messages.DataMessage, 0)
 	var nextMessage *messages.DataMessage
+
+	defer func() {
+		for i := range buffer {
+			c.dataCh <- buffer[i]
+		}
+
+		select {
+		case msg := <- c.dataChBuffer:
+			c.dataCh <- msg
+		default:
+		}
+
+		close(c.dataCh)
+	}()
+
 	for {
 		if len(buffer) > 0 {
 			if nextMessage == nil {
@@ -311,7 +326,6 @@ func (c *Computation) bufferDataMessages() {
 			}
 			select {
 			case <-c.ctx.Done():
-				close(c.dataCh)
 				return
 			case c.dataCh <- nextMessage:
 				nextMessage = nil
@@ -321,7 +335,6 @@ func (c *Computation) bufferDataMessages() {
 		} else {
 			select {
 			case <-c.ctx.Done():
-				close(c.dataCh)
 				return
 			case msg := <-c.dataChBuffer:
 				buffer = append(buffer, msg)
@@ -335,6 +348,20 @@ func (c *Computation) bufferDataMessages() {
 func (c *Computation) bufferExpirationMessages() {
 	buffer := make([]*messages.ExpiredTSIDMessage, 0)
 	var nextMessage *messages.ExpiredTSIDMessage
+
+	defer func() {
+		for i := range buffer {
+			c.expirationCh <- buffer[i]
+		}
+
+		select {
+		case msg := <- c.expirationChBuffer:
+			c.expirationCh <- msg
+		default:
+		}
+
+		close(c.expirationCh)
+	}()
 	for {
 		if len(buffer) > 0 {
 			if nextMessage == nil {
