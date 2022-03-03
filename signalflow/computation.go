@@ -306,6 +306,9 @@ func (c *Computation) bufferDataMessages() {
 	var nextMessage *messages.DataMessage
 
 	defer func() {
+		if nextMessage != nil {
+			c.dataCh <- nextMessage
+		}
 		for i := range buffer {
 			c.dataCh <- buffer[i]
 		}
@@ -350,6 +353,9 @@ func (c *Computation) bufferExpirationMessages() {
 	var nextMessage *messages.ExpiredTSIDMessage
 
 	defer func() {
+		if nextMessage != nil {
+			c.expirationCh <- nextMessage
+		}
 		for i := range buffer {
 			c.expirationCh <- buffer[i]
 		}
