@@ -11,6 +11,7 @@ package dashboard
 
 type CreateUpdateDashboardRequest struct {
 	AuthorizedWriters *AuthorizedWriters    `json:"authorizedWriters,omitempty"`
+	Permissions       *ObjectPermissions    `json:"permissions,omitempty"`
 	ChartDensity      DashboardChartDensity `json:"chartDensity,omitempty"`
 	Charts            []*DashboardChart     `json:"charts,omitempty"`
 	// Description of the dashboard. The system displays the value in the dashboard tab tooltip in the dashboard group in the web UI.

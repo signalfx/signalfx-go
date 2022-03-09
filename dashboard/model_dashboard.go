@@ -11,6 +11,7 @@ package dashboard
 
 type Dashboard struct {
 	AuthorizedWriters *AuthorizedWriters     `json:"authorizedWriters,omitempty"`
+	Permissions       *ObjectPermissions     `json:"permissions,omitempty"`
 	ChartDensity      *DashboardChartDensity `json:"chartDensity,omitempty"`
 	// Array of chart objects associated with the dashboard. Each chart object must exist and be unique across all dashboards.
 	Charts []*DashboardChart `json:"charts,omitempty"`
