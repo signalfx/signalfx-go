@@ -20,7 +20,8 @@ func TestCreateGCPIntegration(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
-	assert.Equal(t, int64(70000), result.PollRate, "PollRate does not match")
+	assert.Equal(t, integration.FiveMinutely, *result.PollRate, "PollRate does not match")
+	assert.Equal(t, int64(300000), result.PollRateMs, "PollRateMs does not match")
 }
 
 func TestGetGCPIntegration(t *testing.T) {

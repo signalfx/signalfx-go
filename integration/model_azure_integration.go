@@ -9,6 +9,8 @@
 
 package integration
 
+import "encoding/json"
+
 // Specifies the data collection integration between Microsoft Azure and SignalFx, in the form of a JSON object.
 type AzureIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
@@ -30,7 +32,8 @@ type AzureIntegration struct {
 	AppId                      string              `json:"appId,omitempty"`
 	AzureEnvironment           AzureEnvironment    `json:"azureEnvironment,omitempty"`
 	CustomNamespacesPerService map[string][]string `json:"customNamespacesPerService,omitempty"`
-	PollRate                   int64               `json:"pollRate,omitempty"`
+	PollRate                   *PollRate           `json:"-"`
+	PollRateMs                 int64               `json:"pollRate,omitempty"`
 	// Azure secret key that associates the SignalFx app in Azure with the Azure tenant ID. To learn how to get this ID, see the topic (https://docs.signalfx.com/en/latest/getting-started/send-data.html#connect-to-microsoft-azure)[Connect to Microsoft Azure] in the product documentation.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
 	SecretKey string `json:"secretKey,omitempty"`
 	// Array of Microsoft Azure service names for the Azure services you want SignalFx to monitor. SignalFx only supports certain services, and if you specify an unsupported one, you receive an API error.  The supported services are:   * microsoft.sql/servers/elasticpools   * microsoft.storage/storageaccounts   * microsoft.storage/storageaccounts/tableservices   * microsoft.storage/storageaccounts/blobservices   * microsoft.storage/storageaccounts/queueservices   * microsoft.storage/storageaccounts/fileservices   * microsoft.compute/virtualmachinescalesets   * microsoft.compute/virtualmachinescalesets/virtualmachines   * microsoft.compute/virtualmachines   * microsoft.devices   * microsoft.devices/iothubs   * microsoft.devices/elasticpools   * microsoft.devices/elasticpools/iothubtenants   * microsoft.eventhub/namespaces   * microsoft.batch/batchaccounts   * microsoft.sql/servers/databases   * microsoft.cache/redis   * microsoft.logic/workflows   * microsoft.web   * microsoft.web/sites   * microsoft.web/serverfarms   * microsoft.web/sites/slots   * microsoft.web/hostingenvironments/multirolepools   * microsoft.web/hostingenvironments/workerpools   * microsoft.analysisservices/servers   * microsoft.apimanagement/service   * microsoft.automation/automationaccounts   * microsoft.classiccompute/virtualmachines   * microsoft.cognitiveservices/accounts   * microsoft.customerinsights/hubs   * microsoft.datafactory   * microsoft.datafactory/datafactories   * microsoft.datafactory/factories   * microsoft.datalakeanalytics/accounts   * microsoft.datalakestore/accounts   * microsoft.dbformysql/servers   * microsoft.dbforpostgresql/servers   * microsoft.documentdb/databaseaccounts   * microsoft.keyvault/vaults   * microsoft.locationbasedservices/accounts   * microsoft.network/loadbalancers   * microsoft.network/publicipaddresses   * microsoft.network/applicationgateways   * microsoft.network/virtualnetworkgateways   * microsoft.network/expressroutecircuits   * microsoft.network/trafficmanagerprofiles   * microsoft.notificationhubs/namespaces/notificationhubs   * microsoft.powerbidedicated/capacities   * microsoft.relay/namespaces   * microsoft.search/searchservices   * microsoft.servicebus/namespaces   * microsoft.sql/servers   * microsoft.streamanalytics/streamingjobs   * microsoft.network/dnszones   * microsoft.hdinsight/clusters   * microsoft.containerinstance/containergroups   * microsoft.containerservice/managedclusters   * microsoft.kusto/clusters   * microsoft.machinelearningservices/workspaces   * microsoft.eventgrid/eventsubscriptions   * microsoft.eventgrid/extensiontopics   * microsoft.eventgrid/systemtopics   * microsoft.eventgrid/topics   * microsoft.eventgrid/domains   * microsoft.network/frontdoors   * microsoft.network/azurefirewalls   * microsoft.maps/accounts   * microsoft.network/networkinterfaces
@@ -41,4 +44,35 @@ type AzureIntegration struct {
 	// Azure ID of the Azure tenant. To learn how to get this ID, see the topic (https://docs.signalfx.com/en/latest/getting-started/send-data.html#connect-to-microsoft-azure)[Connect to Microsoft Azure] in the product documentation.
 	TenantId   string `json:"tenantId,omitempty"`
 	NamedToken string `json:"namedToken,omitempty"`
+}
+
+func (gcp *AzureIntegration) MarshalJSON() ([]byte, error) {
+	type Alias AzureIntegration
+	var copy = Alias(*gcp)
+	if copy.PollRate != nil {
+		copy.PollRateMs = int64(*copy.PollRate)
+	}
+	return json.Marshal(&struct{ *Alias }{
+		Alias: &copy,
+	})
+}
+
+func (gcp *AzureIntegration) UnmarshalJSON(data []byte) error {
+	type Alias AzureIntegration
+	aux := &struct{ *Alias }{
+		Alias: (*Alias)(gcp),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if gcp.PollRateMs == int64(OneMinutely) {
+		oneMinute := OneMinutely
+		gcp.PollRate = &oneMinute
+	} else if gcp.PollRateMs == int64(FiveMinutely) {
+		fiveMinutes := FiveMinutely
+		gcp.PollRate = &fiveMinutes
+	} // else PollRate is going to be nil
+	return nil
 }
