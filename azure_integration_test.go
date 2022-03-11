@@ -20,7 +20,8 @@ func TestCreateAzureIntegration(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
-	assert.Equal(t, int64(120000), result.PollRate, "PollRate does not match")
+	assert.Nil(t, result.PollRate, "PollRate does not match")
+	assert.Equal(t, int64(120000), result.PollRateMs, "PollRateMs does not match")
 }
 
 func TestGetAzureIntegration(t *testing.T) {

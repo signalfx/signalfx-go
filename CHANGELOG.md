@@ -1,12 +1,13 @@
-# 2.0.0, 11 Mar 2022
+# 1.9.0, 11 Mar 2022
 
-* BREAKING CHANGE: use `int64` (value in milliseconds) instead of the `PollRate` type to define Azure and GCP integration poll rate [#153](https://github.com/signalfx/signalfx-go/pull/153)
+* Add support for read permissions for dashboard and dashboard groups
 
-Instead of the `integration.OneMinutely` use `60000`.<BR>
-Instead of the `integration.FiveMinutely` use `300000`.<BR>
-You may use any value between 1 and 10 minutes (`60000` - `600000`).
+* Add `AWS/S3/Storage-Lens` to AWS services list. Sorted AWS/Azure/GCP services by name. [#154](https://github.com/signalfx/signalfx-go/pull/154)
 
-* Added `AWS/S3/Storage-Lens` to AWS services list. Sorted AWS/Azure/GCP services by name. [#154](https://github.com/signalfx/signalfx-go/pull/154)
+* Add `PollRateMs` (type `int64`, value in milliseconds) to define Azure and GCP integration poll rate [#153](https://github.com/signalfx/signalfx-go/pull/153) [#155](https://github.com/signalfx/signalfx-go/pull/155)
+
+`PollRate` (type `PollRate`) is deprecated. Please use `PollRateMs` instead.<BR>
+`PollRateMs` accepts any value between 1 and 10 minutes (`60000` - `600000`).
 
 # 1.8.9, 3 Mar 2022
 
