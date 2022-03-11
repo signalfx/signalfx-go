@@ -6,6 +6,8 @@ Instead of the `integration.OneMinutely` use `60000`.<BR>
 Instead of the `integration.FiveMinutely` use `300000`.<BR>
 You may use any value between 1 and 10 minutes (`60000` - `600000`).
 
+* Added `AWS/S3/Storage-Lens` to AWS services list. Sorted AWS/Azure/GCP services by name. [#154](https://github.com/signalfx/signalfx-go/pull/154)
+
 # 1.8.9, 3 Mar 2022
 
 * signalflow: Fix race in computation buffering when closing (previously the messages were not getting fully flushed to the downstream channels) [#151](https://github.com/signalfx/signalfx-go/pull/151)
