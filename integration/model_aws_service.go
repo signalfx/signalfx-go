@@ -9,7 +9,7 @@
 
 package integration
 
-// AwsService : An AWS service that you want SignalFx to collect data from. SignalFx supports the following AWS services:<br>   * AWS/ApiGateway   * AWS/AppStream   * AWS/AutoScaling   * AWS/Backup   * AWS/Billing   * AWS/CloudFront   * AWS/CloudSearch   * AWS/Events   * AWS/Logs   * AWS/Connect   * AWS/DMS   * AWS/DX   * AWS/DynamoDB   * AWS/EC2   * AWS/EC2Spot   * AWS/ECS   * AWS/ElasticBeanstalk   * AWS/EBS   * AWS/EFS   * AWS/ELB   * AWS/ApplicationELB   * AWS/NetworkELB   * AWS/ElasticTranscoder   * AWS/ElastiCache   * AWS/ES   * AWS/ElasticMapReduce   * AWS/GameLift   * AWS/Inspector   * AWS/IoT   * AWS/KMS   * AWS/KinesisAnalytics   * AWS/Firehose   * AWS/Kinesis   * AWS/KinesisVideo   * AWS/Lambda   * AWS/Lex   * AWS/ML   * AWS/OpsWorks   * AWS/Polly   * AWS/Redshift   * AWS/RDS   * AWS/Route53   * AWS/SageMaker   * AWS/DDoSProtection   * AWS/SES   * AWS/SNS   * AWS/SQS   * AWS/S3   * AWS/S3/Storage-Lens   * AWS/SWF   * AWS/States   * AWS/StorageGateway   * AWS/Translate   * AWS/NATGateway   * AWS/VPN   * AWS/WAFV2   * WAF   * AWS/WorkSpaces   * CWAgent
+// AwsService : An AWS service that you want SignalFx to collect data from.
 type AwsService string
 
 // List of AWSService
