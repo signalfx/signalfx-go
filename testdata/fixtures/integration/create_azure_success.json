@@ -15,7 +15,7 @@
       "customNamespace"
     ]
   },
-  "pollRate": 60000,
+  "pollRate": 120000,
   "secretKey": "string",
   "services": [
     "microsoft.sql/servers/elasticpools"

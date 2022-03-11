@@ -7,7 +7,7 @@
   "lastUpdatedBy": "string",
   "name": "string",
   "type": "GCP",
-  "pollRate": 60000,
+  "pollRate": 70000,
   "projectServiceKeys": [
     {
       "projectId": "string",

@@ -35,7 +35,7 @@
       "namespace": "AWS/ApiGateway"
     }
   ],
-  "pollRate": 60000,
+  "pollRate": 600000,
   "regions": [
     "ap-northeast-1"
   ],
