@@ -9,7 +9,7 @@
 
 package integration
 
-// Deprecated: use int64 values instead
+// Deprecated: use int64 values in milliseconds instead
 // PollRate : The rate at which SignalFx polls a data collection for data, in milliseconds. The allowed values are 60000 (1 minute) and 300000 (5 minutes).
 type PollRate int64
 

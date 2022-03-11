@@ -1,4 +1,43 @@
-# Unreleased
+# 2.0.0, 11 Mar 2022
+
+* BREAKING CHANGE: use int64 instead of the `PollRate` type to define Azure and GCP integration poll rate [#153](https://github.com/signalfx/signalfx-go/pull/153)
+
+Instead of the `integration.OneMinutely` use `60000`.<BR>
+Instead of the `integration.FiveMinutely` use `300000`.<BR>
+You may use any value between 1 and 10 minutes (`60000` - `600000`).
+
+# 1.8.9, 3 Mar 2022
+
+* signalflow: Fix race in computation buffering when closing (previously the messages were not getting fully flushed to the downstream channels) [#151](https://github.com/signalfx/signalfx-go/pull/151)
+
+# 1.8.8, 28 Feb 2022
+
+* Add MetricStreamsSyncState to AWS Cloudwatch integration [#147](https://github.com/signalfx/signalfx-go/pull/147)
+
+# 1.8.6, 8 Feb 2022
+
+* Adding AuthScopes attribute to the org token struct [#146](https://github.com/signalfx/signalfx-go/pull/146)
+
+# 1.8.5, 27 Jan 2022
+
+* signalflow fakebackend support for timestamp control and END_OF_CHANNEL [#145](https://github.com/signalfx/signalfx-go/pull/145)
+
+# 1.8.4, 24 Jan 2022
+
+* Adding ValidateDetector and its unit tests [#142](https://github.com/signalfx/signalfx-go/pull/142)
+
+# 1.8.3, 17 Nov 2021
+
+* Add newly supported AWS services to the list. [#140](https://github.com/signalfx/signalfx-go/pull/140)
+
+# 1.8.2, 30 Sep 2021
+
+*  Update dependencies [#135](https://github.com/signalfx/signalfx-go/pull/135)
+
+# 1.8.1, 24 Aug 2021
+
+* Context cancellation handling [#131](https://github.com/signalfx/signalfx-go/pull/131)
+* Allow to run PostDisconnectCallback
 
 # 1.8.0, 2021-05-11
 
