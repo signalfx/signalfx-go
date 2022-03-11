@@ -1,6 +1,6 @@
 # 2.0.0, 11 Mar 2022
 
-* BREAKING CHANGE: use int64 instead of the `PollRate` type to define Azure and GCP integration poll rate [#153](https://github.com/signalfx/signalfx-go/pull/153)
+* BREAKING CHANGE: use `int64` (value in milliseconds) instead of the `PollRate` type to define Azure and GCP integration poll rate [#153](https://github.com/signalfx/signalfx-go/pull/153)
 
 Instead of the `integration.OneMinutely` use `60000`.<BR>
 Instead of the `integration.FiveMinutely` use `300000`.<BR>
