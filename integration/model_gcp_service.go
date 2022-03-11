@@ -2,7 +2,6 @@ package integration
 
 type GcpService string
 
-// List of AWSService
 const (
 	GCP_APPENGINE        GcpService = "appengine"
 	GCP_BIGQUERY         GcpService = "bigquery"

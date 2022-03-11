@@ -9,10 +9,8 @@
 
 package integration
 
-// AwsService : An AWS service that you want SignalFx to collect data from.
 type AwsService string
 
-// List of AWSService
 const (
 	AWSACP_PRIVATE_CA            AwsService = "AWS/ACMPrivateCA"
 	AWSAMAZON_MQ                 AwsService = "AWS/AmazonMQ"

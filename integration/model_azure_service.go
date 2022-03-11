@@ -1,9 +1,7 @@
 package integration
 
-// AzureService is a type for Azure Service names
 type AzureService string
 
-// List of AzureService
 const (
 	AZURE_MICROSOFT_ANALYSISSERVICES_SERVERS                     AzureService = "microsoft.analysisservices/servers"
 	AZURE_MICROSOFT_APIMANAGEMENT_SERVICE                        AzureService = "microsoft.apimanagement/service"
@@ -83,7 +81,6 @@ const (
 	AZURE_MICROSOFT_WEB_SITES_SLOTS                              AzureService = "microsoft.web/sites/slots"
 )
 
-// AzureServiceNames is a list of Azure service names
 var AzureServiceNames = map[string]AzureService{
 	"microsoft.analysisservices/servers":                        AZURE_MICROSOFT_ANALYSISSERVICES_SERVERS,
 	"microsoft.apimanagement/service":                           AZURE_MICROSOFT_APIMANAGEMENT_SERVICE,
