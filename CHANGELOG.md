@@ -1,3 +1,7 @@
+# 1.10.0, 14 Mar 2022
+
+* Add `AdditionalServices` and `ResourceFilterRules` fields to the `AzureIntegration` struct [#156](https://github.com/signalfx/signalfx-go/pull/156)
+
 # 1.9.0, 11 Mar 2022
 
 * Add support for read permissions for dashboard and dashboard groups

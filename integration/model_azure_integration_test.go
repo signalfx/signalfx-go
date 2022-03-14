@@ -45,3 +45,38 @@ func TestUnmarshalAzureIntegrationWithPollRateMs(t *testing.T) {
 	assert.Nil(t, azure.PollRate, "PollRate does not match")
 	assert.Equal(t, int64(90000), azure.PollRateMs, "PollRateMs does not match")
 }
+
+func TestMarshalAzureIntegrationWithResourceFilterRules(t *testing.T) {
+	payload, err := json.Marshal(AzureIntegration{
+		ResourceFilterRules: []AzureFilterRule{{Filter: AzureFilterExpression{Source: "foobar"}}},
+	})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	expectedPayload := `{"enabled":false,"type":"","resourceFilterRules":[{"filter":{"source":"foobar"}}],"syncGuestOsNamespaces":false}`
+	assert.Equal(t, expectedPayload, string(payload), "payload does not match")
+}
+
+func TestUnmarshalAzureIntegrationWithResourceFilterRules(t *testing.T) {
+	azure := AzureIntegration{}
+	err := json.Unmarshal([]byte(`{"resourceFilterRules":[{"filter": {"source": "foobar"}}]}`), &azure)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	expectedFilterRules := []AzureFilterRule{{Filter: AzureFilterExpression{Source: "foobar"}}}
+	assert.Equal(t, expectedFilterRules, azure.ResourceFilterRules, "ResourceFilterRules does not match")
+}
+
+func TestMarshalAzureIntegrationWithAdditionalServices(t *testing.T) {
+	payload, err := json.Marshal(AzureIntegration{AdditionalServices: []string{"qwe", "abc"}})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	expectedPayload := `{"enabled":false,"type":"","additionalServices":["qwe","abc"],"syncGuestOsNamespaces":false}`
+	assert.Equal(t, expectedPayload, string(payload), "payload does not match")
+}
+
+func TestUnmarshalAzureIntegrationWithAdditionalServices(t *testing.T) {
+	azure := AzureIntegration{}
+	err := json.Unmarshal([]byte(`{"additionalServices":["qwe","abc"]}`), &azure)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, []string{"qwe", "abc"}, azure.AdditionalServices, "AdditionalServices does not match")
+}
