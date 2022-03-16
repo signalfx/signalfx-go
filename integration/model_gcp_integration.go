@@ -34,9 +34,10 @@ type GCPIntegration struct {
 	Services []GcpService `json:"services,omitempty"`
 	// List of GCP project that you want SignalFx to monitor, in the form of a JSON array of objects
 	ProjectServiceKeys []*GCPProject `json:"projectServiceKeys,omitempty"`
-	// List of GCP metadata names that you want SignalFx to collect from the data incoming from the GCP integration, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to whitelist.
-	Whitelist  []string `json:"whitelist,omitempty"`
-	NamedToken string   `json:"namedToken,omitempty"`
+	// List of custom metadata keys that you want SignalFx to collect for Compute Engine Instances, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to include.
+	IncludeList []string `json:"includeList,omitempty"`
+	Whitelist   []string `json:"-"`
+	NamedToken  string   `json:"namedToken,omitempty"`
 }
 
 func (gcp *GCPIntegration) MarshalJSON() ([]byte, error) {
@@ -44,6 +45,9 @@ func (gcp *GCPIntegration) MarshalJSON() ([]byte, error) {
 	var copy = Alias(*gcp)
 	if copy.PollRate != nil {
 		copy.PollRateMs = int64(*copy.PollRate)
+	}
+	if copy.IncludeList == nil && copy.Whitelist != nil {
+		copy.IncludeList = copy.Whitelist
 	}
 	return json.Marshal(&struct{ *Alias }{
 		Alias: &copy,
@@ -67,5 +71,9 @@ func (gcp *GCPIntegration) UnmarshalJSON(data []byte) error {
 		fiveMinutes := FiveMinutely
 		gcp.PollRate = &fiveMinutes
 	} // else PollRate is going to be nil
+
+	if gcp.IncludeList != nil {
+		gcp.Whitelist = gcp.IncludeList
+	}
 	return nil
 }

@@ -45,3 +45,36 @@ func TestUnmarshalGCPIntegrationWithPollRateMs(t *testing.T) {
 	assert.Nil(t, GCP.PollRate, "PollRate does not match")
 	assert.Equal(t, int64(90000), GCP.PollRateMs, "PollRateMs does not match")
 }
+
+func TestMarshalGCPIntegrationWithWhitelist(t *testing.T) {
+	whitelist := []string{"key"}
+	gcpInt := GCPIntegration{
+		Whitelist: whitelist,
+	}
+	payload, err := json.Marshal(&gcpInt)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","includeList":["key"]}`, string(payload), "payload does not match")
+	assert.Nil(t, gcpInt.IncludeList, "IncludeList has been changed")
+}
+
+func TestMarshalGCPIntegrationWithIncludeList(t *testing.T) {
+	includeList := []string{"key"}
+	payload, err := json.Marshal(GCPIntegration{
+		IncludeList: includeList,
+	})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","includeList":["key"]}`, string(payload), "payload does not match")
+}
+
+func TestUnmarshalGCPIntegrationWithIncludeList(t *testing.T) {
+	expectedValue := []string{"key"}
+
+	GCP := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"includeList":["key"]}`), &GCP)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, expectedValue, GCP.IncludeList, "IncludeList does not match")
+	assert.Equal(t, expectedValue, GCP.Whitelist, "Whitelist does not match")
+}
