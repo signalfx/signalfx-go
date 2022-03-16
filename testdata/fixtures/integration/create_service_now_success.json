@@ -1,0 +1,16 @@
+{
+  "created" : 1647426008469,
+  "createdByName" : null,
+  "creator" : "EEEzzzzYYY",
+  "enabled" : true,
+  "id" : "FFF-yyyyZZ",
+  "instanceName" : "inst.service-now.com",
+  "issueType" : "Incident",
+  "lastUpdated" : 1647426008953,
+  "lastUpdatedBy" : "YY_zzzzyyy",
+  "lastUpdatedByName" : null,
+  "name" : "SNOW integ",
+  "type" : "ServiceNow",
+  "alertTriggeredPayloadTemplate": "{\"short_description\": \"{{{messageTitle}}} (customized)\"}",
+  "alertResolvedPayloadTemplate": "{\"close_notes\": \"{{{messageTitle}}} (customized close msg)\"}"
+}

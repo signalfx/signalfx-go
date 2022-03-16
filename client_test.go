@@ -40,41 +40,56 @@ func setup() func() {
 	}
 }
 
-// TODO: Use HTTPSuccess from testify?
+// TODO: rename this to verifyRequestAndCreateResponse
 func verifyRequest(t *testing.T, method string, expectToken bool, status int, params url.Values, resultPath string) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if val, ok := r.Header[AuthHeaderKey]; ok {
-			assert.Equal(t, []string{TestToken}, val, "Incorrect auth token in headers")
-		} else {
-			if expectToken {
-				assert.Fail(t, "Failed to find auth token in headers")
-			}
-		}
-
-		if val, ok := r.Header["Content-Type"]; ok {
-			assert.Equal(t, []string{"application/json"}, val, "Incorrect content-type in headers")
-		} else {
-			assert.Fail(t, "Failed to find content type in headers")
-		}
+	return createResponse(t, status, resultPath, func(t *testing.T, r *http.Request) {
+		verifyHeaders(t, r, expectToken)
+		verifyParams(t, r, params)
 
 		assert.Equal(t, method, r.Method, "Incorrect HTTP method")
+	})
+}
 
-		if params != nil {
-			incomingParams := r.URL.Query()
-			for k := range params {
-				assert.Contains(t, incomingParams, k, "Request is missing expected query parameter %q", k)
-				assert.Equal(t, params.Get(k), incomingParams.Get(k), "Params do match for parameter '"+k+"': '"+incomingParams.Get(k)+"'")
-			}
-			for k := range incomingParams {
-				assert.Contains(t, params, k, "Request contains unexpected query parameter %q", k)
-			}
+func verifyHeaders(t *testing.T, r *http.Request, expectToken bool) {
+	if val, ok := r.Header[AuthHeaderKey]; ok {
+		assert.Equal(t, []string{TestToken}, val, "Incorrect auth token in headers")
+	} else {
+		if expectToken {
+			assert.Fail(t, "Failed to find auth token in headers")
+		}
+	}
+
+	if val, ok := r.Header["Content-Type"]; ok {
+		assert.Equal(t, []string{"application/json"}, val, "Incorrect content-type in headers")
+	} else {
+		assert.Fail(t, "Failed to find content type in headers")
+	}
+}
+
+func verifyParams(t *testing.T, r *http.Request, params url.Values) {
+	if params != nil {
+		incomingParams := r.URL.Query()
+		for k := range params {
+			assert.Contains(t, incomingParams, k, "Request is missing expected query parameter %q", k)
+			assert.Equal(t, params.Get(k), incomingParams.Get(k), "Params do match for parameter '"+k+"': '"+incomingParams.Get(k)+"'")
+		}
+		for k := range incomingParams {
+			assert.Contains(t, params, k, "Request contains unexpected query parameter %q", k)
+		}
+	}
+}
+
+func createResponse(t *testing.T, status int, resultPath string, requestValidator func(t *testing.T, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if requestValidator != nil {
+			requestValidator(t, r)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(status)
-		// Allow empty bodies
+
 		if resultPath != "" {
-			fmt.Fprintf(w, fixture(resultPath))
+			_, _ = fmt.Fprintf(w, fixture(resultPath))
 		}
 	}
 }
