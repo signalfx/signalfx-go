@@ -1,3 +1,7 @@
+# 1.11.0, 16 Mar 2022
+
+* Add `IncludeList` field to `GCPIntegration` struct [#157](https://github.com/signalfx/signalfx-go/pull/157) and stop using deprecated `Whitelist` field
+
 # 1.10.0, 14 Mar 2022
 
 * Add `AdditionalServices` and `ResourceFilterRules` fields to the `AzureIntegration` struct [#156](https://github.com/signalfx/signalfx-go/pull/156)
