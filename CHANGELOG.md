@@ -1,3 +1,7 @@
+# 1.12.0, 17 Mar 2022
+
+Add support for ServiceNow integration [#159]
+
 # 1.11.0, 16 Mar 2022
 
 * Add `IncludeList` field to `GCPIntegration` struct [#157](https://github.com/signalfx/signalfx-go/pull/157) and stop using deprecated `Whitelist` field
