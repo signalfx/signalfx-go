@@ -1,3 +1,9 @@
+# 1.17.0, 1 Apr 2022
+
+No functional changes, this is an equivalent of `1.12.0`.
+
+We are releasing it to succeed mistakenly published `1.16.13` instead of `1.6.13`, which since Jan 2020 shows as the latest.
+
 # 1.12.0, 17 Mar 2022
 
 Add support for ServiceNow integration [#159]
