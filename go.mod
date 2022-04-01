@@ -10,3 +10,6 @@ require (
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/tools v0.0.0-20190906203814-12febf440ab1
 )
+
+// This version was published by mistake, should have been v1.6.13. Reatracting to avoid confusion.
+retract v1.16.13
