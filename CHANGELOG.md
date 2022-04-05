@@ -1,3 +1,7 @@
+# 1.18.0, 5 Apr 2022
+
+* Add `syncCustomNamespacesOnly` fields to the `AwsCloudWatchIntegration` struct [#160](https://github.com/signalfx/signalfx-go/pull/160)
+
 # 1.17.0, 1 Apr 2022
 
 No functional changes, this is an equivalent of `1.12.0`.
