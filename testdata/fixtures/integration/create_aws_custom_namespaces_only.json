@@ -1,0 +1,27 @@
+{
+  "created": 1556361030000,
+  "creator": "string",
+  "enabled": true,
+  "id": "string",
+  "lastUpdated": 1556620230000,
+  "lastUpdatedBy": "string",
+  "name": "string",
+  "type": "AWSCloudWatch",
+  "authMethod": "ExternalId",
+  "externalId": "string",
+  "importCloudWatch": true,
+  "pollRate": 60000,
+  "regions": [],
+  "roleArn": "string",
+  "services": [],
+  "syncCustomNamespacesOnly": true,
+  "customNamespaceSyncRules": [
+    {
+      "namespace": "AWS/Foo"
+    },
+    {
+      "namespace": "AWS/Bar"
+    }
+  ],
+  "sfxAwsAccountArn": "arn:aws:iam::1234567890:root"
+}

@@ -99,6 +99,21 @@ func TestUpdateAWSCloudWatchIntegrationLogsSyncState(t *testing.T) {
 	assert.Equal(t, "ENABLED", result.LogsSyncState, "LogsSyncState does not match")
 }
 
+func TestCreateAWSCloudWatchIntegrationCustomNamespacesOnly(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/integration", verifyRequest(t, "POST", true, http.StatusOK, nil, "integration/create_aws_custom_namespaces_only.json"))
+
+	result, err := client.CreateAWSCloudWatchIntegration(context.Background(), &integration.AwsCloudWatchIntegration{
+		Type: "AWSCloudWatch",
+	})
+	assert.NoError(t, err, "Unexpected error creating integration")
+	assert.Equal(t, true, result.SyncCustomNamespacesOnly, "SyncCustomNamespacesOnly does not match")
+	assert.Equal(t, []*integration.AwsCustomNameSpaceSyncRule{{Namespace: "AWS/Foo"}, {Namespace: "AWS/Bar"}},
+		result.CustomNamespaceSyncRules, "CustomNamespaceSyncRules does not match")
+}
+
 func TestDeleteAWSCloudWatchIntegration(t *testing.T) {
 	teardown := setup()
 	defer teardown()
