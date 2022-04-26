@@ -1,3 +1,7 @@
+# 1.19.0, 26 Apr 2022
+
+* Remove `omitempty` from `ShowDataMarkers` field in the `Detector/Visualization` struct [#162](https://github.com/signalfx/signalfx-go/pull/162)
+
 # 1.18.0, 12 Apr 2022
 
 * Add `syncCustomNamespacesOnly` field to the `AwsCloudWatchIntegration` struct [#160](https://github.com/signalfx/signalfx-go/pull/160)
