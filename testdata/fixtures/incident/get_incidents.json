@@ -1,0 +1,55 @@
+[
+  {
+    "active": true,
+    "anomalyState": "ANOMALOUS",
+    "detectLabel": "string",
+    "detectorId": "string",
+    "events": [
+      {
+        "anomalyState": "ANOMALOUS",
+        "detectLabel": "string",
+        "detectorId": "string",
+        "detectorName": "string",
+        "duration": 0,
+        "event_annotations": {},
+        "id": "string",
+        "incidentId": "string",
+        "inputs": {
+        "A": 5,
+        "B": 6
+        },
+        "severity": "Critical",
+        "timestamp": 1557484230000
+      }
+    ],
+    "incidentId": "string",
+    "severity": "Critical"
+  },
+  {
+    "active": true,
+    "anomalyState": "ANOMALOUS",
+    "detectLabel": "string1",
+    "detectorId": "string1",
+    "events": [
+      {
+        "anomalyState": "ANOMALOUS",
+        "detectLabel": "string1",
+        "detectorId": "string1",
+        "detectorName": "string1",
+        "duration": 0,
+        "event_annotations": {},
+        "id": "string1",
+        "incidentId": "string1",
+        "inputs": {
+        "A": 5,
+        "B": 6
+        },
+        "severity": "Critical",
+        "timestamp": 1557484230000
+      }
+    ],
+    "incidentId": "string1",
+    "severity": "Critical"
+  }
+]
+  
