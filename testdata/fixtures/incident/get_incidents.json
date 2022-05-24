@@ -15,15 +15,18 @@
         "id": "string",
         "incidentId": "string",
         "inputs": {
-        "A": 5,
-        "B": 6
+          "A": 5,
+          "B": 6
         },
         "severity": "Critical",
         "timestamp": 1557484230000
       }
     ],
     "incidentId": "string",
-    "severity": "Critical"
+    "isMuted" : false,
+    "severity": "Critical",
+    "triggeredNotificationSent" : true,
+    "triggeredWhileMuted" : false
   },
   {
     "active": true,
@@ -41,15 +44,17 @@
         "id": "string1",
         "incidentId": "string1",
         "inputs": {
-        "A": 5,
-        "B": 6
+          "A": 5,
+          "B": 6
         },
         "severity": "Critical",
         "timestamp": 1557484230000
       }
     ],
     "incidentId": "string1",
-    "severity": "Critical"
+    "isMuted" : false,
+    "severity": "Critical",
+    "triggeredNotificationSent" : true,
+    "triggeredWhileMuted" : false
   }
 ]
-  
