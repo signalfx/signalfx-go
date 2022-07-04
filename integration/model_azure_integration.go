@@ -48,6 +48,8 @@ type AzureIntegration struct {
 	// List of Azure subscriptions that SignalFx should monitor, in the form of a JSON array
 	Subscriptions         []string `json:"subscriptions,omitempty"`
 	SyncGuestOsNamespaces bool     `json:"syncGuestOsNamespaces"`
+	// Flag determining whether metrics from Azure Monitor should be imported (when value is true) or only metadata (when value is false).
+	ImportAzureMonitor bool `json:"importAzureMonitor,omitempty"`
 	// Azure ID of the Azure tenant. To learn how to get this ID, see the topic (https://docs.signalfx.com/en/latest/getting-started/send-data.html#connect-to-microsoft-azure)[Connect to Microsoft Azure] in the product documentation.
 	TenantId   string `json:"tenantId,omitempty"`
 	NamedToken string `json:"namedToken,omitempty"`
