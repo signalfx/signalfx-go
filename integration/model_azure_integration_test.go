@@ -80,3 +80,19 @@ func TestUnmarshalAzureIntegrationWithAdditionalServices(t *testing.T) {
 	assert.NoError(t, err, "Unexpected error unmarshalling integration")
 	assert.Equal(t, []string{"qwe", "abc"}, azure.AdditionalServices, "AdditionalServices does not match")
 }
+
+func TestMarshalAzureIntegrationWithImportAzureMonitor(t *testing.T) {
+	payload, err := json.Marshal(AzureIntegration{ImportAzureMonitor: true})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	expectedPayload := `{"enabled":false,"type":"","syncGuestOsNamespaces":false,"importAzureMonitor":true}`
+	assert.Equal(t, expectedPayload, string(payload), "payload does not match")
+}
+
+func TestUnmarshalAzureIntegrationWithImportAzureMonitor(t *testing.T) {
+	azure := AzureIntegration{}
+	err := json.Unmarshal([]byte(`{"importAzureMonitor":false}`), &azure)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, false, azure.ImportAzureMonitor, "ImportAzureMonitor does not match")
+}
