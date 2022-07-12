@@ -1,3 +1,7 @@
+# 1.21.0, 12 Jul 2022
+
+* Add `importAzureMonitor` flag to the `AzureIntegration` struct [#165](https://github.com/signalfx/signalfx-go/pull/165)
+
 # 1.19.0, 26 Apr 2022
 
 * Remove `omitempty` from `ShowDataMarkers` field in the `Detector/Visualization` struct [#162](https://github.com/signalfx/signalfx-go/pull/162)
