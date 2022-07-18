@@ -78,3 +78,13 @@ func TestUnmarshalGCPIntegrationWithIncludeList(t *testing.T) {
 	assert.Equal(t, expectedValue, GCP.IncludeList, "IncludeList does not match")
 	assert.Equal(t, expectedValue, GCP.Whitelist, "Whitelist does not match")
 }
+
+func TestMarshalGCPIntegrationWithUseMetricSourceProjectForQuotaEnabled(t *testing.T) {
+	gcpInt := GCPIntegration{
+		UseMetricSourceProjectForQuota: true,
+	}
+	payload, err := json.Marshal(&gcpInt)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","useMetricSourceProjectForQuota":true}`, string(payload), "payload does not match")
+}

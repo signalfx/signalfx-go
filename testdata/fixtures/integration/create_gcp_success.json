@@ -14,6 +14,7 @@
       "projectKey": "string"
     }
   ],
+  "useMetricSourceProjectForQuota": true,
   "services": [
     "appengine"
   ],
