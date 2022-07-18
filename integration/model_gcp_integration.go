@@ -34,6 +34,8 @@ type GCPIntegration struct {
 	Services []GcpService `json:"services,omitempty"`
 	// List of GCP project that you want SignalFx to monitor, in the form of a JSON array of objects
 	ProjectServiceKeys []*GCPProject `json:"projectServiceKeys,omitempty"`
+	// When this value is set to true Observability Cloud will force usage of a quota from the project where metrics are stored. For this to work the service account provided for the project needs to be provided with serviceusage.services.use permission or Service Usage Consumer role in this project. When set to false default quota settings are used.
+	UseMetricSourceProjectForQuota bool `json:"useMetricSourceProjectForQuota,omitempty"`
 	// List of custom metadata keys that you want SignalFx to collect for Compute Engine Instances, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to include.
 	IncludeList []string `json:"includeList,omitempty"`
 	Whitelist   []string `json:"-"`
