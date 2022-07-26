@@ -64,4 +64,11 @@ type Options struct {
 	Type string `json:"type"`
 	// Specifies the type of unit to use when displaying or labeling values     - Metric\\: Values represent decimal multiples. For example, if `unitPrefix` is Metric, 1K represents 1 kilobyte or 1000       bytes.     - Binary\\: Values represent binary multiples. For example, if `unitPrefix` is Binary, 1K represents 1 kibibyte or 1024       bytes.<br> **Note** This option is available for all values of `option.type` except `Text`
 	UnitPrefix string `json:"unitPrefix,omitempty"`
+	// The column configuration on logs chart
+	Columns []*Columns `json:"columns,omitempty"`
+	// The sort option configuration for a logs chart
+	SortOptions []*SortOptions `json:"sortOptions,omitempty"`
+	// The default connection configuration for a logs chart 
+	DefaultConnection string `json:"defaultConnection,omitempty"`
+
 }
