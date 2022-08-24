@@ -14,13 +14,13 @@ func TestMarshalGetMetricRulesetResponseWithAggregators(t *testing.T) {
 	metricRuleset := GetMetricRulesetResponse{
 		Id:            stringToPointer("metric_ruleset_id"),
 		Creator:       stringToPointer("user"),
-		Created:       int64ToPointer(time.Now().UnixMilli()),
+		Created:       int64ToPointer(time.Now().UnixNano()),
 		Version:       int64ToPointer(11),
 		Name:          stringToPointer("name"),
 		Destination:   &dest,
 		Enabled:       boolToPointer(true),
 		LastUpdatedBy: stringToPointer("updater"),
-		LastUpdated:   int64ToPointer(time.Now().UnixMilli()),
+		LastUpdated:   int64ToPointer(time.Now().UnixNano()),
 		MetricMatcher: &MetricMatcher{
 			SimpleMetricMatcher: &SimpleMetricMatcher{
 				Type:       "simple",
