@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/signalfx/signalfx-go/metric_ruleset"
@@ -25,13 +26,13 @@ func (c *Client) GetMetricRuleset(ctx context.Context, id string) (*metric_rules
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		message, _ := io.ReadAll(resp.Body)
+		message, _ := ioutil.ReadAll(resp.Body)
 		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
 	metricRuleset := &metric_ruleset.GetMetricRulesetResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&metricRuleset)
-	io.Copy(io.Discard, resp.Body)
+	io.Copy(ioutil.Discard, resp.Body)
 
 	return metricRuleset, err
 }
@@ -53,13 +54,13 @@ func (c *Client) CreateMetricRuleset(ctx context.Context, metricRuleset *metric_
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		message, _ := io.ReadAll(resp.Body)
+		message, _ := ioutil.ReadAll(resp.Body)
 		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
 	createdMetricRuleset := &metric_ruleset.CreateMetricRulesetResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&createdMetricRuleset)
-	io.Copy(io.Discard, resp.Body)
+	io.Copy(ioutil.Discard, resp.Body)
 
 	return createdMetricRuleset, err
 }
@@ -81,13 +82,13 @@ func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRules
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		message, _ := io.ReadAll(resp.Body)
+		message, _ := ioutil.ReadAll(resp.Body)
 		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
 	updatedMetricRuleset := &metric_ruleset.UpdateMetricRulesetResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&updatedMetricRuleset)
-	io.Copy(io.Discard, resp.Body)
+	io.Copy(ioutil.Discard, resp.Body)
 
 	return updatedMetricRuleset, err
 }
@@ -104,11 +105,11 @@ func (c *Client) DeleteMetricRuleset(ctx context.Context, id string) error {
 	}
 
 	if resp.StatusCode != http.StatusNoContent {
-		message, _ := io.ReadAll(resp.Body)
+		message, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
-	io.Copy(io.Discard, resp.Body)
+	io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
 }
