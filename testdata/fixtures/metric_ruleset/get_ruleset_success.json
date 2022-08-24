@@ -1,0 +1,24 @@
+{
+  "id":"metric_ruleset_id",
+  "version":1,
+  "name":"container cpu utilization by realm and service",
+  "destination":2,
+  "enabled": true,
+  "metricMatcher":{
+    "type":"simple",
+    "metricName":"container_cpu_utilization",
+    "filters":[
+      {
+        "property":"sfx_realm",
+        "NOT":true,
+        "propertyValue":[
+          "lab0","rc0"
+        ]
+      },
+      {
+        "property":"sfx_service",
+        "propertyValue": ["metrics_processor"]
+      }
+    ]
+  }
+}

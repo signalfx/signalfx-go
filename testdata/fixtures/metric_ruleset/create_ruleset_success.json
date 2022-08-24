@@ -1,0 +1,18 @@
+{
+  "id":"metric_ruleset_id",
+  "version":1,
+  "name":"container cpu utilization by realm and service",
+  "destination":2,
+  "enabled": true,
+  "metricMatcher":{
+    "type":"simple",
+    "metricName":"container_cpu_utilization"
+  },
+  "aggregators": [
+    {
+      "type": "rollup",
+      "outputName": "cpu_by_realm_service",
+      "dimensionsToKeep":["dim3","dim4"]
+    }
+  ]
+}
