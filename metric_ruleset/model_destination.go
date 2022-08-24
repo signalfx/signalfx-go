@@ -15,17 +15,17 @@ import (
 	"fmt"
 )
 
-// Destination The routing destination for your data points 
+// Destination The routing destination for your data points
 type Destination string
 
 // List of Destination
 const (
-	UNKNOWN Destination = "Unknown"
+	UNKNOWN        Destination = "Unknown"
 	REALTIME_13_MO Destination = "Realtime_13MO"
-	REALTIME_3_MO Destination = "Realtime_3MO"
-	HCM Destination = "HCM"
-	FULL_FIDELITY Destination = "FullFidelity"
-	DROP Destination = "Drop"
+	REALTIME_3_MO  Destination = "Realtime_3MO"
+	HCM            Destination = "HCM"
+	FULL_FIDELITY  Destination = "FullFidelity"
+	DROP           Destination = "Drop"
 )
 
 // All allowed values of Destination enum

@@ -16,19 +16,19 @@ import (
 
 // CreateMetricRulesetRequest Create metric ingest ruleset request body
 type CreateMetricRulesetRequest struct {
-	// Aggregation rules in the ruleset 
+	// Aggregation rules in the ruleset
 	Aggregators []RollupAggregator `json:"aggregators,omitempty"`
-	// Metric ingest ruleset description 
-	Description *string `json:"description,omitempty"`
+	// Metric ingest ruleset description
+	Description *string      `json:"description,omitempty"`
 	Destination *Destination `json:"destination,omitempty"`
-	// Ruleset status 
+	// Ruleset status
 	Enabled bool `json:"enabled"`
-	// Ruleset ID 
-	Id *string `json:"id,omitempty"`
+	// Ruleset ID
+	Id            *string       `json:"id,omitempty"`
 	MetricMatcher MetricMatcher `json:"metricMatcher"`
-	// Name of the ruleset 
+	// Name of the ruleset
 	Name string `json:"name"`
-	// Version of the ruleset 
+	// Version of the ruleset
 	Version int64 `json:"version"`
 }
 

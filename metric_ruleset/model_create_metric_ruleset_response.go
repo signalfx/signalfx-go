@@ -16,27 +16,27 @@ import (
 
 // CreateMetricRulesetResponse Create metric ingest ruleset response body
 type CreateMetricRulesetResponse struct {
-	// Aggregation rules in the ruleset 
+	// Aggregation rules in the ruleset
 	Aggregators []RollupAggregator `json:"aggregators,omitempty"`
-	// User ID of the user who created this ingest ruleset 
+	// User ID of the user who created this ingest ruleset
 	Creator *string `json:"creator,omitempty"`
-	// Date and time when this ruleset was created  
+	// Date and time when this ruleset was created
 	Created *int64 `json:"created,omitempty"`
-	// Metric ingest ruleset description 
-	Description *string `json:"description,omitempty"`
+	// Metric ingest ruleset description
+	Description *string      `json:"description,omitempty"`
 	Destination *Destination `json:"destination,omitempty"`
-	// Ruleset status 
+	// Ruleset status
 	Enabled *bool `json:"enabled,omitempty"`
-	// Ruleset ID 
+	// Ruleset ID
 	Id *string `json:"id,omitempty"`
-	// ID of the user who last updated the ruleset 
+	// ID of the user who last updated the ruleset
 	LastUpdatedBy *string `json:"lastUpdatedBy,omitempty"`
-	// Time at which this ruleset was last updated 
-	LastUpdated *int64 `json:"lastUpdated,omitempty"`
+	// Time at which this ruleset was last updated
+	LastUpdated   *int64         `json:"lastUpdated,omitempty"`
 	MetricMatcher *MetricMatcher `json:"metricMatcher,omitempty"`
-	// Name of the ruleset 
+	// Name of the ruleset
 	Name *string `json:"name,omitempty"`
-	// Version of the ruleset 
+	// Version of the ruleset
 	Version *int64 `json:"version,omitempty"`
 }
 

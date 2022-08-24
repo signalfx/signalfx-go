@@ -93,7 +93,7 @@ func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRules
 }
 
 // DeleteMetricRuleset deletes a metric ruleset.
-func (c *Client) DeleteMetricRuleset(ctx context.Context, id string) (error) {
+func (c *Client) DeleteMetricRuleset(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, http.MethodDelete, MetricRulesetApiURL+"/"+id, nil, nil)
 	if resp != nil {
 		defer resp.Body.Close()

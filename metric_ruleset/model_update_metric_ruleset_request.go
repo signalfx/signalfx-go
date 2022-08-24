@@ -19,10 +19,10 @@ type UpdateMetricRulesetRequest struct {
 	// Aggregation rules in the ruleset
 	Aggregators []RollupAggregator `json:"aggregators,omitempty"`
 	// Metric ingest ruleset description
-	Description *string `json:"description,omitempty"`
+	Description *string      `json:"description,omitempty"`
 	Destination *Destination `json:"destination,omitempty"`
 	// Ruleset status
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled       *bool          `json:"enabled,omitempty"`
 	MetricMatcher *MetricMatcher `json:"metricMatcher,omitempty"`
 	// Name of the ruleset
 	Name *string `json:"name,omitempty"`

@@ -12,15 +12,15 @@ import (
 func TestMarshalGetMetricRulesetResponseWithAggregators(t *testing.T) {
 	dest := FULL_FIDELITY
 	metricRuleset := GetMetricRulesetResponse{
-		Id: stringToPointer("metric_ruleset_id"),
-		Creator: stringToPointer("user"),
-		Created: int64ToPointer(time.Now().UnixMilli()),
-		Version: int64ToPointer(11),
-		Name: stringToPointer("name"),
-		Destination: &dest,
-		Enabled: boolToPointer(true),
+		Id:            stringToPointer("metric_ruleset_id"),
+		Creator:       stringToPointer("user"),
+		Created:       int64ToPointer(time.Now().UnixMilli()),
+		Version:       int64ToPointer(11),
+		Name:          stringToPointer("name"),
+		Destination:   &dest,
+		Enabled:       boolToPointer(true),
 		LastUpdatedBy: stringToPointer("updater"),
-		LastUpdated: int64ToPointer(time.Now().UnixMilli()),
+		LastUpdated:   int64ToPointer(time.Now().UnixMilli()),
 		MetricMatcher: &MetricMatcher{
 			SimpleMetricMatcher: &SimpleMetricMatcher{
 				Type:       "simple",
@@ -36,7 +36,7 @@ func TestMarshalGetMetricRulesetResponseWithAggregators(t *testing.T) {
 		},
 		Aggregators: []RollupAggregator{
 			{
-				Type: "rollup",
+				Type:       "rollup",
 				OutputName: "newMetricName1",
 				DimensionsToKeep: []string{
 					"dim1",
@@ -44,7 +44,7 @@ func TestMarshalGetMetricRulesetResponseWithAggregators(t *testing.T) {
 				},
 			},
 			{
-				Type: "rollup",
+				Type:       "rollup",
 				OutputName: "newMetricName2",
 				DimensionsToKeep: []string{
 					"dim3",
@@ -99,9 +99,9 @@ func TestMarshalGetMetricRulesetResponseWithAggregators(t *testing.T) {
 func TestMarshalMetricRulesetNoAggregators(t *testing.T) {
 	dest := REALTIME_13_MO
 	metricRuleset := GetMetricRulesetResponse{
-		Id: stringToPointer("metric_ruleset_id"),
-		Version: int64ToPointer(2),
-		Name: stringToPointer("name"),
+		Id:          stringToPointer("metric_ruleset_id"),
+		Version:     int64ToPointer(2),
+		Name:        stringToPointer("name"),
 		Description: stringToPointer("description"),
 		Destination: &dest,
 		MetricMatcher: &MetricMatcher{
@@ -113,8 +113,7 @@ func TestMarshalMetricRulesetNoAggregators(t *testing.T) {
 	}
 	payload, err := json.Marshal(&metricRuleset)
 
-	var expectedPayload =
-		`{
+	var expectedPayload = `{
 			"id":"metric_ruleset_id",
 			"version":2,
 			"name":"name",
@@ -131,8 +130,7 @@ func TestMarshalMetricRulesetNoAggregators(t *testing.T) {
 
 func TestUnmarshalMetricRulesetWithAggregators(t *testing.T) {
 	metricRuleset := GetMetricRulesetResponse{}
-	var jsonString =
-		`{
+	var jsonString = `{
 			"id":"metric_ruleset_id",
 			"version":2,
 			"name":"name",
@@ -160,21 +158,21 @@ func TestUnmarshalMetricRulesetWithAggregators(t *testing.T) {
 
 	dest := DROP
 	expectedMetricRuleset := GetMetricRulesetResponse{
-		Id: stringToPointer("metric_ruleset_id"),
-		Version: int64ToPointer(2),
-		Name: stringToPointer("name"),
-		Enabled: boolToPointer(true),
+		Id:          stringToPointer("metric_ruleset_id"),
+		Version:     int64ToPointer(2),
+		Name:        stringToPointer("name"),
+		Enabled:     boolToPointer(true),
 		Description: stringToPointer("description"),
 		Destination: &dest,
 		MetricMatcher: &MetricMatcher{
 			SimpleMetricMatcher: &SimpleMetricMatcher{
-				Type: "simple",
+				Type:       "simple",
 				MetricName: "metricName",
 			},
 		},
 		Aggregators: []RollupAggregator{
 			{
-				Type: "rollup",
+				Type:       "rollup",
 				OutputName: "newMetricName1",
 				DimensionsToKeep: []string{
 					"dim1",
@@ -182,7 +180,7 @@ func TestUnmarshalMetricRulesetWithAggregators(t *testing.T) {
 				},
 			},
 			{
-				Type: "rollup",
+				Type:       "rollup",
 				OutputName: "newMetricName2",
 				DimensionsToKeep: []string{
 					"dim3",
@@ -198,8 +196,7 @@ func TestUnmarshalMetricRulesetWithAggregators(t *testing.T) {
 
 func TestUnmarshalMetricRulesetNoAggregators(t *testing.T) {
 	metricRuleset := GetMetricRulesetResponse{}
-	var jsonString =
-		`{
+	var jsonString = `{
 			"id":"metric_ruleset_id",
 			"version":2,
 			"name":"name",
@@ -222,15 +219,15 @@ func TestUnmarshalMetricRulesetNoAggregators(t *testing.T) {
 	err := json.Unmarshal([]byte(jsonString), &metricRuleset)
 	dest := FULL_FIDELITY
 	expectedMetricRuleset := GetMetricRulesetResponse{
-		Id: stringToPointer("metric_ruleset_id"),
-		Version: int64ToPointer(2),
-		Name: stringToPointer("name"),
-		Enabled: boolToPointer(false),
+		Id:          stringToPointer("metric_ruleset_id"),
+		Version:     int64ToPointer(2),
+		Name:        stringToPointer("name"),
+		Enabled:     boolToPointer(false),
 		Destination: &dest,
 		MetricMatcher: &MetricMatcher{
 			SimpleMetricMatcher: &SimpleMetricMatcher{
-				Type: "simple",
-				MetricName:        "metricName",
+				Type:       "simple",
+				MetricName: "metricName",
 				Filters: []PropertyFilter{
 					{
 						Property:      stringToPointer("dim1"),

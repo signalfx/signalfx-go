@@ -23,7 +23,7 @@ type UpdateMetricRulesetResponse struct {
 	// Date and time when this ruleset was created
 	Created *int64 `json:"created,omitempty"`
 	// Metric ingest ruleset description
-	Description *string `json:"description,omitempty"`
+	Description *string      `json:"description,omitempty"`
 	Destination *Destination `json:"destination,omitempty"`
 	// Ruleset status
 	Enabled *bool `json:"enabled,omitempty"`
@@ -32,7 +32,7 @@ type UpdateMetricRulesetResponse struct {
 	// ID of the user who last updated the ruleset
 	LastUpdatedBy *string `json:"lastUpdatedBy,omitempty"`
 	// Time at which this ruleset was last updated
-	LastUpdated *int64 `json:"lastUpdated,omitempty"`
+	LastUpdated   *int64         `json:"lastUpdated,omitempty"`
 	MetricMatcher *MetricMatcher `json:"metricMatcher,omitempty"`
 	// Name of the ruleset
 	Name *string `json:"name,omitempty"`

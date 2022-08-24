@@ -17,21 +17,21 @@ func TestCreateMetricRuleset(t *testing.T) {
 
 	dest := metric_ruleset.FULL_FIDELITY
 	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
-		Name: "container cpu utilization by realm and service",
-		Version: 1,
-		Enabled: true,
+		Name:        "container cpu utilization by realm and service",
+		Version:     1,
+		Enabled:     true,
 		Destination: &dest,
 		MetricMatcher: metric_ruleset.MetricMatcher{
 			SimpleMetricMatcher: &metric_ruleset.SimpleMetricMatcher{
 				MetricName: "container_cpu_utilization",
-				Type:"simple",
+				Type:       "simple",
 			},
 		},
 		Aggregators: []metric_ruleset.RollupAggregator{
 			{
-				OutputName: "cpu_by_realm_service",
-				DimensionsToKeep: []string { "sfx_realm", "sfx_service" },
-				Type: "rollup",
+				OutputName:       "cpu_by_realm_service",
+				DimensionsToKeep: []string{"sfx_realm", "sfx_service"},
+				Type:             "rollup",
 			},
 		},
 	})
@@ -64,9 +64,9 @@ func TestUpdateMetricRuleset(t *testing.T) {
 	enabled := true
 	version := int64(2)
 	result, err := client.UpdateMetricRuleset(context.Background(), "metric_ruleset_id", &metric_ruleset.UpdateMetricRulesetRequest{
-		Name: &name,
-		Version: &version,
-		Enabled: &enabled,
+		Name:        &name,
+		Version:     &version,
+		Enabled:     &enabled,
 		Destination: &dest,
 		MetricMatcher: &metric_ruleset.MetricMatcher{
 			SimpleMetricMatcher: &metric_ruleset.SimpleMetricMatcher{
