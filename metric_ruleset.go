@@ -15,7 +15,7 @@ import (
 const MetricRulesetApiURL = "/v2/metricruleset"
 
 // GetMetricRuleset gets a metric ruleset.
-func (c *Client) GetMetricRuleset(ctx context.Context, id string) (*metric_ruleset.MetricRuleset, error) {
+func (c *Client) GetMetricRuleset(ctx context.Context, id string) (*metric_ruleset.GetMetricRulesetResponse, error) {
 	resp, err := c.doRequest(ctx, http.MethodGet, MetricRulesetApiURL+"/"+id, nil, nil)
 	if resp != nil {
 		defer resp.Body.Close()
@@ -29,7 +29,7 @@ func (c *Client) GetMetricRuleset(ctx context.Context, id string) (*metric_rules
 		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
-	metricRuleset := &metric_ruleset.MetricRuleset{}
+	metricRuleset := &metric_ruleset.GetMetricRulesetResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&metricRuleset)
 	io.Copy(io.Discard, resp.Body)
 
@@ -37,7 +37,7 @@ func (c *Client) GetMetricRuleset(ctx context.Context, id string) (*metric_rules
 }
 
 // CreateMetricRuleset creates a metric ruleset.
-func (c *Client) CreateMetricRuleset(ctx context.Context, metricRuleset *metric_ruleset.MetricRuleset) (*metric_ruleset.MetricRuleset, error) {
+func (c *Client) CreateMetricRuleset(ctx context.Context, metricRuleset *metric_ruleset.CreateMetricRulesetRequest) (*metric_ruleset.CreateMetricRulesetResponse, error) {
 	payload, err := json.Marshal(metricRuleset)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (c *Client) CreateMetricRuleset(ctx context.Context, metricRuleset *metric_
 		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
-	createdMetricRuleset := &metric_ruleset.MetricRuleset{}
+	createdMetricRuleset := &metric_ruleset.CreateMetricRulesetResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&createdMetricRuleset)
 	io.Copy(io.Discard, resp.Body)
 
@@ -65,7 +65,7 @@ func (c *Client) CreateMetricRuleset(ctx context.Context, metricRuleset *metric_
 }
 
 // UpdateMetricRuleset updates a metric ruleset.
-func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRuleset *metric_ruleset.MetricRuleset) (*metric_ruleset.MetricRuleset, error) {
+func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRuleset *metric_ruleset.UpdateMetricRulesetRequest) (*metric_ruleset.UpdateMetricRulesetResponse, error) {
 	payload, err := json.Marshal(metricRuleset)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRules
 		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
 	}
 
-	updatedMetricRuleset := &metric_ruleset.MetricRuleset{}
+	updatedMetricRuleset := &metric_ruleset.UpdateMetricRulesetResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&updatedMetricRuleset)
 	io.Copy(io.Discard, resp.Body)
 

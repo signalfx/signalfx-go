@@ -2,11 +2,11 @@
   "id":"metric_ruleset_id",
   "version":1,
   "name":"container cpu utilization by realm and service",
-  "destination":2,
+  "destination":"Drop",
   "enabled": true,
   "metricMatcher":{
-    "type":"simple",
-    "metricName":"container_cpu_utilization"
+    "type": "simple",
+    "metricName": "container_cpu_utilization"
   },
   "aggregators": [
     {

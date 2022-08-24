@@ -15,28 +15,31 @@ func TestCreateMetricRuleset(t *testing.T) {
 
 	mux.HandleFunc(MetricRulesetApiURL, verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "metric_ruleset/create_ruleset_success.json"))
 
-	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.MetricRuleset{
+	dest := metric_ruleset.FULL_FIDELITY
+	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
 		Name: "container cpu utilization by realm and service",
 		Version: 1,
 		Enabled: true,
-		Destination: 2,
-		MetricMatcher: &metric_ruleset.SimpleMetricMatcher{
-			MetricName: "container_cpu_utilization",
-			BaseMetricMatcher: metric_ruleset.BaseMetricMatcher{Type:"simple"},
+		Destination: &dest,
+		MetricMatcher: metric_ruleset.MetricMatcher{
+			SimpleMetricMatcher: &metric_ruleset.SimpleMetricMatcher{
+				MetricName: "container_cpu_utilization",
+				Type:"simple",
+			},
 		},
-		Aggregators: []metric_ruleset.MetricAggregator{
-			&metric_ruleset.RollupAggregator{
+		Aggregators: []metric_ruleset.RollupAggregator{
+			{
 				OutputName: "cpu_by_realm_service",
 				DimensionsToKeep: []string { "sfx_realm", "sfx_service" },
-				BaseMetricAggregator: metric_ruleset.BaseMetricAggregator{Type: "rollup"},
+				Type: "rollup",
 			},
 		},
 	})
 
 	assert.NoError(t, err, "Unexpected error creating metric ruleset")
-	assert.Equal(t, "container cpu utilization by realm and service", result.Name, "Name does not match")
+	assert.Equal(t, "container cpu utilization by realm and service", *result.Name, "Name does not match")
 	assert.Equal(t, 1, len(result.Aggregators), "Unexpected length of aggregators array")
-	assert.Equal(t, "simple", result.MetricMatcher.GetMatcherType(), "Matcher type does not match expected")
+	assert.Equal(t, "simple", result.MetricMatcher.SimpleMetricMatcher.Type, "Matcher type does not match expected")
 }
 
 func TestGetMetricRuleset(t *testing.T) {
@@ -47,7 +50,7 @@ func TestGetMetricRuleset(t *testing.T) {
 
 	result, err := client.GetMetricRuleset(context.Background(), "metric_ruleset_id")
 	assert.NoError(t, err, "Unexpected error getting metric ruleset")
-	assert.Equal(t, "container cpu utilization by realm and service", result.Name, "Name does not match")
+	assert.Equal(t, "container cpu utilization by realm and service", *result.Name, "Name does not match")
 }
 
 func TestUpdateMetricRuleset(t *testing.T) {
@@ -56,18 +59,24 @@ func TestUpdateMetricRuleset(t *testing.T) {
 
 	mux.HandleFunc(MetricRulesetApiURL+"/metric_ruleset_id", verifyRequest(t, http.MethodPut, true, http.StatusOK, nil, "metric_ruleset/create_ruleset_success.json"))
 
-	result, err := client.UpdateMetricRuleset(context.Background(), "metric_ruleset_id", &metric_ruleset.MetricRuleset{
-		Name: "container cpu utilization by realm and service",
-		Version: 1,
-		Enabled: true,
-		Destination: 2,
-		MetricMatcher: &metric_ruleset.SimpleMetricMatcher{
-			MetricName: "container_cpu_utilization",
-			BaseMetricMatcher: metric_ruleset.BaseMetricMatcher{Type:"simple"},
+	name := "newName"
+	dest := metric_ruleset.DROP
+	enabled := true
+	version := int64(2)
+	result, err := client.UpdateMetricRuleset(context.Background(), "metric_ruleset_id", &metric_ruleset.UpdateMetricRulesetRequest{
+		Name: &name,
+		Version: &version,
+		Enabled: &enabled,
+		Destination: &dest,
+		MetricMatcher: &metric_ruleset.MetricMatcher{
+			SimpleMetricMatcher: &metric_ruleset.SimpleMetricMatcher{
+				MetricName: "container_cpu_utilization",
+				Type:       "simple",
+			},
 		},
 	})
 	assert.NoError(t, err, "Unexpected error creating integration")
-	assert.Equal(t, "container cpu utilization by realm and service", result.Name, "Name does not match")
+	assert.Equal(t, "container cpu utilization by realm and service", *result.Name, "Name does not match")
 }
 
 func TestDeleteMetricRuleset(t *testing.T) {
