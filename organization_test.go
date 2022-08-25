@@ -69,6 +69,19 @@ func TestInviteMember(t *testing.T) {
 	assert.Equal(t, "string", results.Email, "Incorrect email")
 }
 
+func TestUpdateMember(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/organization/member/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "organization/update_member_success.json"))
+
+	results, err := client.UpdateMember(context.Background(), "string", &organization.UpdateMemberRequest{
+		Admin: true,
+	})
+	assert.NoError(t, err, "Unexpected error updating member")
+	assert.Equal(t, true, results.Admin, "Incorrect admin config")
+}
+
 func TestGetInviteMembers(t *testing.T) {
 	teardown := setup()
 	defer teardown()
