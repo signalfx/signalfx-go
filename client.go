@@ -105,6 +105,35 @@ func (c *Client) doRequestWithToken(ctx context.Context, method string, path str
 	return c.httpClient.Do(req)
 }
 
+// Added temporarily to support navigator API. Must be worked on before the change gets made.
+func (c *Client) doRequestWithNavHeader(ctx context.Context, method string, path string, params url.Values, body io.Reader) (*http.Response, error) {
+	return c.doRequestWithTokenWithNavHeader(ctx, method, path, params, body, c.authToken)
+}
+
+// Added temporarily to support navigator API. Must be worked on before the change gets made.
+func (c *Client) doRequestWithTokenWithNavHeader(ctx context.Context, method string, path string, params url.Values, body io.Reader, token string) (*http.Response, error) {
+	destURL, err := url.Parse(c.baseURL)
+	if err != nil {
+		return nil, err
+	}
+	destURL.Path = stdpath.Join(destURL.Path, path)
+
+	if params != nil {
+		destURL.RawQuery = params.Encode()
+	}
+	req, err := http.NewRequestWithContext(ctx, method, destURL.String(), body)
+	if token != "" {
+		req.Header.Set(AuthHeaderKey, token)
+	}
+	req.Header.Set("User-Agent", c.userAgent)
+	req.Header.Set("Content-Type", "application/vnd.splunk.observability.navigator+json")
+	if err != nil {
+		return nil, err
+	}
+
+	return c.httpClient.Do(req)
+}
+
 // SignalFlow creates and returns a SignalFlow client that can be used to
 // execute streaming jobs.
 func (c *Client) SignalFlow(options ...signalflow.ClientParam) (*signalflow.Client, error) {
