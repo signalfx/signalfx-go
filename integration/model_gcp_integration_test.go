@@ -88,3 +88,69 @@ func TestMarshalGCPIntegrationWithUseMetricSourceProjectForQuotaEnabled(t *testi
 	assert.NoError(t, err, "Unexpected error marshalling integration")
 	assert.Equal(t, `{"enabled":false,"type":"","useMetricSourceProjectForQuota":true}`, string(payload), "payload does not match")
 }
+
+func TestMarshalGCPIntegrationWithImportGCPMetricsEnabled(t *testing.T) {
+	gcpInt := GCPIntegration{
+		ImportGCPMetrics: new(bool),
+	}
+
+	*gcpInt.ImportGCPMetrics = true
+	payload, err := json.Marshal(&gcpInt)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","importGCPMetrics":true}`, string(payload), "payload does not match")
+
+}
+
+func TestMarshalGCPIntegrationWithImportGCPMetricsDisabled(t *testing.T) {
+	gcpInt := GCPIntegration{
+		ImportGCPMetrics: new(bool),
+	}
+
+	*gcpInt.ImportGCPMetrics = false
+	payload, err := json.Marshal(&gcpInt)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","importGCPMetrics":false}`, string(payload), "payload does not match")
+
+}
+
+func TestMarshalGCPIntegrationWithImportGCPMetricsEmpty(t *testing.T) {
+	GCP := GCPIntegration{}
+
+	payload, err := json.Marshal(GCP)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":""}`, string(payload), "payload does not match")
+
+}
+
+func TestUnmarshalGCPIntegrationWithImportGCPMetricsEnabled(t *testing.T) {
+	GCP := GCPIntegration{}
+
+	err := json.Unmarshal([]byte(`{"importGCPMetrics":true}`), &GCP)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, true, *GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
+
+}
+
+func TestUnmarshalGCPIntegrationWithImportGCPMetricsDisabled(t *testing.T) {
+	GCP := GCPIntegration{}
+
+	err := json.Unmarshal([]byte(`{"importGCPMetrics":false}`), &GCP)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, false, *GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
+
+}
+
+func TestUnmarshalGCPIntegrationWithImportGCPMetricsEmpty(t *testing.T) {
+	GCP := GCPIntegration{}
+
+	err := json.Unmarshal([]byte(`{}`), &GCP)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, (*bool)(nil), GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
+
+}
