@@ -82,8 +82,7 @@ func TestUnmarshalAzureIntegrationWithAdditionalServices(t *testing.T) {
 }
 
 func TestMarshalAzureIntegrationWithImportAzureMonitorEnabled(t *testing.T) {
-	azureInt := AzureIntegration{ImportAzureMonitor: new(bool)}
-	*azureInt.ImportAzureMonitor = true
+	azureInt := AzureIntegration{ImportAzureMonitor: newBoolPtr(true)}
 	payload, err := json.Marshal(azureInt)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
@@ -92,8 +91,7 @@ func TestMarshalAzureIntegrationWithImportAzureMonitorEnabled(t *testing.T) {
 }
 
 func TestMarshalAzureIntegrationWithImportAzureMonitorDisabled(t *testing.T) {
-	azureInt := AzureIntegration{ImportAzureMonitor: new(bool)}
-	*azureInt.ImportAzureMonitor = false
+	azureInt := AzureIntegration{ImportAzureMonitor: newBoolPtr(false)}
 	payload, err := json.Marshal(azureInt)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
@@ -132,4 +130,8 @@ func TestUnmarshalAzureIntegrationWithImportAzureMonitorEmpty(t *testing.T) {
 
 	assert.NoError(t, err, "Unexpected error unmarshalling integration")
 	assert.Equal(t, (*bool)(nil), azure.ImportAzureMonitor, "ImportAzureMonitor does not match")
+}
+
+func newBoolPtr(val bool) *bool {
+	return &val
 }

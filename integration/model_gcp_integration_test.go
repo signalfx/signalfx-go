@@ -91,10 +91,9 @@ func TestMarshalGCPIntegrationWithUseMetricSourceProjectForQuotaEnabled(t *testi
 
 func TestMarshalGCPIntegrationWithImportGCPMetricsEnabled(t *testing.T) {
 	gcpInt := GCPIntegration{
-		ImportGCPMetrics: new(bool),
+		ImportGCPMetrics: newBoolPtr(true),
 	}
 
-	*gcpInt.ImportGCPMetrics = true
 	payload, err := json.Marshal(&gcpInt)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
@@ -104,10 +103,9 @@ func TestMarshalGCPIntegrationWithImportGCPMetricsEnabled(t *testing.T) {
 
 func TestMarshalGCPIntegrationWithImportGCPMetricsDisabled(t *testing.T) {
 	gcpInt := GCPIntegration{
-		ImportGCPMetrics: new(bool),
+		ImportGCPMetrics: newBoolPtr(false),
 	}
 
-	*gcpInt.ImportGCPMetrics = false
 	payload, err := json.Marshal(&gcpInt)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
