@@ -1,7 +1,11 @@
-# 1.23.0 14 Oct 2022
+# 1.24.0 14 Oct 2022
 
 * Add `importGCPMetriccs` flag to the `GCPIntegration` struct [#172](https://github.com/signalfx/signalfx-go/pull/172)
 * Change type of `importAzureMonitor` flag in the `AzureIntegration` struct from bool to *bool [#172](https://github.com/signalfx/signalfx-go/pull/172)
+
+# 1.23.0 27 Jul 2022
+
+* Add logs list chart options to the model options [#168](https://github.com/signalfx/signalfx-go/pull/168)
 
 # 1.22.0, 18 Jul 2022
 
