@@ -1,3 +1,8 @@
+# 1.23.0 14 Oct 2022
+
+* Add `importGCPMetriccs` flag to the `GCPIntegration` struct [#172](https://github.com/signalfx/signalfx-go/pull/172)
+* Change type of `importAzureMonitor` flag in the `AzureIntegration` struct from bool to *bool [#172](https://github.com/signalfx/signalfx-go/pull/172)
+
 # 1.22.0, 18 Jul 2022
 
 * Add `useMetricSourceProjectForQuota` flag to the `GcpIntegration` struct [#167](https://github.com/signalfx/signalfx-go/pull/167)
