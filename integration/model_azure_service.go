@@ -9,6 +9,7 @@ const (
 	AZURE_BATCH_BATCHACCOUNTS                                    AzureService = "microsoft.batch/batchaccounts"
 	AZURE_CACHE_REDIS                                            AzureService = "microsoft.cache/redis"
 	AZURE_MICROSOFT_CDN_CDNWEBAPPLICATIONFIREWALLPOLICIES        AzureService = "microsoft.cdn/cdnwebapplicationfirewallpolicies"
+	AZURE_MICROSOFT_CDN_CDNPROFILES                              AzureService = "microsoft.cdn/profiles"
 	AZURE_MICROSOFT_CLASSICCOMPUTE_VIRTUALMACHINES               AzureService = "microsoft.classiccompute/virtualmachines"
 	AZURE_MICROSOFT_COGNITIVESERVICES_ACCOUNTS                   AzureService = "microsoft.cognitiveservices/accounts"
 	AZURE_COMPUTE_VIRTUALMACHINES                                AzureService = "microsoft.compute/virtualmachines"
@@ -88,6 +89,7 @@ var AzureServiceNames = map[string]AzureService{
 	"microsoft.batch/batchaccounts":                             AZURE_BATCH_BATCHACCOUNTS,
 	"microsoft.cache/redis":                                     AZURE_CACHE_REDIS,
 	"microsoft.cdn/cdnwebapplicationfirewallpolicies":           AZURE_MICROSOFT_CDN_CDNWEBAPPLICATIONFIREWALLPOLICIES,
+	"microsoft.cdn/profiles":                                    AZURE_MICROSOFT_CDN_CDNPROFILES,
 	"microsoft.classiccompute/virtualmachines":                  AZURE_MICROSOFT_CLASSICCOMPUTE_VIRTUALMACHINES,
 	"microsoft.cognitiveservices/accounts":                      AZURE_MICROSOFT_COGNITIVESERVICES_ACCOUNTS,
 	"microsoft.compute/virtualmachines":                         AZURE_COMPUTE_VIRTUALMACHINES,
