@@ -1,3 +1,7 @@
+# 1.25.0 22 Nov 2022
+
+* Update list of Azure services [#175](https://github.com/signalfx/signalfx-go/pull/175), [#176](https://github.com/signalfx/signalfx-go/pull/176)
+
 # 1.24.0 14 Oct 2022
 
 * Add `importGCPMetriccs` flag to the `GCPIntegration` struct [#172](https://github.com/signalfx/signalfx-go/pull/172)
