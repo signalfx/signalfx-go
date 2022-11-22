@@ -26,6 +26,7 @@ const (
 	AZURE_MICROSOFT_DATALAKESTORE_ACCOUNTS                       AzureService = "microsoft.datalakestore/accounts"
 	AZURE_MICROSOFT_DBFORMARIADB_SERVERS                         AzureService = "microsoft.dbformariadb/servers"
 	AZURE_MICROSOFT_DBFORMYSQL_SERVERS                           AzureService = "microsoft.dbformysql/servers"
+	AZURE_MICROSOFT_DBFORMYSQL_FLEXIBLESERVERS                   AzureService = "microsoft.dbformysql/flexibleservers"
 	AZURE_MICROSOFT_DBFORPOSTGRESQL_SERVERS                      AzureService = "microsoft.dbforpostgresql/servers"
 	AZURE_DEVICES                                                AzureService = "microsoft.devices"
 	AZURE_DEVICES_ELASTICPOOLS                                   AzureService = "microsoft.devices/elasticpools"
@@ -106,6 +107,7 @@ var AzureServiceNames = map[string]AzureService{
 	"microsoft.datalakestore/accounts":                          AZURE_MICROSOFT_DATALAKESTORE_ACCOUNTS,
 	"microsoft.dbformariadb/servers":                            AZURE_MICROSOFT_DBFORMARIADB_SERVERS,
 	"microsoft.dbformysql/servers":                              AZURE_MICROSOFT_DBFORMYSQL_SERVERS,
+	"microsoft.dbformysql/flexibleservers":                      AZURE_MICROSOFT_DBFORMYSQL_FLEXIBLESERVERS,
 	"microsoft.dbforpostgresql/servers":                         AZURE_MICROSOFT_DBFORPOSTGRESQL_SERVERS,
 	"microsoft.devices":                                         AZURE_DEVICES,
 	"microsoft.devices/elasticpools":                            AZURE_DEVICES_ELASTICPOOLS,
