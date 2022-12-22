@@ -1,3 +1,7 @@
+# 1.26.0 22 Dec 2022
+
+* Add `State` flag to the `AwsCloudWatchIntegration` struct [#177](https://github.com/signalfx/signalfx-go/pull/177) 
+
 # 1.25.0 22 Nov 2022
 
 * Update list of Azure services [#175](https://github.com/signalfx/signalfx-go/pull/175), [#176](https://github.com/signalfx/signalfx-go/pull/176)
