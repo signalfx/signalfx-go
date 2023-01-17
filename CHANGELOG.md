@@ -1,3 +1,7 @@
+# 1.26.0 13 Jan 2023
+
+* Add `customMetricTypeDomains` field to the `GCPIntegration` struct [#180](https://github.com/signalfx/signalfx-go/pull/180)
+
 # 1.25.0 22 Nov 2022
 
 * Update list of Azure services [#175](https://github.com/signalfx/signalfx-go/pull/175), [#176](https://github.com/signalfx/signalfx-go/pull/176)
