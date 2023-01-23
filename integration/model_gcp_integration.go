@@ -9,6 +9,8 @@
 
 package integration
 
+import "encoding/json"
+
 // Specifies the data collection integration between Google Cloud Platform and SignalFx, in the form of a JSON object.
 type GCPIntegration struct {
 	// The creation date and time for the integration object, in Unix time UTC-relative. The system sets this value, and you can't modify it.
@@ -24,14 +26,60 @@ type GCPIntegration struct {
 	// SignalFx-assigned ID of the last user who updated the integration. If the last update was by the system, the value is \"AAAAAAAAAA\". This value is \"read-only\".
 	LastUpdatedBy string `json:"lastUpdatedBy,omitempty"`
 	// A human-readable label for the integration. This property helps you identify a specific integration when you're using multiple integrations for the same service.
-	Name     string    `json:"name,omitempty"`
-	Type     Type      `json:"type"`
-	PollRate *PollRate `json:"pollRate,omitempty"`
+	Name       string    `json:"name,omitempty"`
+	Type       Type      `json:"type"`
+	PollRate   *PollRate `json:"-"`
+	PollRateMs int64     `json:"pollRate,omitempty"`
 	// Array of GCP services that you want SignalFx to monitor. SignalFx only supports certain services, and if you specify an unsupported one, you receive an API error. The supported services are: <br>   * appengine   * bigquery   * bigtable   * cloudfunctions   * cloudiot   * cloudsql   * cloudtasks   * compute   * container   * dataflow   * datastore   * firebasedatabase   * firebasehosting   * interconnect   * loadbalancing   * logging   * ml   * monitoring   * pubsub   * router   * serviceruntime   * spanner   * storage   * vpn
 	Services []GcpService `json:"services,omitempty"`
+	// A list of additional GCP service domain names that you want to monitor using Observability Cloud. Use this list to specify services that Observability Cloud doesn't support. If you specify an invalid name, the system responds to your API request with an HTTP response code <i>400</i>.
+	CustomMetricTypeDomains []string `json:"customMetricTypeDomains,omitempty"`
 	// List of GCP project that you want SignalFx to monitor, in the form of a JSON array of objects
 	ProjectServiceKeys []*GCPProject `json:"projectServiceKeys,omitempty"`
-	// List of GCP metadata names that you want SignalFx to collect from the data incoming from the GCP integration, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to whitelist.
-	Whitelist  []string `json:"whitelist,omitempty"`
-	NamedToken string   `json:"namedToken,omitempty"`
+	// When this value is set to true Observability Cloud will force usage of a quota from the project where metrics are stored. For this to work the service account provided for the project needs to be provided with serviceusage.services.use permission or Service Usage Consumer role in this project. When set to false default quota settings are used.
+	UseMetricSourceProjectForQuota bool `json:"useMetricSourceProjectForQuota,omitempty"`
+	// List of custom metadata keys that you want SignalFx to collect for Compute Engine Instances, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to include.
+	IncludeList []string `json:"includeList,omitempty"`
+	Whitelist   []string `json:"-"`
+	NamedToken  string   `json:"namedToken,omitempty"`
+	// Flag determining whether SignalFx should also import Google Cloud metrics (when value is true) or only metadata (when value is false).
+	ImportGCPMetrics *bool `json:"importGCPMetrics,omitempty"`
+}
+
+func (gcp *GCPIntegration) MarshalJSON() ([]byte, error) {
+	type Alias GCPIntegration
+	var copy = Alias(*gcp)
+	if copy.PollRate != nil {
+		copy.PollRateMs = int64(*copy.PollRate)
+	}
+	if copy.IncludeList == nil && copy.Whitelist != nil {
+		copy.IncludeList = copy.Whitelist
+	}
+	return json.Marshal(&struct{ *Alias }{
+		Alias: &copy,
+	})
+}
+
+func (gcp *GCPIntegration) UnmarshalJSON(data []byte) error {
+	type Alias GCPIntegration
+	aux := &struct{ *Alias }{
+		Alias: (*Alias)(gcp),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if gcp.PollRateMs == int64(OneMinutely) {
+		oneMinute := OneMinutely
+		gcp.PollRate = &oneMinute
+	} else if gcp.PollRateMs == int64(FiveMinutely) {
+		fiveMinutes := FiveMinutely
+		gcp.PollRate = &fiveMinutes
+	} // else PollRate is going to be nil
+
+	if gcp.IncludeList != nil {
+		gcp.Whitelist = gcp.IncludeList
+	}
+	return nil
 }

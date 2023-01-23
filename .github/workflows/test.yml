@@ -1,0 +1,40 @@
+name: build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        GO_VERSION: [ "1.17" ]
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.GO_VERSION }}
+
+      - name: Caching dependency
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+            ~/go/bin
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+
+      - name: Run tests
+        run: |
+          go mod download
+          # Used for code generation
+          go install github.com/mauricelam/genny
+          go install golang.org/x/tools/cmd/goimports
+          go generate ./...
+          go test ./... -parallel 4 -timeout 2m

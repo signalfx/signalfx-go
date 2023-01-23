@@ -1,3 +1,5 @@
+>ℹ️&nbsp;&nbsp;SignalFx was acquired by Splunk in October 2019. See [Splunk SignalFx](https://www.splunk.com/en_us/investor-relations/acquisitions/signalfx.html) for more information.
+
 # Go client library for SignalFx
 
 [![GoDoc](https://godoc.org/github.com/signalfx/signalfx-go?status.svg)](https://godoc.org/github.com/signalfx/signalfx-go)
@@ -38,4 +40,3 @@ We're working on it, feel free to file an issue if an endpoint is missing!
 The request and response bodies for this library are machine generated from our OpenAPI specs using [OpenAPI code generator](https://github.com/OpenAPITools/openapi-generator). This is a real boon for everyone, keeping the documentation as a source of truth and ensuring that this library has support for all the things!
 
 This means that some of our type names are verbose. It's fine, you only type code once and the benefits are worth it.
-

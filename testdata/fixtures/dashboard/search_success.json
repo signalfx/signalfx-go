@@ -10,6 +10,18 @@
           "string"
         ]
       },
+      "permissions": {
+        "acl": [
+          {
+            "actions": [
+              "string"
+            ],
+            "principalId": "string",
+            "principalType": "string"
+          }
+        ],
+        "parent": "string"
+      },
       "chartDensity": "DEFAULT",
       "charts": [
         {

@@ -7,6 +7,18 @@
       "string"
     ]
   },
+  "permissions": {
+    "acl": [
+      {
+        "actions": [
+          "string"
+        ],
+        "principalId": "string",
+        "principalType": "string"
+      }
+    ],
+    "parent": "string"
+  },
   "created": 0,
   "creator": "string",
   "dashboards": [

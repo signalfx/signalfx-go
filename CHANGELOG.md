@@ -1,4 +1,97 @@
-# Unreleased
+# 1.26.0 13 Jan 2023
+
+* Add `customMetricTypeDomains` field to the `GCPIntegration` struct [#180](https://github.com/signalfx/signalfx-go/pull/180)
+
+# 1.25.0 22 Nov 2022
+
+* Update list of Azure services [#175](https://github.com/signalfx/signalfx-go/pull/175), [#176](https://github.com/signalfx/signalfx-go/pull/176)
+
+# 1.24.0 14 Oct 2022
+
+* Add `importGCPMetriccs` flag to the `GCPIntegration` struct [#172](https://github.com/signalfx/signalfx-go/pull/172)
+* Change type of `importAzureMonitor` flag in the `AzureIntegration` struct from bool to *bool [#172](https://github.com/signalfx/signalfx-go/pull/172)
+
+# 1.23.0 27 Jul 2022
+
+* Add logs list chart options to the model options [#168](https://github.com/signalfx/signalfx-go/pull/168)
+
+# 1.22.0, 18 Jul 2022
+
+* Add `useMetricSourceProjectForQuota` flag to the `GcpIntegration` struct [#167](https://github.com/signalfx/signalfx-go/pull/167)
+
+# 1.21.0, 12 Jul 2022
+
+* Add `importAzureMonitor` flag to the `AzureIntegration` struct [#165](https://github.com/signalfx/signalfx-go/pull/165)
+
+# 1.19.0, 26 Apr 2022
+
+* Remove `omitempty` from `ShowDataMarkers` field in the `Detector/Visualization` struct [#162](https://github.com/signalfx/signalfx-go/pull/162)
+
+# 1.18.0, 12 Apr 2022
+
+* Add `syncCustomNamespacesOnly` field to the `AwsCloudWatchIntegration` struct [#160](https://github.com/signalfx/signalfx-go/pull/160)
+
+# 1.17.0, 1 Apr 2022
+
+No functional changes, this is an equivalent of `1.12.0`.
+
+We are releasing it to succeed mistakenly published `1.16.13` instead of `1.6.13`, which since Jan 2020 shows as the latest.
+
+# 1.12.0, 17 Mar 2022
+
+Add support for ServiceNow integration [#159]
+
+# 1.11.0, 16 Mar 2022
+
+* Add `IncludeList` field to `GCPIntegration` struct [#157](https://github.com/signalfx/signalfx-go/pull/157) and stop using deprecated `Whitelist` field
+
+# 1.10.0, 14 Mar 2022
+
+* Add `AdditionalServices` and `ResourceFilterRules` fields to the `AzureIntegration` struct [#156](https://github.com/signalfx/signalfx-go/pull/156)
+
+# 1.9.0, 11 Mar 2022
+
+* Add support for read permissions for dashboard and dashboard groups
+
+* Add `AWS/S3/Storage-Lens` to AWS services list. Sorted AWS/Azure/GCP services by name. [#154](https://github.com/signalfx/signalfx-go/pull/154)
+
+* Add `PollRateMs` (type `int64`, value in milliseconds) to define Azure and GCP integration poll rate [#153](https://github.com/signalfx/signalfx-go/pull/153) [#155](https://github.com/signalfx/signalfx-go/pull/155)
+
+`PollRate` (type `PollRate`) is deprecated. Please use `PollRateMs` instead.<BR>
+`PollRateMs` accepts any value between 1 and 10 minutes (`60000` - `600000`).
+
+# 1.8.9, 3 Mar 2022
+
+* signalflow: Fix race in computation buffering when closing (previously the messages were not getting fully flushed to the downstream channels) [#151](https://github.com/signalfx/signalfx-go/pull/151)
+
+# 1.8.8, 28 Feb 2022
+
+* Add MetricStreamsSyncState to AWS Cloudwatch integration [#147](https://github.com/signalfx/signalfx-go/pull/147)
+
+# 1.8.6, 8 Feb 2022
+
+* Adding AuthScopes attribute to the org token struct [#146](https://github.com/signalfx/signalfx-go/pull/146)
+
+# 1.8.5, 27 Jan 2022
+
+* signalflow fakebackend support for timestamp control and END_OF_CHANNEL [#145](https://github.com/signalfx/signalfx-go/pull/145)
+
+# 1.8.4, 24 Jan 2022
+
+* Adding ValidateDetector and its unit tests [#142](https://github.com/signalfx/signalfx-go/pull/142)
+
+# 1.8.3, 17 Nov 2021
+
+* Add newly supported AWS services to the list. [#140](https://github.com/signalfx/signalfx-go/pull/140)
+
+# 1.8.2, 30 Sep 2021
+
+*  Update dependencies [#135](https://github.com/signalfx/signalfx-go/pull/135)
+
+# 1.8.1, 24 Aug 2021
+
+* Context cancellation handling [#131](https://github.com/signalfx/signalfx-go/pull/131)
+* Allow to run PostDisconnectCallback
 
 # 1.8.0, 2021-05-11
 

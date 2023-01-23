@@ -14,7 +14,7 @@ type Visualization struct {
 	// If true, all data points are displayed; otherwise, data points are sampled. The latter option improves performance.
 	DisableSampling bool `json:"disableSampling,omitempty"`
 	// If true, markers are drawn for each datapoint in the visualization.
-	ShowDataMarkers bool `json:"showDataMarkers,omitempty"`
+	ShowDataMarkers bool `json:"showDataMarkers"`
 	// If true, a vertical line is displayed on the visualization when an event is triggered.
 	ShowEventLines      bool                   `json:"showEventLines,omitempty"`
 	Time                *Time                  `json:"time,omitempty"`
