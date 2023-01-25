@@ -113,3 +113,28 @@ func (c *Client) DeleteMetricRuleset(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (c *Client) GenerateAggregationMetricName(ctx context.Context, generateAggregationNameRequest metric_ruleset.GenerateAggregationNameRequest) (string, error) {
+	payload, err := json.Marshal(generateAggregationNameRequest)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.doRequest(ctx, http.MethodPost, MetricRulesetApiURL+"/generateAggregationMetricName", nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+	if err != nil {
+		return "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return "", fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
+	}
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	aggregationMetricName := string(respBody)
+
+	return aggregationMetricName, err
+}

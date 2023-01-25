@@ -14,8 +14,8 @@ import (
 	"encoding/json"
 )
 
-// CreateMetricRulesetResponse Create metric ruleset response body 
-type CreateMetricRulesetResponse struct {
+// MetricRuleset Metric ruleset properties 
+type MetricRuleset struct {
 	// Aggregation rules in the ruleset 
 	AggregationRules []AggregationRule `json:"aggregationRules,omitempty"`
 	// User ID of the user who created this metric ruleset 
@@ -39,25 +39,25 @@ type CreateMetricRulesetResponse struct {
 	Version *int64 `json:"version,omitempty"`
 }
 
-// NewCreateMetricRulesetResponse instantiates a new CreateMetricRulesetResponse object
+// NewMetricRuleset instantiates a new MetricRuleset object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateMetricRulesetResponse() *CreateMetricRulesetResponse {
-	this := CreateMetricRulesetResponse{}
+func NewMetricRuleset() *MetricRuleset {
+	this := MetricRuleset{}
 	return &this
 }
 
-// NewCreateMetricRulesetResponseWithDefaults instantiates a new CreateMetricRulesetResponse object
+// NewMetricRulesetWithDefaults instantiates a new MetricRuleset object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewCreateMetricRulesetResponseWithDefaults() *CreateMetricRulesetResponse {
-	this := CreateMetricRulesetResponse{}
+func NewMetricRulesetWithDefaults() *MetricRuleset {
+	this := MetricRuleset{}
 	return &this
 }
 
 // GetAggregationRules returns the AggregationRules field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetAggregationRules() []AggregationRule {
+func (o *MetricRuleset) GetAggregationRules() []AggregationRule {
 	if o == nil || isNil(o.AggregationRules) {
 		var ret []AggregationRule
 		return ret
@@ -67,7 +67,7 @@ func (o *CreateMetricRulesetResponse) GetAggregationRules() []AggregationRule {
 
 // GetAggregationRulesOk returns a tuple with the AggregationRules field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetAggregationRulesOk() ([]AggregationRule, bool) {
+func (o *MetricRuleset) GetAggregationRulesOk() ([]AggregationRule, bool) {
 	if o == nil || isNil(o.AggregationRules) {
     return nil, false
 	}
@@ -75,7 +75,7 @@ func (o *CreateMetricRulesetResponse) GetAggregationRulesOk() ([]AggregationRule
 }
 
 // HasAggregationRules returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasAggregationRules() bool {
+func (o *MetricRuleset) HasAggregationRules() bool {
 	if o != nil && !isNil(o.AggregationRules) {
 		return true
 	}
@@ -84,12 +84,12 @@ func (o *CreateMetricRulesetResponse) HasAggregationRules() bool {
 }
 
 // SetAggregationRules gets a reference to the given []AggregationRule and assigns it to the AggregationRules field.
-func (o *CreateMetricRulesetResponse) SetAggregationRules(v []AggregationRule) {
+func (o *MetricRuleset) SetAggregationRules(v []AggregationRule) {
 	o.AggregationRules = v
 }
 
 // GetCreator returns the Creator field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetCreator() string {
+func (o *MetricRuleset) GetCreator() string {
 	if o == nil || isNil(o.Creator) {
 		var ret string
 		return ret
@@ -99,7 +99,7 @@ func (o *CreateMetricRulesetResponse) GetCreator() string {
 
 // GetCreatorOk returns a tuple with the Creator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetCreatorOk() (*string, bool) {
+func (o *MetricRuleset) GetCreatorOk() (*string, bool) {
 	if o == nil || isNil(o.Creator) {
     return nil, false
 	}
@@ -107,7 +107,7 @@ func (o *CreateMetricRulesetResponse) GetCreatorOk() (*string, bool) {
 }
 
 // HasCreator returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasCreator() bool {
+func (o *MetricRuleset) HasCreator() bool {
 	if o != nil && !isNil(o.Creator) {
 		return true
 	}
@@ -116,12 +116,12 @@ func (o *CreateMetricRulesetResponse) HasCreator() bool {
 }
 
 // SetCreator gets a reference to the given string and assigns it to the Creator field.
-func (o *CreateMetricRulesetResponse) SetCreator(v string) {
+func (o *MetricRuleset) SetCreator(v string) {
 	o.Creator = &v
 }
 
 // GetCreatorName returns the CreatorName field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetCreatorName() string {
+func (o *MetricRuleset) GetCreatorName() string {
 	if o == nil || isNil(o.CreatorName) {
 		var ret string
 		return ret
@@ -131,7 +131,7 @@ func (o *CreateMetricRulesetResponse) GetCreatorName() string {
 
 // GetCreatorNameOk returns a tuple with the CreatorName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetCreatorNameOk() (*string, bool) {
+func (o *MetricRuleset) GetCreatorNameOk() (*string, bool) {
 	if o == nil || isNil(o.CreatorName) {
     return nil, false
 	}
@@ -139,7 +139,7 @@ func (o *CreateMetricRulesetResponse) GetCreatorNameOk() (*string, bool) {
 }
 
 // HasCreatorName returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasCreatorName() bool {
+func (o *MetricRuleset) HasCreatorName() bool {
 	if o != nil && !isNil(o.CreatorName) {
 		return true
 	}
@@ -148,12 +148,12 @@ func (o *CreateMetricRulesetResponse) HasCreatorName() bool {
 }
 
 // SetCreatorName gets a reference to the given string and assigns it to the CreatorName field.
-func (o *CreateMetricRulesetResponse) SetCreatorName(v string) {
+func (o *MetricRuleset) SetCreatorName(v string) {
 	o.CreatorName = &v
 }
 
 // GetCreated returns the Created field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetCreated() int64 {
+func (o *MetricRuleset) GetCreated() int64 {
 	if o == nil || isNil(o.Created) {
 		var ret int64
 		return ret
@@ -163,7 +163,7 @@ func (o *CreateMetricRulesetResponse) GetCreated() int64 {
 
 // GetCreatedOk returns a tuple with the Created field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetCreatedOk() (*int64, bool) {
+func (o *MetricRuleset) GetCreatedOk() (*int64, bool) {
 	if o == nil || isNil(o.Created) {
     return nil, false
 	}
@@ -171,7 +171,7 @@ func (o *CreateMetricRulesetResponse) GetCreatedOk() (*int64, bool) {
 }
 
 // HasCreated returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasCreated() bool {
+func (o *MetricRuleset) HasCreated() bool {
 	if o != nil && !isNil(o.Created) {
 		return true
 	}
@@ -180,12 +180,12 @@ func (o *CreateMetricRulesetResponse) HasCreated() bool {
 }
 
 // SetCreated gets a reference to the given int64 and assigns it to the Created field.
-func (o *CreateMetricRulesetResponse) SetCreated(v int64) {
+func (o *MetricRuleset) SetCreated(v int64) {
 	o.Created = &v
 }
 
 // GetId returns the Id field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetId() string {
+func (o *MetricRuleset) GetId() string {
 	if o == nil || isNil(o.Id) {
 		var ret string
 		return ret
@@ -195,7 +195,7 @@ func (o *CreateMetricRulesetResponse) GetId() string {
 
 // GetIdOk returns a tuple with the Id field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetIdOk() (*string, bool) {
+func (o *MetricRuleset) GetIdOk() (*string, bool) {
 	if o == nil || isNil(o.Id) {
     return nil, false
 	}
@@ -203,7 +203,7 @@ func (o *CreateMetricRulesetResponse) GetIdOk() (*string, bool) {
 }
 
 // HasId returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasId() bool {
+func (o *MetricRuleset) HasId() bool {
 	if o != nil && !isNil(o.Id) {
 		return true
 	}
@@ -212,12 +212,12 @@ func (o *CreateMetricRulesetResponse) HasId() bool {
 }
 
 // SetId gets a reference to the given string and assigns it to the Id field.
-func (o *CreateMetricRulesetResponse) SetId(v string) {
+func (o *MetricRuleset) SetId(v string) {
 	o.Id = &v
 }
 
 // GetLastUpdatedBy returns the LastUpdatedBy field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetLastUpdatedBy() string {
+func (o *MetricRuleset) GetLastUpdatedBy() string {
 	if o == nil || isNil(o.LastUpdatedBy) {
 		var ret string
 		return ret
@@ -227,7 +227,7 @@ func (o *CreateMetricRulesetResponse) GetLastUpdatedBy() string {
 
 // GetLastUpdatedByOk returns a tuple with the LastUpdatedBy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetLastUpdatedByOk() (*string, bool) {
+func (o *MetricRuleset) GetLastUpdatedByOk() (*string, bool) {
 	if o == nil || isNil(o.LastUpdatedBy) {
     return nil, false
 	}
@@ -235,7 +235,7 @@ func (o *CreateMetricRulesetResponse) GetLastUpdatedByOk() (*string, bool) {
 }
 
 // HasLastUpdatedBy returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasLastUpdatedBy() bool {
+func (o *MetricRuleset) HasLastUpdatedBy() bool {
 	if o != nil && !isNil(o.LastUpdatedBy) {
 		return true
 	}
@@ -244,12 +244,12 @@ func (o *CreateMetricRulesetResponse) HasLastUpdatedBy() bool {
 }
 
 // SetLastUpdatedBy gets a reference to the given string and assigns it to the LastUpdatedBy field.
-func (o *CreateMetricRulesetResponse) SetLastUpdatedBy(v string) {
+func (o *MetricRuleset) SetLastUpdatedBy(v string) {
 	o.LastUpdatedBy = &v
 }
 
 // GetLastUpdatedByName returns the LastUpdatedByName field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetLastUpdatedByName() string {
+func (o *MetricRuleset) GetLastUpdatedByName() string {
 	if o == nil || isNil(o.LastUpdatedByName) {
 		var ret string
 		return ret
@@ -259,7 +259,7 @@ func (o *CreateMetricRulesetResponse) GetLastUpdatedByName() string {
 
 // GetLastUpdatedByNameOk returns a tuple with the LastUpdatedByName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetLastUpdatedByNameOk() (*string, bool) {
+func (o *MetricRuleset) GetLastUpdatedByNameOk() (*string, bool) {
 	if o == nil || isNil(o.LastUpdatedByName) {
     return nil, false
 	}
@@ -267,7 +267,7 @@ func (o *CreateMetricRulesetResponse) GetLastUpdatedByNameOk() (*string, bool) {
 }
 
 // HasLastUpdatedByName returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasLastUpdatedByName() bool {
+func (o *MetricRuleset) HasLastUpdatedByName() bool {
 	if o != nil && !isNil(o.LastUpdatedByName) {
 		return true
 	}
@@ -276,12 +276,12 @@ func (o *CreateMetricRulesetResponse) HasLastUpdatedByName() bool {
 }
 
 // SetLastUpdatedByName gets a reference to the given string and assigns it to the LastUpdatedByName field.
-func (o *CreateMetricRulesetResponse) SetLastUpdatedByName(v string) {
+func (o *MetricRuleset) SetLastUpdatedByName(v string) {
 	o.LastUpdatedByName = &v
 }
 
 // GetLastUpdated returns the LastUpdated field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetLastUpdated() int64 {
+func (o *MetricRuleset) GetLastUpdated() int64 {
 	if o == nil || isNil(o.LastUpdated) {
 		var ret int64
 		return ret
@@ -291,7 +291,7 @@ func (o *CreateMetricRulesetResponse) GetLastUpdated() int64 {
 
 // GetLastUpdatedOk returns a tuple with the LastUpdated field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetLastUpdatedOk() (*int64, bool) {
+func (o *MetricRuleset) GetLastUpdatedOk() (*int64, bool) {
 	if o == nil || isNil(o.LastUpdated) {
     return nil, false
 	}
@@ -299,7 +299,7 @@ func (o *CreateMetricRulesetResponse) GetLastUpdatedOk() (*int64, bool) {
 }
 
 // HasLastUpdated returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasLastUpdated() bool {
+func (o *MetricRuleset) HasLastUpdated() bool {
 	if o != nil && !isNil(o.LastUpdated) {
 		return true
 	}
@@ -308,12 +308,12 @@ func (o *CreateMetricRulesetResponse) HasLastUpdated() bool {
 }
 
 // SetLastUpdated gets a reference to the given int64 and assigns it to the LastUpdated field.
-func (o *CreateMetricRulesetResponse) SetLastUpdated(v int64) {
+func (o *MetricRuleset) SetLastUpdated(v int64) {
 	o.LastUpdated = &v
 }
 
 // GetMetricName returns the MetricName field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetMetricName() string {
+func (o *MetricRuleset) GetMetricName() string {
 	if o == nil || isNil(o.MetricName) {
 		var ret string
 		return ret
@@ -323,7 +323,7 @@ func (o *CreateMetricRulesetResponse) GetMetricName() string {
 
 // GetMetricNameOk returns a tuple with the MetricName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetMetricNameOk() (*string, bool) {
+func (o *MetricRuleset) GetMetricNameOk() (*string, bool) {
 	if o == nil || isNil(o.MetricName) {
     return nil, false
 	}
@@ -331,7 +331,7 @@ func (o *CreateMetricRulesetResponse) GetMetricNameOk() (*string, bool) {
 }
 
 // HasMetricName returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasMetricName() bool {
+func (o *MetricRuleset) HasMetricName() bool {
 	if o != nil && !isNil(o.MetricName) {
 		return true
 	}
@@ -340,12 +340,12 @@ func (o *CreateMetricRulesetResponse) HasMetricName() bool {
 }
 
 // SetMetricName gets a reference to the given string and assigns it to the MetricName field.
-func (o *CreateMetricRulesetResponse) SetMetricName(v string) {
+func (o *MetricRuleset) SetMetricName(v string) {
 	o.MetricName = &v
 }
 
 // GetRoutingRule returns the RoutingRule field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetRoutingRule() RoutingRule {
+func (o *MetricRuleset) GetRoutingRule() RoutingRule {
 	if o == nil || isNil(o.RoutingRule) {
 		var ret RoutingRule
 		return ret
@@ -355,7 +355,7 @@ func (o *CreateMetricRulesetResponse) GetRoutingRule() RoutingRule {
 
 // GetRoutingRuleOk returns a tuple with the RoutingRule field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetRoutingRuleOk() (*RoutingRule, bool) {
+func (o *MetricRuleset) GetRoutingRuleOk() (*RoutingRule, bool) {
 	if o == nil || isNil(o.RoutingRule) {
     return nil, false
 	}
@@ -363,7 +363,7 @@ func (o *CreateMetricRulesetResponse) GetRoutingRuleOk() (*RoutingRule, bool) {
 }
 
 // HasRoutingRule returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasRoutingRule() bool {
+func (o *MetricRuleset) HasRoutingRule() bool {
 	if o != nil && !isNil(o.RoutingRule) {
 		return true
 	}
@@ -372,12 +372,12 @@ func (o *CreateMetricRulesetResponse) HasRoutingRule() bool {
 }
 
 // SetRoutingRule gets a reference to the given RoutingRule and assigns it to the RoutingRule field.
-func (o *CreateMetricRulesetResponse) SetRoutingRule(v RoutingRule) {
+func (o *MetricRuleset) SetRoutingRule(v RoutingRule) {
 	o.RoutingRule = &v
 }
 
 // GetVersion returns the Version field value if set, zero value otherwise.
-func (o *CreateMetricRulesetResponse) GetVersion() int64 {
+func (o *MetricRuleset) GetVersion() int64 {
 	if o == nil || isNil(o.Version) {
 		var ret int64
 		return ret
@@ -387,7 +387,7 @@ func (o *CreateMetricRulesetResponse) GetVersion() int64 {
 
 // GetVersionOk returns a tuple with the Version field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateMetricRulesetResponse) GetVersionOk() (*int64, bool) {
+func (o *MetricRuleset) GetVersionOk() (*int64, bool) {
 	if o == nil || isNil(o.Version) {
     return nil, false
 	}
@@ -395,7 +395,7 @@ func (o *CreateMetricRulesetResponse) GetVersionOk() (*int64, bool) {
 }
 
 // HasVersion returns a boolean if a field has been set.
-func (o *CreateMetricRulesetResponse) HasVersion() bool {
+func (o *MetricRuleset) HasVersion() bool {
 	if o != nil && !isNil(o.Version) {
 		return true
 	}
@@ -404,11 +404,11 @@ func (o *CreateMetricRulesetResponse) HasVersion() bool {
 }
 
 // SetVersion gets a reference to the given int64 and assigns it to the Version field.
-func (o *CreateMetricRulesetResponse) SetVersion(v int64) {
+func (o *MetricRuleset) SetVersion(v int64) {
 	o.Version = &v
 }
 
-func (o CreateMetricRulesetResponse) MarshalJSON() ([]byte, error) {
+func (o MetricRuleset) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if !isNil(o.AggregationRules) {
 		toSerialize["aggregationRules"] = o.AggregationRules
@@ -446,38 +446,38 @@ func (o CreateMetricRulesetResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableCreateMetricRulesetResponse struct {
-	value *CreateMetricRulesetResponse
+type NullableMetricRuleset struct {
+	value *MetricRuleset
 	isSet bool
 }
 
-func (v NullableCreateMetricRulesetResponse) Get() *CreateMetricRulesetResponse {
+func (v NullableMetricRuleset) Get() *MetricRuleset {
 	return v.value
 }
 
-func (v *NullableCreateMetricRulesetResponse) Set(val *CreateMetricRulesetResponse) {
+func (v *NullableMetricRuleset) Set(val *MetricRuleset) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableCreateMetricRulesetResponse) IsSet() bool {
+func (v NullableMetricRuleset) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableCreateMetricRulesetResponse) Unset() {
+func (v *NullableMetricRuleset) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableCreateMetricRulesetResponse(val *CreateMetricRulesetResponse) *NullableCreateMetricRulesetResponse {
-	return &NullableCreateMetricRulesetResponse{value: val, isSet: true}
+func NewNullableMetricRuleset(val *MetricRuleset) *NullableMetricRuleset {
+	return &NullableMetricRuleset{value: val, isSet: true}
 }
 
-func (v NullableCreateMetricRulesetResponse) MarshalJSON() ([]byte, error) {
+func (v NullableMetricRuleset) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableCreateMetricRulesetResponse) UnmarshalJSON(src []byte) error {
+func (v *NullableMetricRuleset) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

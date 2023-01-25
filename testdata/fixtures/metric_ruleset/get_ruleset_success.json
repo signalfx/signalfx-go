@@ -1,27 +1,37 @@
 {
-  "id":"metric_ruleset_id",
-  "version":1,
-  "name":"container cpu utilization by realm and service",
-  "destination":"FullFidelity",
-  "enabled": true,
-  "metricMatcher":{
-    "type": "simple",
-    "metricName": "container_cpu_utilization",
-    "filters": [
-      {
-        "property": "sfx_realm",
-        "NOT": true,
-        "propertyValue": [
-          "lab0",
-          "rc0"
-        ]
+  "aggregationRules": [
+    {
+      "aggregator": {
+        "dimensionsToKeep": [
+          "sfx_service"
+        ],
+        "outputName": "memory_utilization.by.sfx_realm.agg",
+        "type": "rollup"
       },
-      {
-        "property": "sfx_service",
-        "propertyValue": [
-          "metrics_processor"
-        ]
-      }
-    ]
-  }
+      "enabled": true,
+      "matcher": {
+        "filters": [
+          {
+            "property": "sfx_realm",
+            "NOT": false,
+            "propertyValue": ["lab0"]
+          }
+        ],
+        "type": "dimension"
+      },
+      "name": "TestRule"
+    }
+  ],
+  "created": 1674598662022,
+  "creator": "TestCreatorId",
+  "creatorName": "TestName",
+  "id": "TestId_MemoryUtilization",
+  "lastUpdated": 1674598662022,
+  "lastUpdatedBy": "TestUpdatedId",
+  "lastUpdatedByName": "TestName",
+  "metricName": "memory.utilization",
+  "routingRule": {
+    "destination": "Drop"
+  },
+  "version": 1
 }

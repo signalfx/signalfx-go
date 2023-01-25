@@ -1,7 +1,7 @@
 /*
-Metric Ingest Ruleset API
+Metric Ruleset API
 
-Metric ingest ruleset API
+Metric ruleset API 
 
 API version: 3.0.1
 */
@@ -14,19 +14,118 @@ import (
 	"encoding/json"
 )
 
-// RollupAggregator An aggregation rule configured in your ruleset
+// RollupAggregator A rollup aggregator for your aggregation rule 
 type RollupAggregator struct {
-	// Dimensions you want to keep in the aggregation rule
+	// Dimensions you want to keep in the aggregation rule 
 	DimensionsToKeep []string `json:"dimensionsToKeep,omitempty"`
-	// New aggregated metric name
+	// New aggregated metric name 
 	OutputName string `json:"outputName"`
-	// Aggregation rule type
+	// Aggregation rule type 
 	Type string `json:"type"`
+}
+
+// NewRollupAggregator instantiates a new RollupAggregator object
+// This constructor will assign default values to properties that have it defined,
+// and makes sure properties required by API are set, but the set of arguments
+// will change when the set of required properties is changed
+func NewRollupAggregator(outputName string, type_ string) *RollupAggregator {
+	this := RollupAggregator{}
+	this.OutputName = outputName
+	this.Type = type_
+	return &this
+}
+
+// NewRollupAggregatorWithDefaults instantiates a new RollupAggregator object
+// This constructor will only assign default values to properties that have it defined,
+// but it doesn't guarantee that properties required by API are set
+func NewRollupAggregatorWithDefaults() *RollupAggregator {
+	this := RollupAggregator{}
+	return &this
+}
+
+// GetDimensionsToKeep returns the DimensionsToKeep field value if set, zero value otherwise.
+func (o *RollupAggregator) GetDimensionsToKeep() []string {
+	if o == nil || isNil(o.DimensionsToKeep) {
+		var ret []string
+		return ret
+	}
+	return o.DimensionsToKeep
+}
+
+// GetDimensionsToKeepOk returns a tuple with the DimensionsToKeep field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *RollupAggregator) GetDimensionsToKeepOk() ([]string, bool) {
+	if o == nil || isNil(o.DimensionsToKeep) {
+    return nil, false
+	}
+	return o.DimensionsToKeep, true
+}
+
+// HasDimensionsToKeep returns a boolean if a field has been set.
+func (o *RollupAggregator) HasDimensionsToKeep() bool {
+	if o != nil && !isNil(o.DimensionsToKeep) {
+		return true
+	}
+
+	return false
+}
+
+// SetDimensionsToKeep gets a reference to the given []string and assigns it to the DimensionsToKeep field.
+func (o *RollupAggregator) SetDimensionsToKeep(v []string) {
+	o.DimensionsToKeep = v
+}
+
+// GetOutputName returns the OutputName field value
+func (o *RollupAggregator) GetOutputName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.OutputName
+}
+
+// GetOutputNameOk returns a tuple with the OutputName field value
+// and a boolean to check if the value has been set.
+func (o *RollupAggregator) GetOutputNameOk() (*string, bool) {
+	if o == nil {
+    return nil, false
+	}
+	return &o.OutputName, true
+}
+
+// SetOutputName sets field value
+func (o *RollupAggregator) SetOutputName(v string) {
+	o.OutputName = v
+}
+
+// GetType returns the Type field value
+func (o *RollupAggregator) GetType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value
+// and a boolean to check if the value has been set.
+func (o *RollupAggregator) GetTypeOk() (*string, bool) {
+	if o == nil {
+    return nil, false
+	}
+	return &o.Type, true
+}
+
+// SetType sets field value
+func (o *RollupAggregator) SetType(v string) {
+	o.Type = v
 }
 
 func (o RollupAggregator) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.DimensionsToKeep != nil {
+	if !isNil(o.DimensionsToKeep) {
 		toSerialize["dimensionsToKeep"] = o.DimensionsToKeep
 	}
 	if true {
@@ -37,3 +136,41 @@ func (o RollupAggregator) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(toSerialize)
 }
+
+type NullableRollupAggregator struct {
+	value *RollupAggregator
+	isSet bool
+}
+
+func (v NullableRollupAggregator) Get() *RollupAggregator {
+	return v.value
+}
+
+func (v *NullableRollupAggregator) Set(val *RollupAggregator) {
+	v.value = val
+	v.isSet = true
+}
+
+func (v NullableRollupAggregator) IsSet() bool {
+	return v.isSet
+}
+
+func (v *NullableRollupAggregator) Unset() {
+	v.value = nil
+	v.isSet = false
+}
+
+func NewNullableRollupAggregator(val *RollupAggregator) *NullableRollupAggregator {
+	return &NullableRollupAggregator{value: val, isSet: true}
+}
+
+func (v NullableRollupAggregator) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.value)
+}
+
+func (v *NullableRollupAggregator) UnmarshalJSON(src []byte) error {
+	v.isSet = true
+	return json.Unmarshal(src, &v.value)
+}
+
+

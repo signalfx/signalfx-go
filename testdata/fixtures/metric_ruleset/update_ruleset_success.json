@@ -9,12 +9,11 @@
         "outputName": "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
         "type": "rollup"
       },
-      "enabled": true,
+      "enabled": false,
       "matcher": {
         "filters": [],
         "type": "dimension"
-      },
-      "name": "TestRule"
+      }
     }
   ],
   "created": 1674598662022,
@@ -26,7 +25,7 @@
   "lastUpdatedByName": "TestName",
   "metricName": "container_cpu_utilization",
   "routingRule": {
-    "destination": "RealTime"
+    "destination": "Drop"
   },
   "version": 1
 }

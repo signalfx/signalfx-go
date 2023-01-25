@@ -1,7 +1,7 @@
 /*
-Metric Ingest Ruleset API
+Metric Ruleset API
 
-Metric ingest ruleset API
+Metric ruleset API 
 
 API version: 3.0.1
 */
@@ -11,40 +11,108 @@ API version: 3.0.1
 package metric_ruleset
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
 
-// MetricMatcher - Metric matcher for the ruleset
+// MetricMatcher - Metric matcher  
 type MetricMatcher struct {
-	SimpleMetricMatcher *SimpleMetricMatcher
+	DimensionMatcher *DimensionMatcher
 }
+
+// DimensionMatcherAsMetricMatcher is a convenience function that returns DimensionMatcher wrapped in MetricMatcher
+func DimensionMatcherAsMetricMatcher(v *DimensionMatcher) MetricMatcher {
+	return MetricMatcher{
+		DimensionMatcher: v,
+	}
+}
+
 
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *MetricMatcher) UnmarshalJSON(data []byte) error {
 	var err error
-
-	// try to unmarshal data into SimpleMetricMatcher
-	err = json.NewDecoder(bytes.NewBuffer(data)).Decode(&dst.SimpleMetricMatcher)
-	if err != nil {
-		return err
+	match := 0
+	// try to unmarshal data into DimensionMatcher
+	err = newStrictDecoder(data).Decode(&dst.DimensionMatcher)
+	if err == nil {
+		jsonDimensionMatcher, _ := json.Marshal(dst.DimensionMatcher)
+		if string(jsonDimensionMatcher) == "{}" { // empty struct
+			dst.DimensionMatcher = nil
+		} else {
+			match++
+		}
+	} else {
+		dst.DimensionMatcher = nil
 	}
 
-	jsonSimpleMetricMatcher, _ := json.Marshal(dst.SimpleMetricMatcher)
-	if string(jsonSimpleMetricMatcher) == "{}" { // empty struct
-		dst.SimpleMetricMatcher = nil
-		fmt.Errorf("Data failed to match schemas in oneOf(MetricMatcher)")
-	}
+	if match > 1 { // more than 1 match
+		// reset to nil
+		dst.DimensionMatcher = nil
 
-	return nil
+		return fmt.Errorf("data matches more than one schema in oneOf(MetricMatcher)")
+	} else if match == 1 {
+		return nil // exactly one match
+	} else { // no match
+		return fmt.Errorf("data failed to match schemas in oneOf(MetricMatcher)")
+	}
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src MetricMatcher) MarshalJSON() ([]byte, error) {
-	if src.SimpleMetricMatcher != nil {
-		return json.Marshal(&src.SimpleMetricMatcher)
+	if src.DimensionMatcher != nil {
+		return json.Marshal(&src.DimensionMatcher)
 	}
 
 	return nil, nil // no data in oneOf schemas
 }
+
+// Get the actual instance
+func (obj *MetricMatcher) GetActualInstance() (interface{}) {
+	if obj == nil {
+		return nil
+	}
+	if obj.DimensionMatcher != nil {
+		return obj.DimensionMatcher
+	}
+
+	// all schemas are nil
+	return nil
+}
+
+type NullableMetricMatcher struct {
+	value *MetricMatcher
+	isSet bool
+}
+
+func (v NullableMetricMatcher) Get() *MetricMatcher {
+	return v.value
+}
+
+func (v *NullableMetricMatcher) Set(val *MetricMatcher) {
+	v.value = val
+	v.isSet = true
+}
+
+func (v NullableMetricMatcher) IsSet() bool {
+	return v.isSet
+}
+
+func (v *NullableMetricMatcher) Unset() {
+	v.value = nil
+	v.isSet = false
+}
+
+func NewNullableMetricMatcher(val *MetricMatcher) *NullableMetricMatcher {
+	return &NullableMetricMatcher{value: val, isSet: true}
+}
+
+func (v NullableMetricMatcher) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.value)
+}
+
+func (v *NullableMetricMatcher) UnmarshalJSON(src []byte) error {
+	v.isSet = true
+	return json.Unmarshal(src, &v.value)
+}
+
+
