@@ -2,9 +2,10 @@
   "aggregationRules": [
     {
       "aggregator": {
-        "dimensionsToKeep": [
+        "dimensions": [
           "sfx_service"
         ],
+        "dropDimensions": false,
         "outputName": "memory_utilization.by.sfx_realm.agg",
         "type": "rollup"
       },

@@ -20,6 +20,8 @@ type GenerateAggregationNameRequest struct {
 	MetricName string `json:"metricName"`
 	// Dimensions you want to keep in the aggregation rule 
 	Dimensions []string `json:"dimensions"`
+	// Flag toggling if the dimensions are being dropped 
+	DropDimensions *bool `json:"dropDimensions,omitempty"`
 }
 
 // NewGenerateAggregationNameRequest instantiates a new GenerateAggregationNameRequest object
@@ -89,6 +91,38 @@ func (o *GenerateAggregationNameRequest) SetDimensions(v []string) {
 	o.Dimensions = v
 }
 
+// GetDropDimensions returns the DropDimensions field value if set, zero value otherwise.
+func (o *GenerateAggregationNameRequest) GetDropDimensions() bool {
+	if o == nil || isNil(o.DropDimensions) {
+		var ret bool
+		return ret
+	}
+	return *o.DropDimensions
+}
+
+// GetDropDimensionsOk returns a tuple with the DropDimensions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GenerateAggregationNameRequest) GetDropDimensionsOk() (*bool, bool) {
+	if o == nil || isNil(o.DropDimensions) {
+    return nil, false
+	}
+	return o.DropDimensions, true
+}
+
+// HasDropDimensions returns a boolean if a field has been set.
+func (o *GenerateAggregationNameRequest) HasDropDimensions() bool {
+	if o != nil && !isNil(o.DropDimensions) {
+		return true
+	}
+
+	return false
+}
+
+// SetDropDimensions gets a reference to the given bool and assigns it to the DropDimensions field.
+func (o *GenerateAggregationNameRequest) SetDropDimensions(v bool) {
+	o.DropDimensions = &v
+}
+
 func (o GenerateAggregationNameRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
@@ -96,6 +130,9 @@ func (o GenerateAggregationNameRequest) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["dimensions"] = o.Dimensions
+	}
+	if !isNil(o.DropDimensions) {
+		toSerialize["dropDimensions"] = o.DropDimensions
 	}
 	return json.Marshal(toSerialize)
 }

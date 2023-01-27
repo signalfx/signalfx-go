@@ -16,8 +16,10 @@ import (
 
 // RollupAggregator A rollup aggregator for your aggregation rule 
 type RollupAggregator struct {
-	// Dimensions you want to keep in the aggregation rule 
-	DimensionsToKeep []string `json:"dimensionsToKeep,omitempty"`
+	// Dimensions you want to keep or drop in the aggregation rule 
+	Dimensions []string `json:"dimensions,omitempty"`
+	// Flag toggling if the dimensions are being dropped 
+	DropDimensions *bool `json:"dropDimensions,omitempty"`
 	// New aggregated metric name 
 	OutputName string `json:"outputName"`
 	// Aggregation rule type 
@@ -43,36 +45,68 @@ func NewRollupAggregatorWithDefaults() *RollupAggregator {
 	return &this
 }
 
-// GetDimensionsToKeep returns the DimensionsToKeep field value if set, zero value otherwise.
-func (o *RollupAggregator) GetDimensionsToKeep() []string {
-	if o == nil || isNil(o.DimensionsToKeep) {
+// GetDimensions returns the Dimensions field value if set, zero value otherwise.
+func (o *RollupAggregator) GetDimensions() []string {
+	if o == nil || isNil(o.Dimensions) {
 		var ret []string
 		return ret
 	}
-	return o.DimensionsToKeep
+	return o.Dimensions
 }
 
-// GetDimensionsToKeepOk returns a tuple with the DimensionsToKeep field value if set, nil otherwise
+// GetDimensionsOk returns a tuple with the Dimensions field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *RollupAggregator) GetDimensionsToKeepOk() ([]string, bool) {
-	if o == nil || isNil(o.DimensionsToKeep) {
+func (o *RollupAggregator) GetDimensionsOk() ([]string, bool) {
+	if o == nil || isNil(o.Dimensions) {
     return nil, false
 	}
-	return o.DimensionsToKeep, true
+	return o.Dimensions, true
 }
 
-// HasDimensionsToKeep returns a boolean if a field has been set.
-func (o *RollupAggregator) HasDimensionsToKeep() bool {
-	if o != nil && !isNil(o.DimensionsToKeep) {
+// HasDimensions returns a boolean if a field has been set.
+func (o *RollupAggregator) HasDimensions() bool {
+	if o != nil && !isNil(o.Dimensions) {
 		return true
 	}
 
 	return false
 }
 
-// SetDimensionsToKeep gets a reference to the given []string and assigns it to the DimensionsToKeep field.
-func (o *RollupAggregator) SetDimensionsToKeep(v []string) {
-	o.DimensionsToKeep = v
+// SetDimensions gets a reference to the given []string and assigns it to the Dimensions field.
+func (o *RollupAggregator) SetDimensions(v []string) {
+	o.Dimensions = v
+}
+
+// GetDropDimensions returns the DropDimensions field value if set, zero value otherwise.
+func (o *RollupAggregator) GetDropDimensions() bool {
+	if o == nil || isNil(o.DropDimensions) {
+		var ret bool
+		return ret
+	}
+	return *o.DropDimensions
+}
+
+// GetDropDimensionsOk returns a tuple with the DropDimensions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *RollupAggregator) GetDropDimensionsOk() (*bool, bool) {
+	if o == nil || isNil(o.DropDimensions) {
+    return nil, false
+	}
+	return o.DropDimensions, true
+}
+
+// HasDropDimensions returns a boolean if a field has been set.
+func (o *RollupAggregator) HasDropDimensions() bool {
+	if o != nil && !isNil(o.DropDimensions) {
+		return true
+	}
+
+	return false
+}
+
+// SetDropDimensions gets a reference to the given bool and assigns it to the DropDimensions field.
+func (o *RollupAggregator) SetDropDimensions(v bool) {
+	o.DropDimensions = &v
 }
 
 // GetOutputName returns the OutputName field value
@@ -125,8 +159,11 @@ func (o *RollupAggregator) SetType(v string) {
 
 func (o RollupAggregator) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if !isNil(o.DimensionsToKeep) {
-		toSerialize["dimensionsToKeep"] = o.DimensionsToKeep
+	if !isNil(o.Dimensions) {
+		toSerialize["dimensions"] = o.Dimensions
+	}
+	if !isNil(o.DropDimensions) {
+		toSerialize["dropDimensions"] = o.DropDimensions
 	}
 	if true {
 		toSerialize["outputName"] = o.OutputName

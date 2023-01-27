@@ -2,10 +2,11 @@
   "aggregationRules": [
     {
       "aggregator": {
-        "dimensionsToKeep": [
+        "dimensions": [
           "sfx_realm",
           "sfx_service"
         ],
+        "dropDimensions": false,
         "outputName": "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
         "type": "rollup"
       },

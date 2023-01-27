@@ -16,6 +16,7 @@ func TestCreateMetricRuleset(t *testing.T) {
 	mux.HandleFunc(MetricRulesetApiURL, verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "metric_ruleset/create_ruleset_success.json"))
 
 	dest := metric_ruleset.FULL_FIDELITY
+	dropDimensions := false
 	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
 		MetricName: "container_cpu_utilization",
 		Version:    1,
@@ -31,7 +32,8 @@ func TestCreateMetricRuleset(t *testing.T) {
 					RollupAggregator: &metric_ruleset.RollupAggregator{
 						Type:             "rollup",
 						OutputName:       "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
-						DimensionsToKeep: []string{"sfx_realm", "sfx_service"},
+						Dimensions: []string{"sfx_realm", "sfx_service"},
+						DropDimensions: &dropDimensions,
 					},
 				},
 			},
@@ -67,6 +69,7 @@ func TestUpdateMetricRuleset(t *testing.T) {
 	metricName := "container_cpu_utilization"
 	dest := metric_ruleset.DROP
 	version := int64(2)
+	dropDimensions := false
 	result, err := client.UpdateMetricRuleset(context.Background(), "TestId", &metric_ruleset.UpdateMetricRulesetRequest{
 		MetricName: &metricName,
 		Version:    &version,
@@ -82,7 +85,8 @@ func TestUpdateMetricRuleset(t *testing.T) {
 					RollupAggregator: &metric_ruleset.RollupAggregator{
 						Type:             "rollup",
 						OutputName:       "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
-						DimensionsToKeep: []string{"sfx_realm", "sfx_service"},
+						Dimensions: []string{"sfx_realm", "sfx_service"},
+						DropDimensions: &dropDimensions,
 					},
 				},
 			},
@@ -115,9 +119,11 @@ func TestGenerateAggregationMetricName(t *testing.T) {
 
 	mux.HandleFunc(MetricRulesetApiURL+"/generateAggregationMetricName", verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "metric_ruleset/generate_aggregation_metric_name_success.txt"))
 
+	dropDimensions := false
 	result, err := client.GenerateAggregationMetricName(context.Background(), metric_ruleset.GenerateAggregationNameRequest{
 		MetricName: "cpu.utilization",
 		Dimensions: []string{"sfx_realm"},
+		DropDimensions: &dropDimensions,
 	})
 
 	assert.NoError(t, err, "Unexpected error generating aggregation metric name")
