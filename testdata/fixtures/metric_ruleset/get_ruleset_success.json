@@ -1,0 +1,38 @@
+{
+  "aggregationRules": [
+    {
+      "aggregator": {
+        "dimensions": [
+          "sfx_service"
+        ],
+        "dropDimensions": false,
+        "outputName": "memory_utilization.by.sfx_realm.agg",
+        "type": "rollup"
+      },
+      "enabled": true,
+      "matcher": {
+        "filters": [
+          {
+            "property": "sfx_realm",
+            "NOT": false,
+            "propertyValue": ["lab0"]
+          }
+        ],
+        "type": "dimension"
+      },
+      "name": "TestRule"
+    }
+  ],
+  "created": 1674598662022,
+  "creator": "TestCreatorId",
+  "creatorName": "TestName",
+  "id": "TestId_MemoryUtilization",
+  "lastUpdated": 1674598662022,
+  "lastUpdatedBy": "TestUpdatedId",
+  "lastUpdatedByName": "TestName",
+  "metricName": "memory.utilization",
+  "routingRule": {
+    "destination": "Drop"
+  },
+  "version": 1
+}
