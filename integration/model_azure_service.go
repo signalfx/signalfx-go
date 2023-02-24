@@ -28,6 +28,7 @@ const (
 	AZURE_MICROSOFT_DBFORMYSQL_SERVERS                           AzureService = "microsoft.dbformysql/servers"
 	AZURE_MICROSOFT_DBFORMYSQL_FLEXIBLESERVERS                   AzureService = "microsoft.dbformysql/flexibleservers"
 	AZURE_MICROSOFT_DBFORPOSTGRESQL_SERVERS                      AzureService = "microsoft.dbforpostgresql/servers"
+	AZURE_MICROSOFT_DBFORPOSTGRESQL_FLEXIBLESERVERS              AzureService = "microsoft.dbforpostgresql/flexibleservers"
 	AZURE_DEVICES                                                AzureService = "microsoft.devices"
 	AZURE_DEVICES_ELASTICPOOLS                                   AzureService = "microsoft.devices/elasticpools"
 	AZURE_DEVICES_ELASTICPOOLS_IOHUBTENANTS                      AzureService = "microsoft.devices/elasticpools/iothubtenants"
