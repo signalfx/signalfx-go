@@ -45,6 +45,7 @@ type FakeBackend struct {
 	programErrors        map[string]string
 	runningJobsByProgram map[string]int
 	cancelFuncsByHandle  map[string]context.CancelFunc
+	cancelFuncsByChannel map[string]context.CancelFunc
 	server               *httptest.Server
 	handleIdx            int
 }
@@ -137,6 +138,10 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 		if cancel := f.cancelFuncsByHandle[message["handle"].(string)]; cancel != nil {
 			cancel()
 		}
+	case "detach":
+		if cancel := f.cancelFuncsByChannel[message["channel"].(string)]; cancel != nil {
+			cancel()
+		}
 	case "execute":
 		if !f.authenticated {
 			return errors.New("not authenticated")
@@ -155,6 +160,7 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 
 		execCtx, cancel := context.WithCancel(ctx)
 		f.cancelFuncsByHandle[handle] = cancel
+		f.cancelFuncsByChannel[ch] = cancel
 
 		log.Printf("Executing SignalFlow program %s with tsids %v and handle %s", program, programTSIDs, handle)
 		f.runningJobsByProgram[program]++
@@ -289,6 +295,7 @@ func (f *FakeBackend) Start() {
 	f.programErrors = map[string]string{}
 	f.runningJobsByProgram = map[string]int{}
 	f.cancelFuncsByHandle = map[string]context.CancelFunc{}
+	f.cancelFuncsByChannel = map[string]context.CancelFunc{}
 	f.conns = map[*websocket.Conn]bool{}
 	f.server = httptest.NewServer(f)
 }
