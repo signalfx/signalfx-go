@@ -411,6 +411,20 @@ func (c *Computation) IsFinished() bool {
 	return c.ctx.Err() != nil
 }
 
+// Detach the computation on the backend by using the channel name.
+func (c *Computation) Detach() error {
+	return c.DetachWithReason("")
+}
+
+// DetachWithReason detaches the computation with a given reason. This reason will
+// be reflected in the control message that signals the end of the job/channel
+func (c *Computation) DetachWithReason(reason string) error {
+	return c.client.Detach(&DetachRequest{
+		Reason:  reason,
+		Channel: c.channel.name,
+	})
+}
+
 // Stop the computation on the backend.
 func (c *Computation) Stop() error {
 	return c.StopWithReason("")
