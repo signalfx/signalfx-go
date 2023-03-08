@@ -292,6 +292,15 @@ func (c *Client) Execute(req *ExecuteRequest) (*Computation, error) {
 	return newComputation(c.ctx, c.registerChannel(req.Channel), c), nil
 }
 
+func (c *Client) Detach(req *DetachRequest) error {
+	// We are assuming that the detach request will always come from the same
+	// client that started it with the Execute method above, and thus the
+	// connection is still active (i.e. we don't need to call ensureInitialized
+	// here).  If the websocket connection does drop, all jobs started by that
+	// connection get detached/stopped automatically.
+	return c.sendMessage(req)
+}
+
 // Stop sends a job stop request message to the backend.  It does not wait for
 // jobs to actually be stopped.
 func (c *Client) Stop(req *StopRequest) error {
