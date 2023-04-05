@@ -84,6 +84,14 @@ func (c *wsConn) Run() {
 
 			if c.ctx.Err() == context.Canceled {
 				log.Printf("Context cancelled, stop reconnecting.")
+				// if the conn is nil no one will drain outgoing messages when stopping
+				for msg := range c.outgoingTextMsgs {
+					msg.resultCh <- nil
+					//
+					if len(c.outgoingTextMsgs) == 0 {
+						close(c.outgoingTextMsgs)
+					}
+				}
 				return
 			}
 
