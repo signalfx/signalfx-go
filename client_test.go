@@ -104,6 +104,7 @@ func Test_Close_DoesNotLeakGoroutines(t *testing.T) {
 	// This test compares goroutines before and after creating the client - let's wait for other goroutines to close first.
 	_ = waitForAllGoroutinesToDie(2, time.Second*2)
 	goroutinesBefore := runtime.NumGoroutine()
+	signalflow.ReconnectDelay = time.Millisecond * 200
 
 	clientsCount := 10
 	clients := make([]*signalflow.Client, clientsCount)
@@ -123,7 +124,7 @@ func Test_Close_DoesNotLeakGoroutines(t *testing.T) {
 	if goroutinesAfter != goroutinesBefore {
 		t.Logf("goroutinesAfter[%d] != goroutinesBefore[%d]\n", goroutinesAfter, goroutinesBefore)
 		_ = syscall.Kill(syscall.Getpid(), syscall.SIGQUIT) // send SIGQUIT to dump goroutines for easier debug
-		t.Fail()
+		t.Errorf("goroutinesAfter[%d] != goroutinesBefore[%d]\n", goroutinesAfter, goroutinesBefore)
 	}
 }
 
