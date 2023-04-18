@@ -32,7 +32,7 @@ type Organization struct {
 	// The authentication key for the account that owns the organization.
 	AccountKey string `json:"accountKey,omitempty"`
 	// The renewal status for the account that owns the organization
-	AccountRenews string `json:"accountRenews,omitempty"`
+	AccountRenews bool `json:"accountRenews,omitempty"`
 	// Specifies a date and time after which the account that owns the organization becomes invalid, in Unix time UTC-relative.
 	AccountValidUntil int64 `json:"accountValidUntil,omitempty"`
 	// Specifies the number of datapoints per minute that the  organization can receive.
