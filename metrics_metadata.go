@@ -213,14 +213,18 @@ func (c *Client) GetMetricTimeSeries(ctx context.Context, id string) (*metrics_m
 }
 
 // SearchMetricTimeSeries searches for metric time series, given a query string in `query`.
-func (c *Client) SearchMetricTimeSeries(ctx context.Context, query string, orderBy string, limit int, offset int) (*metrics_metadata.MetricTimeSeriesRetrieveResponseModel, error) {
+func (c *Client) SearchMetricTimeSeries(
+	ctx context.Context,
+	query string,
+	startMS int64,
+	endMS int64,
+	resolution int,
+) (*metrics_metadata.MetricTimeSeriesRetrieveResponseModel, error) {
 	params := url.Values{}
 	params.Add("query", query)
-	if orderBy != "" {
-		params.Add("orderBy", orderBy)
-	}
-	params.Add("limit", strconv.Itoa(limit))
-	params.Add("offset", strconv.Itoa(offset))
+	params.Add("startMS", string(startMS))
+	params.Add("endMS", string(endMS))
+	params.Add("resolution", string(resolution))
 
 	resp, err := c.doRequest(ctx, "GET", MetricTimeSeriesAPIURL, params, nil)
 	if resp != nil {
