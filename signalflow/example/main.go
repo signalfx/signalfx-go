@@ -2,31 +2,47 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"flag"
 	"log"
 	"os"
+	"time"
 
-	"github.com/signalfx/signalfx-go/signalflow"
+	"github.com/signalfx/signalfx-go/signalflow/v2"
 )
 
 func main() {
-	var streamURL = os.Getenv("SIGNALFX_STREAM_URL")
-	var accessToken = os.Getenv("SIGNALFX_ACCESS_TOKEN")
+	var (
+		realm       string
+		accessToken string
+		program     string
+		duration    time.Duration
+	)
+
+	flag.StringVar(&realm, "realm", "", "SignalFx Realm")
+	flag.StringVar(&accessToken, "access-token", "", "SignalFx Org Access Token")
+	flag.StringVar(&program, "program", "data('cpu.utilization').count().publish()", "The SignalFlow program to execute")
+	flag.DurationVar(&duration, "duration", 30*time.Second, "How long to run the job before sending Stop message")
+	flag.Parse()
+
+	if realm == "" || accessToken == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	c, err := signalflow.NewClient(
-		signalflow.StreamURL(streamURL),
-		signalflow.AccessToken(accessToken))
+		signalflow.StreamURLForRealm(realm),
+		signalflow.AccessToken(accessToken),
+		signalflow.OnError(func(err error) {
+			log.Printf("Error in SignalFlow client: %v", err)
+		}))
 	if err != nil {
 		log.Printf("Error creating client: %v", err)
 		return
 	}
 
-	program := os.Getenv("SIGNALFLOW_PROGRAM")
-	if program == "" {
-		program = "data('cpu.utilization').publish()"
-	}
-
-	comp, err := c.Execute(&signalflow.ExecuteRequest{
+	log.Printf("Executing program for %v: %s", duration, program)
+	comp, err := c.Execute(context.Background(), &signalflow.ExecuteRequest{
 		Program: program,
 	})
 	if err != nil {
@@ -34,13 +50,29 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Resolution: %v\n", comp.Resolution())
-	fmt.Printf("Max Delay: %v\n", comp.MaxDelay())
-	fmt.Printf("Detected Lag: %v\n", comp.Lag())
+	// If you want to limit how long to wait for the resolution metadata to come in you can use a
+	// timed context.
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	resolution, err := comp.Resolution(ctx)
+	cancel()
+
+	maxDelay, _ := comp.MaxDelay(context.Background())
+	lag, _ := comp.Lag(context.Background())
+
+	log.Printf("Resolution: %v (err: %v)\n", resolution, err)
+	log.Printf("Max Delay: %v\n", maxDelay)
+	log.Printf("Detected Lag: %v\n", lag)
 
 	go func() {
 		for msg := range comp.Expirations() {
-			fmt.Printf("Got expiration notice for TSID %s", msg.TSID)
+			log.Printf("Got expiration notice for TSID %s", msg.TSID)
+		}
+	}()
+
+	go func() {
+		time.Sleep(duration)
+		if err := comp.Stop(context.Background()); err != nil {
+			log.Printf("Failed to stop computation: %v", err)
 		}
 	}()
 
@@ -48,14 +80,20 @@ func main() {
 		// This will run as long as there is data, or until the websocket gets
 		// disconnected.
 		if len(msg.Payloads) == 0 {
-			fmt.Printf("\rNo data available")
+			log.Printf("\rNo data available")
 			continue
 		}
 		for _, pl := range msg.Payloads {
-			meta := comp.TSIDMetadata(pl.TSID)
-			fmt.Printf("%s %v: %v\n", meta.OriginatingMetric, meta.CustomProperties, pl.Value())
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			meta, err := comp.TSIDMetadata(ctx, pl.TSID)
+			cancel()
+			if err != nil {
+				log.Printf("Failed to get metadata for tsid %s: %v", pl.TSID, err)
+				continue
+			}
+			log.Printf("%s (%s) %v %v: %v\n", meta.OriginatingMetric, meta.Metric, meta.CustomProperties, meta.InternalProperties, pl.Value())
 		}
-		fmt.Println("")
+		log.Println("")
 	}
 
 	err = comp.Err()

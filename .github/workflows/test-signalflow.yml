@@ -1,24 +1,24 @@
-name: build-and-test
+name: build-and-test-signalflow
 on:
   push:
     branches:
       - main
   pull_request:
-    paths_ignore:
+    paths:
     - 'signalflow/**'
 
 jobs:
-  test-main-package:
-    runs-on: ubuntu-20.04
+  test-signalflow-package:
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        GO_VERSION: [ "1.17", "1.20" ]
+        GO_VERSION: [ "1.19", "1.20" ]
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.GO_VERSION }}
 
@@ -29,13 +29,16 @@ jobs:
             ~/.cache/go-build
             ~/go/pkg/mod
             ~/go/bin
-          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('signalflow/go.sum') }}
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.52.2
+          working-directory: signalflow
 
       - name: Run signalfx-go tests
         run: |
+          cd signalflow
           go mod download
-          # Used for code generation
-          go install github.com/mauricelam/genny
-          go install golang.org/x/tools/cmd/goimports
-          go generate ./...
-          go test ./... -parallel 4 -timeout 4m
+          go test -cover -race ./... -parallel 4 -timeout 5m

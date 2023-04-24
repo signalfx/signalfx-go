@@ -1,9 +1,11 @@
-// Package signalflow contains a SignalFx SignalFlow client, which can be used
-// to execute analytics jobs against the SignalFx backend.
+// Package signalflow contains a SignalFx SignalFlow client, which can be used to execute analytics
+// jobs against the SignalFx backend.
 //
-// The client currently only supports the execute request.  Not all SignalFlow
-// messages are handled at this time, and some will be silently dropped.
+// Not all SignalFlow messages are handled at this time, and some will be silently dropped. All of
+// the most important and useful ones are supported though.
 //
-// The client will automatically attempt to reconnect to the backend if the
-// connection is broken.  There is a 5 second delay between retries.
+// The client will automatically attempt to reconnect to the backend if the connection is broken
+// after a short delay.
+//
+// SignalFlow is documented at https://dev.splunk.com/observability/docs/signalflow/messages.
 package signalflow
