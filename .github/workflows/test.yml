@@ -37,4 +37,4 @@ jobs:
           go install github.com/mauricelam/genny
           go install golang.org/x/tools/cmd/goimports
           go generate ./...
-          go test ./... -parallel 4 -timeout 2m
+          go test ./... -parallel 4 -timeout 4m

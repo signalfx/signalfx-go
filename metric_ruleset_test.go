@@ -17,11 +17,13 @@ func TestCreateMetricRuleset(t *testing.T) {
 
 	dest := metric_ruleset.FULL_FIDELITY
 	dropDimensions := false
+	ruleName := "TestRule"
 	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
 		MetricName: "container_cpu_utilization",
 		Version:    1,
 		AggregationRules: []metric_ruleset.AggregationRule{
 			{
+				Name:    &ruleName,
 				Enabled: true,
 				Matcher: metric_ruleset.MetricMatcher{
 					DimensionMatcher: &metric_ruleset.DimensionMatcher{
@@ -30,9 +32,9 @@ func TestCreateMetricRuleset(t *testing.T) {
 				},
 				Aggregator: metric_ruleset.MetricAggregator{
 					RollupAggregator: &metric_ruleset.RollupAggregator{
-						Type:             "rollup",
-						OutputName:       "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
-						Dimensions: []string{"sfx_realm", "sfx_service"},
+						Type:           "rollup",
+						OutputName:     "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
+						Dimensions:     []string{"sfx_realm", "sfx_service"},
 						DropDimensions: &dropDimensions,
 					},
 				},
@@ -70,11 +72,13 @@ func TestUpdateMetricRuleset(t *testing.T) {
 	dest := metric_ruleset.DROP
 	version := int64(2)
 	dropDimensions := false
+	ruleName := "UpdatedName"
 	result, err := client.UpdateMetricRuleset(context.Background(), "TestId", &metric_ruleset.UpdateMetricRulesetRequest{
 		MetricName: &metricName,
 		Version:    &version,
 		AggregationRules: []metric_ruleset.AggregationRule{
 			{
+				Name:    &ruleName,
 				Enabled: false,
 				Matcher: metric_ruleset.MetricMatcher{
 					DimensionMatcher: &metric_ruleset.DimensionMatcher{
@@ -83,9 +87,9 @@ func TestUpdateMetricRuleset(t *testing.T) {
 				},
 				Aggregator: metric_ruleset.MetricAggregator{
 					RollupAggregator: &metric_ruleset.RollupAggregator{
-						Type:             "rollup",
-						OutputName:       "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
-						Dimensions: []string{"sfx_realm", "sfx_service"},
+						Type:           "rollup",
+						OutputName:     "container_cpu_utilization.by.sfx_realm.sfx_service.agg",
+						Dimensions:     []string{"sfx_realm", "sfx_service"},
 						DropDimensions: &dropDimensions,
 					},
 				},
@@ -121,8 +125,8 @@ func TestGenerateAggregationMetricName(t *testing.T) {
 
 	dropDimensions := false
 	result, err := client.GenerateAggregationMetricName(context.Background(), metric_ruleset.GenerateAggregationNameRequest{
-		MetricName: "cpu.utilization",
-		Dimensions: []string{"sfx_realm"},
+		MetricName:     "cpu.utilization",
+		Dimensions:     []string{"sfx_realm"},
 		DropDimensions: &dropDimensions,
 	})
 

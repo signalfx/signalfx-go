@@ -14,7 +14,8 @@
       "matcher": {
         "filters": [],
         "type": "dimension"
-      }
+      },
+      "name": "UpdatedName"
     }
   ],
   "created": 1674598662022,

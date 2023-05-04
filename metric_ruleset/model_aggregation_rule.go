@@ -16,6 +16,8 @@ import (
 
 // AggregationRule A single aggregation rule in a metric ruleset 
 type AggregationRule struct {
+	// Name of the aggregation rule
+	Name *string `json:"name,omitempty"`
 	Matcher MetricMatcher `json:"matcher"`
 	// Status of this aggregation rule 
 	Enabled bool `json:"enabled"`
@@ -28,6 +30,8 @@ type AggregationRule struct {
 // will change when the set of required properties is changed
 func NewAggregationRule(matcher MetricMatcher, enabled bool, aggregator MetricAggregator) *AggregationRule {
 	this := AggregationRule{}
+	var name string = ""
+	this.Name = &name
 	this.Matcher = matcher
 	this.Enabled = enabled
 	this.Aggregator = aggregator
@@ -39,9 +43,43 @@ func NewAggregationRule(matcher MetricMatcher, enabled bool, aggregator MetricAg
 // but it doesn't guarantee that properties required by API are set
 func NewAggregationRuleWithDefaults() *AggregationRule {
 	this := AggregationRule{}
+	var name string = ""
+	this.Name = &name
 	var enabled bool = false
 	this.Enabled = enabled
 	return &this
+}
+
+// GetName returns the Name field value if set, zero value otherwise.
+func (o *AggregationRule) GetName() string {
+	if o == nil || isNil(o.Name) {
+		var ret string
+		return ret
+	}
+	return *o.Name
+}
+
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *AggregationRule) GetNameOk() (*string, bool) {
+	if o == nil || isNil(o.Name) {
+    return nil, false
+	}
+	return o.Name, true
+}
+
+// HasName returns a boolean if a field has been set.
+func (o *AggregationRule) HasName() bool {
+	if o != nil && !isNil(o.Name) {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given string and assigns it to the Name field.
+func (o *AggregationRule) SetName(v string) {
+	o.Name = &v
 }
 
 // GetMatcher returns the Matcher field value
@@ -118,6 +156,9 @@ func (o *AggregationRule) SetAggregator(v MetricAggregator) {
 
 func (o AggregationRule) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
+	if !isNil(o.Name) {
+		toSerialize["name"] = o.Name
+	}
 	if true {
 		toSerialize["matcher"] = o.Matcher
 	}
