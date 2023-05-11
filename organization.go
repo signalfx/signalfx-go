@@ -112,6 +112,34 @@ func (c *Client) InviteMember(ctx context.Context, inviteRequest *organization.C
 	return finalMember, err
 }
 
+// Updates admin status of a member.
+func (c *Client) UpdateMember(ctx context.Context, id string, updateRequest *organization.UpdateMemberRequest) (*organization.Member, error) {
+	payload, err := json.Marshal(updateRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.doRequest(ctx, "PUT", OrganizationMemberAPIURL+"/"+id, nil, bytes.NewReader(payload))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		message, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	}
+
+	finalMember := &organization.Member{}
+
+	err = json.NewDecoder(resp.Body).Decode(finalMember)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
+	return finalMember, err
+}
+
 // InviteMembers invites many members to the organization.
 func (c *Client) InviteMembers(ctx context.Context, inviteRequest *organization.InviteMembersRequest) (*organization.InviteMembersRequest, error) {
 	payload, err := json.Marshal(inviteRequest)
