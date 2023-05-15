@@ -24,10 +24,12 @@ const (
 	AZURE_MICROSOFT_DATAFACTORY_FACTORIES                        AzureService = "microsoft.datafactory/factories"
 	AZURE_MICROSOFT_DATALAKEANALYTICS_ACCOUNTS                   AzureService = "microsoft.datalakeanalytics/accounts"
 	AZURE_MICROSOFT_DATALAKESTORE_ACCOUNTS                       AzureService = "microsoft.datalakestore/accounts"
+	AZURE_MICROSOFT_DATAPROTECTION_BACKUPVAULTS                  AzureService = "microsoft.dataprotection/backupvaults"
 	AZURE_MICROSOFT_DBFORMARIADB_SERVERS                         AzureService = "microsoft.dbformariadb/servers"
 	AZURE_MICROSOFT_DBFORMYSQL_SERVERS                           AzureService = "microsoft.dbformysql/servers"
 	AZURE_MICROSOFT_DBFORMYSQL_FLEXIBLESERVERS                   AzureService = "microsoft.dbformysql/flexibleservers"
 	AZURE_MICROSOFT_DBFORPOSTGRESQL_SERVERS                      AzureService = "microsoft.dbforpostgresql/servers"
+	AZURE_MICROSOFT_DBFORPOSTGRESQL_FLEXIBLESERVERS              AzureService = "microsoft.dbforpostgresql/flexibleservers"
 	AZURE_DEVICES                                                AzureService = "microsoft.devices"
 	AZURE_DEVICES_ELASTICPOOLS                                   AzureService = "microsoft.devices/elasticpools"
 	AZURE_DEVICES_ELASTICPOOLS_IOHUBTENANTS                      AzureService = "microsoft.devices/elasticpools/iothubtenants"
@@ -60,6 +62,7 @@ const (
 	AZURE_MICROSOFT_NETWORK_VIRTUALNETWORKGATEWAYS               AzureService = "microsoft.network/virtualnetworkgateways"
 	AZURE_MICROSOFT_NOTIFICATIONHUBS_NAMESPACES_NOTIFICATIONHUBS AzureService = "microsoft.notificationhubs/namespaces/notificationhubs"
 	AZURE_MICROSOFT_POWERBIDEDICATED_CAPACITIES                  AzureService = "microsoft.powerbidedicated/capacities"
+	AZURE_MICROSOFT_RECOVERYSERVICES_VAULTS                      AzureService = "microsoft.recoveryservices/vaults"
 	AZURE_MICROSOFT_RELAY_NAMESPACES                             AzureService = "microsoft.relay/namespaces"
 	AZURE_MICROSOFT_SEARCH_SEARCHSERVICES                        AzureService = "microsoft.search/searchservices"
 	AZURE_MICROSOFT_SERVICEBUS_NAMESPACES                        AzureService = "microsoft.servicebus/namespaces"
@@ -105,10 +108,12 @@ var AzureServiceNames = map[string]AzureService{
 	"microsoft.datafactory/factories":                           AZURE_MICROSOFT_DATAFACTORY_FACTORIES,
 	"microsoft.datalakeanalytics/accounts":                      AZURE_MICROSOFT_DATALAKEANALYTICS_ACCOUNTS,
 	"microsoft.datalakestore/accounts":                          AZURE_MICROSOFT_DATALAKESTORE_ACCOUNTS,
+	"microsoft.dataprotection/backupvaults":                     AZURE_MICROSOFT_DATAPROTECTION_BACKUPVAULTS,
 	"microsoft.dbformariadb/servers":                            AZURE_MICROSOFT_DBFORMARIADB_SERVERS,
 	"microsoft.dbformysql/servers":                              AZURE_MICROSOFT_DBFORMYSQL_SERVERS,
 	"microsoft.dbformysql/flexibleservers":                      AZURE_MICROSOFT_DBFORMYSQL_FLEXIBLESERVERS,
 	"microsoft.dbforpostgresql/servers":                         AZURE_MICROSOFT_DBFORPOSTGRESQL_SERVERS,
+	"microsoft.dbforpostgresql/flexibleservers":                 AZURE_MICROSOFT_DBFORPOSTGRESQL_FLEXIBLESERVERS,
 	"microsoft.devices":                                         AZURE_DEVICES,
 	"microsoft.devices/elasticpools":                            AZURE_DEVICES_ELASTICPOOLS,
 	"microsoft.devices/elasticpools/iothubtenants":              AZURE_DEVICES_ELASTICPOOLS_IOHUBTENANTS,
@@ -141,6 +146,7 @@ var AzureServiceNames = map[string]AzureService{
 	"microsoft.network/virtualnetworkgateways":                  AZURE_MICROSOFT_NETWORK_VIRTUALNETWORKGATEWAYS,
 	"microsoft.notificationhubs/namespaces/notificationhubs":    AZURE_MICROSOFT_NOTIFICATIONHUBS_NAMESPACES_NOTIFICATIONHUBS,
 	"microsoft.powerbidedicated/capacities":                     AZURE_MICROSOFT_POWERBIDEDICATED_CAPACITIES,
+	"microsoft.recoveryservices/vaults":                         AZURE_MICROSOFT_RECOVERYSERVICES_VAULTS,
 	"microsoft.relay/namespaces":                                AZURE_MICROSOFT_RELAY_NAMESPACES,
 	"microsoft.search/searchservices":                           AZURE_MICROSOFT_SEARCH_SEARCHSERVICES,
 	"microsoft.servicebus/namespaces":                           AZURE_MICROSOFT_SERVICEBUS_NAMESPACES,
