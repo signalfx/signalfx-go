@@ -15,5 +15,4 @@ func TestParseMessage(t *testing.T) {
 		require.NoError(t, err)
 		require.IsType(t, &EndOfChannelControlMessage{}, msg)
 	})
-
 }

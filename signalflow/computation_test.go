@@ -2,16 +2,18 @@ package signalflow
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/signalfx/signalfx-go/idtool"
-	"github.com/signalfx/signalfx-go/signalflow/messages"
+	"github.com/signalfx/signalfx-go/signalflow/v2/messages"
 	"github.com/stretchr/testify/require"
 )
 
 func waitForDataMsg(t *testing.T, comp *Computation) (messages.Message, error) {
+	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	for {
@@ -33,73 +35,91 @@ func waitForDataMsg(t *testing.T, comp *Computation) (messages.Message, error) {
 }
 
 func TestBuffersDataMessages(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(&messages.DataMessage{
+	defer close(ch)
+	ch <- &messages.DataMessage{
 		Payloads: []messages.DataPayload{
 			{
 				TSID: idtool.ID(4000),
 			},
 		},
-	})
-	ch.AcceptMessage(&messages.MetadataMessage{
+	}
+	ch <- &messages.MetadataMessage{
 		TSID: idtool.ID(4000),
-	})
+	}
 
-	require.NotNil(t, comp.TSIDMetadata(4000))
+	md, _ := comp.TSIDMetadata(context.Background(), 4000)
+	require.NotNil(t, md)
 
-	ch.AcceptMessage(&messages.InfoMessage{})
+	ch <- &messages.InfoMessage{}
 
 	msg, _ := waitForDataMsg(t, comp)
 	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
 
-	ch.AcceptMessage(&messages.DataMessage{
+	ch <- &messages.DataMessage{
 		Payloads: []messages.DataPayload{
 			{
 				TSID: idtool.ID(4001),
 			},
 		},
-	})
+	}
 	msg, _ = waitForDataMsg(t, comp)
 	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
 }
 
+func waitForExpiryMsg(t *testing.T, comp *Computation) (messages.Message, error) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	for {
+		select {
+		case m := <-comp.Expirations():
+			if m == nil {
+				continue
+			}
+			return m, nil
+		case <-ctx.Done():
+			err := comp.Err()
+			if err != nil {
+				return nil, err
+			}
+
+			t.Fatal("data message didn't get buffered")
+		}
+	}
+}
+
 func TestBuffersExpiryMessages(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(&messages.DataMessage{
-		Payloads: []messages.DataPayload{
-			{
-				TSID: idtool.ID(4000),
-			},
-		},
-	})
-	ch.AcceptMessage(&messages.MetadataMessage{
+	defer close(ch)
+	ch <- &messages.ExpiredTSIDMessage{
+		TSID: idtool.ID(4000).String(),
+	}
+	ch <- &messages.MetadataMessage{
 		TSID: idtool.ID(4000),
-	})
+	}
 
-	require.NotNil(t, comp.TSIDMetadata(4000))
+	md, _ := comp.TSIDMetadata(context.Background(), 4000)
+	require.NotNil(t, md)
 
-	ch.AcceptMessage(&messages.InfoMessage{})
+	ch <- &messages.InfoMessage{}
 
-	msg, _ := waitForDataMsg(t, comp)
-	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
+	msg, _ := waitForExpiryMsg(t, comp)
+	require.Equal(t, idtool.ID(4000).String(), msg.(*messages.ExpiredTSIDMessage).TSID)
 
-	ch.AcceptMessage(&messages.DataMessage{
-		Payloads: []messages.DataPayload{
-			{
-				TSID: idtool.ID(4001),
-			},
-		},
-	})
-	msg, _ = waitForDataMsg(t, comp)
-	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
+	ch <- &messages.ExpiredTSIDMessage{
+		TSID: idtool.ID(4001).String(),
+	}
+	msg, _ = waitForExpiryMsg(t, comp)
+	require.Equal(t, idtool.ID(4001).String(), msg.(*messages.ExpiredTSIDMessage).TSID)
 }
 
 func mustParse(m messages.Message, err error) messages.Message {
@@ -110,11 +130,12 @@ func mustParse(m messages.Message, err error) messages.Message {
 }
 
 func TestResolutionMetadata(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
+	defer close(ch)
 
 	wg := sync.WaitGroup{}
 
@@ -122,12 +143,13 @@ func TestResolutionMetadata(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		wg.Add(1)
 		go func() {
-			require.Equal(t, 5*time.Second, comp.Resolution())
-			wg.Done()
+			defer wg.Done()
+			resolution, _ := comp.Resolution(context.Background())
+			require.Equal(t, 5*time.Second, resolution)
 		}()
 	}
 
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "message",
 		"message": {
 			"messageCode": "JOB_RUNNING_RESOLUTION",
@@ -135,18 +157,19 @@ func TestResolutionMetadata(t *testing.T) {
 				"resolutionMs": 5000
 			}
 		}
-	}`), true)))
+	}`), true))
 
 	wg.Wait()
 }
 
 func TestMaxDelayMetadata(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "message",
 		"message": {
 			"messageCode": "JOB_INITIAL_MAX_DELAY",
@@ -154,18 +177,20 @@ func TestMaxDelayMetadata(t *testing.T) {
 				"maxDelayMs": 1000
 			}
 		}
-	}`), true)))
+	}`), true))
 
-	require.Equal(t, 1*time.Second, comp.MaxDelay())
+	maxDelay, _ := comp.MaxDelay(context.Background())
+	require.Equal(t, 1*time.Second, maxDelay)
 }
 
 func TestLagMetadata(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "message",
 		"message": {
 			"messageCode": "JOB_DETECTED_LAG",
@@ -173,18 +198,20 @@ func TestLagMetadata(t *testing.T) {
 				"lagMs": 3500
 			}
 		}
-	}`), true)))
+	}`), true))
 
-	require.Equal(t, 3500*time.Millisecond, comp.Lag())
+	lag, _ := comp.Lag(context.Background())
+	require.Equal(t, 3500*time.Millisecond, lag)
 }
 
 func TestFindLimitedResultSetMetadata(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "message",
 		"message": {
 			"messageCode": "FIND_LIMITED_RESULT_SET",
@@ -193,19 +220,23 @@ func TestFindLimitedResultSetMetadata(t *testing.T) {
 				"limitSize": 50000
 			}
 		}
-	}`), true)))
+	}`), true))
 
-	require.Equal(t, 123456789, comp.MatchedSize())
-	require.Equal(t, 50000, comp.LimitSize())
+	matchedSize, _ := comp.MatchedSize(context.Background())
+	require.Equal(t, 123456789, matchedSize)
+
+	limitSize, _ := comp.LimitSize(context.Background())
+	require.Equal(t, 50000, limitSize)
 }
 
 func TestMatchedNoTimeseriesQueryMetaData(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "message",
 		"message": {
 			"messageCode": "FIND_MATCHED_NO_TIMESERIES",
@@ -213,18 +244,20 @@ func TestMatchedNoTimeseriesQueryMetaData(t *testing.T) {
 				"query": "abc"
 			}
 		}
-	}`), true)))
+	}`), true))
 
-	require.Equal(t, "abc", comp.MatchedNoTimeseriesQuery())
+	noMatched, _ := comp.MatchedNoTimeseriesQuery(context.Background())
+	require.Equal(t, "abc", noMatched)
 }
 
 func TestGroupByMissingPropertyMetaData(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "message",
 		"message": {
 			"messageCode": "GROUPBY_MISSING_PROPERTY",
@@ -232,96 +265,112 @@ func TestGroupByMissingPropertyMetaData(t *testing.T) {
 				"propertyNames": ["x", "y", "z"]
 			}
 		}
-	}`), true)))
+	}`), true))
 
-	require.Equal(t, []string{"x", "y", "z"}, comp.GroupByMissingProperties())
+	missingProps, _ := comp.GroupByMissingProperties(context.Background())
+	require.Equal(t, []string{"x", "y", "z"}, missingProps)
 }
 
 func TestHandle(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "control-message",
 		"event": "JOB_START",
 		"handle": "AAAABBBB"
-	}`), true)))
+	}`), true))
 
-	require.Equal(t, "AAAABBBB", comp.Handle())
+	handle, _ := comp.Handle(context.Background())
+	require.Equal(t, "AAAABBBB", handle)
 }
 
 func TestComputationError(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "error",
 		"error": 400,
 		"errorType": "ANALYTICS_PROGRAM_NAME_ERROR",
 		"message": "We hit some error"
-	}`), true)))
+	}`), true))
 
 	_, err := waitForDataMsg(t, comp)
 	if err == nil {
 		t.Fatal("Expected computation error")
 	}
-	require.Equal(t, 400, err.(*ComputationError).Code)
-	require.Equal(t, "ANALYTICS_PROGRAM_NAME_ERROR", err.(*ComputationError).ErrorType)
-	require.Equal(t, "We hit some error", err.(*ComputationError).Message)
+
+	var ce *ComputationError
+	if !errors.As(err, &ce) {
+		t.FailNow()
+	}
+	require.Equal(t, 400, ce.Code)
+	require.Equal(t, "ANALYTICS_PROGRAM_NAME_ERROR", ce.ErrorType)
+	require.Equal(t, "We hit some error", ce.Message)
 }
 
 func TestComputationErrorWithNullMessage(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
-	ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+	defer close(ch)
+	ch <- mustParse(messages.ParseMessage([]byte(`{
 		"type": "error",
 		"error": 400,
 		"errorType": "ANALYTICS_INTERNAL_ERROR",
 		"message": null
-	}`), true)))
+	}`), true))
 
 	_, err := waitForDataMsg(t, comp)
 	if err == nil {
 		t.Fatal("Expected computation error")
 	}
-	require.Equal(t, 400, err.(*ComputationError).Code)
-	require.Equal(t, "ANALYTICS_INTERNAL_ERROR", err.(*ComputationError).ErrorType)
-	require.Equal(t, "", err.(*ComputationError).Message)
+
+	var ce *ComputationError
+	if !errors.As(err, &ce) {
+		t.FailNow()
+	}
+	require.Equal(t, 400, ce.Code)
+	require.Equal(t, "ANALYTICS_INTERNAL_ERROR", ce.ErrorType)
+	require.Equal(t, "", ce.Message)
 }
 
 func TestComputationFinish(t *testing.T) {
-	ch := newChannel(context.Background(), "ch1")
-	comp := newComputation(context.Background(), ch, &Client{
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
 		defaultMetadataTimeout: 1 * time.Second,
 	})
-	defer comp.cancel()
+	defer close(ch)
 	go func() {
-		ch.AcceptMessage(mustParse(messages.ParseMessage([]byte(`{
+		ch <- mustParse(messages.ParseMessage([]byte(`{
 			"type": "control-message",
 			"event": "JOB_START",
 			"handle": "AAAABBBB"
-		}`), true)))
+		}`), true))
 
-		ch.AcceptMessage(&messages.MetadataMessage{
+		ch <- &messages.MetadataMessage{
 			TSID: idtool.ID(4000),
-		})
+		}
 
-		ch.AcceptMessage(&messages.DataMessage{
+		ch <- &messages.DataMessage{
 			Payloads: []messages.DataPayload{
 				{
 					TSID: idtool.ID(4000),
 				},
 			},
-		})
+		}
 
-		ch.AcceptMessage(&messages.EndOfChannelControlMessage{})
+		ch <- &messages.EndOfChannelControlMessage{}
 	}()
 
 	for msg := range comp.Data() {

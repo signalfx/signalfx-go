@@ -2,20 +2,20 @@ package signalflow
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/signalfx/golib/v3/pointer"
 	"github.com/signalfx/signalfx-go/idtool"
-	"github.com/signalfx/signalfx-go/signalflow/messages"
+	"github.com/signalfx/signalfx-go/signalflow/v2/messages"
 )
 
 // Computation is a single running SignalFlow job
 type Computation struct {
-	ctx     context.Context
-	cancel  context.CancelFunc
-	channel *Channel
+	sync.Mutex
+	channel <-chan messages.Message
+	name    string
 	client  *Client
 	dataCh  chan *messages.DataMessage
 	// An intermediate channel for data messages where they can be buffered if
@@ -23,26 +23,20 @@ type Computation struct {
 	dataChBuffer       chan *messages.DataMessage
 	expirationCh       chan *messages.ExpiredTSIDMessage
 	expirationChBuffer chan *messages.ExpiredTSIDMessage
-	updateSignal       updateSignal
-	lastError          error
 
-	resolutionMS             *int
-	lagMS                    *int
-	maxDelayMS               *int
-	matchedSize              *int
-	limitSize                *int
-	matchedNoTimeseriesQuery *string
-	groupByMissingProperties []string
+	errMutex  sync.RWMutex
+	lastError error
 
-	tsidMetadata map[idtool.ID]*messages.MetadataProperties
-	events       []*messages.EventMessage
+	handle                   asyncMetadata[string]
+	resolutionMS             asyncMetadata[int]
+	lagMS                    asyncMetadata[int]
+	maxDelayMS               asyncMetadata[int]
+	matchedSize              asyncMetadata[int]
+	limitSize                asyncMetadata[int]
+	matchedNoTimeseriesQuery asyncMetadata[string]
+	groupByMissingProperties asyncMetadata[[]string]
 
-	handle string
-
-	// The timeout to wait for metadata when a metadata access function is
-	// called.  This will default to what is set on the client, but can be
-	// overridden by changing this field directly.
-	MetadataTimeout time.Duration
+	tsidMetadata map[idtool.ID]*asyncMetadata[*messages.MetadataProperties]
 }
 
 // ComputationError exposes the underlying metadata of a computation error
@@ -63,220 +57,149 @@ func (e *ComputationError) Error() string {
 	return err
 }
 
-func newComputation(ctx context.Context, channel *Channel, client *Client) *Computation {
-	newCtx, cancel := context.WithCancel(ctx)
+func newComputation(channel <-chan messages.Message, name string, client *Client) *Computation {
 	comp := &Computation{
-		ctx:                newCtx,
-		cancel:             cancel,
 		channel:            channel,
+		name:               name,
 		client:             client,
 		dataCh:             make(chan *messages.DataMessage),
 		dataChBuffer:       make(chan *messages.DataMessage),
 		expirationCh:       make(chan *messages.ExpiredTSIDMessage),
 		expirationChBuffer: make(chan *messages.ExpiredTSIDMessage),
-		tsidMetadata:       make(map[idtool.ID]*messages.MetadataProperties),
-		updateSignal:       updateSignal{},
-		MetadataTimeout:    client.defaultMetadataTimeout,
+		tsidMetadata:       make(map[idtool.ID]*asyncMetadata[*messages.MetadataProperties]),
 	}
 
 	go comp.bufferDataMessages()
 	go comp.bufferExpirationMessages()
-	go comp.watchMessages()
+	go func() {
+		err := comp.watchMessages()
+
+		if !errors.Is(err, errChannelClosed) {
+			comp.errMutex.Lock()
+			comp.lastError = err
+			comp.errMutex.Unlock()
+		}
+
+		comp.shutdown()
+	}()
+
 	return comp
 }
 
-// Channel returns the underlying Channel instance used by this computation.
-func (c *Computation) Channel() *Channel {
-	return c.channel
+// Handle of the computation. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) Handle(ctx context.Context) (string, error) {
+	return c.handle.Get(ctx)
 }
 
-// Handle of the computation
-func (c *Computation) Handle() string {
-	if err := c.waitForMetadata(func() bool { return c.handle != "" }); err != nil {
-		return ""
+// Resolution of the job. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) Resolution(ctx context.Context) (time.Duration, error) {
+	resMS, err := c.resolutionMS.Get(ctx)
+	return time.Duration(resMS) * time.Millisecond, err
+}
+
+// Lag detected for the job. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) Lag(ctx context.Context) (time.Duration, error) {
+	lagMS, err := c.lagMS.Get(ctx)
+	return time.Duration(lagMS) * time.Millisecond, err
+}
+
+// MaxDelay detected of the job. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) MaxDelay(ctx context.Context) (time.Duration, error) {
+	maxDelayMS, err := c.maxDelayMS.Get(ctx)
+	return time.Duration(maxDelayMS) * time.Millisecond, err
+}
+
+// MatchedSize detected of the job. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) MatchedSize(ctx context.Context) (int, error) {
+	return c.matchedSize.Get(ctx)
+}
+
+// LimitSize detected of the job. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) LimitSize(ctx context.Context) (int, error) {
+	return c.limitSize.Get(ctx)
+}
+
+// MatchedNoTimeseriesQuery if it matched no active timeseries. Will wait as long as the given ctx
+// is not closed. If ctx is closed an error will be returned.
+func (c *Computation) MatchedNoTimeseriesQuery(ctx context.Context) (string, error) {
+	return c.matchedNoTimeseriesQuery.Get(ctx)
+}
+
+// GroupByMissingProperties are timeseries that don't contain the required dimensions. Will wait as
+// long as the given ctx is not closed. If ctx is closed an error will be returned.
+func (c *Computation) GroupByMissingProperties(ctx context.Context) ([]string, error) {
+	return c.groupByMissingProperties.Get(ctx)
+}
+
+// TSIDMetadata for a particular tsid. Will wait as long as the given ctx is not closed. If ctx is closed an
+// error will be returned.
+func (c *Computation) TSIDMetadata(ctx context.Context, tsid idtool.ID) (*messages.MetadataProperties, error) {
+	c.Lock()
+	if _, ok := c.tsidMetadata[tsid]; !ok {
+		c.tsidMetadata[tsid] = &asyncMetadata[*messages.MetadataProperties]{}
 	}
-	return c.handle
-}
-
-// Waits for the given cond func to return true, or until the metadata timeout
-// duration has passed.
-func (c *Computation) waitForMetadata(cond func() bool) error {
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	remaining := c.MetadataTimeout
-	for !cond() {
-		if err := c.updateSignal.WaitWithTimeout(c.ctx, &remaining); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// Resolution of the job.  This will wait for a short while for the resolution
-// message to come on the websocket, but will return 0 after a timeout if it
-// does not come.
-func (c *Computation) Resolution() time.Duration {
-	if err := c.waitForMetadata(func() bool { return c.resolutionMS != nil }); err != nil {
-		return 0
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return time.Duration(*c.resolutionMS) * time.Millisecond
-}
-
-// Lag detected for the job.  This will wait for a short while for the lag
-// message to come on the websocket, but will return 0 after a timeout if it
-// does not come.
-func (c *Computation) Lag() time.Duration {
-	if err := c.waitForMetadata(func() bool { return c.lagMS != nil }); err != nil {
-		return 0
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return time.Duration(*c.lagMS) * time.Millisecond
-}
-
-// MaxDelay detected of the job.  This will wait for a short while for the max
-// delay message to come on the websocket, but will return 0 after a timeout if
-// it does not come.
-func (c *Computation) MaxDelay() time.Duration {
-	if err := c.waitForMetadata(func() bool { return c.maxDelayMS != nil }); err != nil {
-		return 0
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return time.Duration(*c.maxDelayMS) * time.Millisecond
-}
-
-// MatchedSize detected of the job.  This will wait for a short while for the matched
-// size message to come on the websocket, but will return 0 after a timeout if
-// it does not come.
-func (c *Computation) MatchedSize() int {
-	if err := c.waitForMetadata(func() bool { return c.matchedSize != nil }); err != nil {
-		return 0
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return *c.matchedSize
-}
-
-// LimitSize detected of the job.  This will wait for a short while for the limit
-// size message to come on the websocket, but will return 0 after a timeout if
-// it does not come.
-func (c *Computation) LimitSize() int {
-	if err := c.waitForMetadata(func() bool { return c.limitSize != nil }); err != nil {
-		return 0
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return *c.limitSize
-}
-
-// MatchedNoTimeseriesQuery if it matched no active timeseries.
-// This will wait for a short while for the limit
-// size message to come on the websocket, but will return "" after a timeout if
-// it does not come.
-func (c *Computation) MatchedNoTimeseriesQuery() string {
-	if err := c.waitForMetadata(func() bool { return c.matchedNoTimeseriesQuery != nil }); err != nil {
-		return ""
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return *c.matchedNoTimeseriesQuery
-}
-
-// GroupByMissingProperties are timeseries that don't contain the required dimensions.
-// This will wait for a short while for the limit
-// size message to come on the websocket, but will return nil after a timeout if
-// it does not come.
-func (c *Computation) GroupByMissingProperties() []string {
-	if err := c.waitForMetadata(func() bool { return c.groupByMissingProperties != nil }); err != nil {
-		return nil
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return c.groupByMissingProperties
-}
-
-// TSIDMetadata for a particular tsid.  This will wait for a short while for
-// the tsid metadata message to come on the websocket, but will return nil
-// after a timeout if it does not come.
-func (c *Computation) TSIDMetadata(tsid idtool.ID) *messages.MetadataProperties {
-	if err := c.waitForMetadata(func() bool { return c.tsidMetadata[tsid] != nil }); err != nil {
-		return nil
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return c.tsidMetadata[tsid]
-}
-
-// Events returns the results from events or alerts queries.
-func (c *Computation) Events() []*messages.EventMessage {
-	if err := c.waitForMetadata(func() bool { return c.events != nil }); err != nil {
-		return nil
-	}
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
-	return c.events
-}
-
-// Done passes through the computation context's Done channel for use in select
-// statements to know when the computation is finished or an error occurred.
-func (c *Computation) Done() <-chan struct{} {
-	return c.ctx.Done()
+	md := c.tsidMetadata[tsid]
+	c.Unlock()
+	return md.Get(ctx)
 }
 
 // Err returns the last fatal error that caused the computation to stop, if
 // any.  Will be nil if the computation stopped in an expected manner.
 func (c *Computation) Err() error {
+	c.errMutex.RLock()
+	defer c.errMutex.RUnlock()
+
 	return c.lastError
 }
 
-func (c *Computation) watchMessages() {
+func (c *Computation) watchMessages() error {
 	for {
-		select {
-		case <-c.ctx.Done():
-			return
-		case m, ok := <-c.channel.Messages():
-			if !ok {
-				c.cancel()
-				continue
-			}
-			c.processMessage(m)
+		m, ok := <-c.channel
+		if !ok {
+			return nil
+		}
+		if err := c.processMessage(m); err != nil {
+			return err
 		}
 	}
 }
 
-func (c *Computation) processMessage(m messages.Message) {
-	defer c.updateSignal.SignalAll()
-	c.updateSignal.Lock()
-	defer c.updateSignal.Unlock()
+var errChannelClosed = errors.New("computation channel is closed")
 
+func (c *Computation) processMessage(m messages.Message) error {
 	switch v := m.(type) {
 	case *messages.JobStartControlMessage:
-		c.handle = v.Handle
+		c.handle.Set(v.Handle)
 	case *messages.EndOfChannelControlMessage, *messages.ChannelAbortControlMessage:
-		c.cancel()
+		return errChannelClosed
 	case *messages.DataMessage:
 		c.dataChBuffer <- v
 	case *messages.ExpiredTSIDMessage:
+		c.Lock()
 		delete(c.tsidMetadata, idtool.IDFromString(v.TSID))
+		c.Unlock()
 		c.expirationChBuffer <- v
 	case *messages.InfoMessage:
 		switch v.MessageBlock.Code {
 		case messages.JobRunningResolution:
-			c.resolutionMS = pointer.Int(v.MessageBlock.Contents.(messages.JobRunningResolutionContents).ResolutionMS())
+			c.resolutionMS.Set(v.MessageBlock.Contents.(messages.JobRunningResolutionContents).ResolutionMS())
 		case messages.JobDetectedLag:
-			c.lagMS = pointer.Int(v.MessageBlock.Contents.(messages.JobDetectedLagContents).LagMS())
+			c.lagMS.Set(v.MessageBlock.Contents.(messages.JobDetectedLagContents).LagMS())
 		case messages.JobInitialMaxDelay:
-			c.maxDelayMS = pointer.Int(v.MessageBlock.Contents.(messages.JobInitialMaxDelayContents).MaxDelayMS())
+			c.maxDelayMS.Set(v.MessageBlock.Contents.(messages.JobInitialMaxDelayContents).MaxDelayMS())
 		case messages.FindLimitedResultSet:
-			c.matchedSize = pointer.Int(v.MessageBlock.Contents.(messages.FindLimitedResultSetContents).MatchedSize())
-			c.limitSize = pointer.Int(v.MessageBlock.Contents.(messages.FindLimitedResultSetContents).LimitSize())
+			c.matchedSize.Set(v.MessageBlock.Contents.(messages.FindLimitedResultSetContents).MatchedSize())
+			c.limitSize.Set(v.MessageBlock.Contents.(messages.FindLimitedResultSetContents).LimitSize())
 		case messages.FindMatchedNoTimeseries:
-			c.matchedNoTimeseriesQuery = pointer.String(v.MessageBlock.Contents.(messages.FindMatchedNoTimeseriesContents).MatchedNoTimeseriesQuery())
+			c.matchedNoTimeseriesQuery.Set(v.MessageBlock.Contents.(messages.FindMatchedNoTimeseriesContents).MatchedNoTimeseriesQuery())
 		case messages.GroupByMissingProperty:
-			c.groupByMissingProperties = v.MessageBlock.Contents.(messages.GroupByMissingPropertyContents).GroupByMissingProperties()
+			c.groupByMissingProperties.Set(v.MessageBlock.Contents.(messages.GroupByMissingPropertyContents).GroupByMissingProperties())
 		}
 	case *messages.ErrorMessage:
 		rawData := v.RawData()
@@ -290,17 +213,21 @@ func (c *Computation) processMessage(m messages.Message) {
 		if errType, ok := rawData["errorType"]; ok {
 			computationError.ErrorType = errType.(string)
 		}
-		c.lastError = &computationError
-		c.cancel()
+		return &computationError
 	case *messages.MetadataMessage:
-		c.tsidMetadata[v.TSID] = &v.Properties
-	case *messages.EventMessage:
-		c.events = append(c.events, v)
+		c.Lock()
+		if _, ok := c.tsidMetadata[v.TSID]; !ok {
+			c.tsidMetadata[v.TSID] = &asyncMetadata[*messages.MetadataProperties]{}
+		}
+		c.tsidMetadata[v.TSID].Set(&v.Properties)
+		c.Unlock()
 	}
+	return nil
 }
 
-// Buffer up data messages indefinitely until another goroutine reads them off of
-// c.messages, which is an unbuffered channel.
+// Buffer up data messages indefinitely until another goroutine reads them off of c.messages, which
+// is an unbuffered channel. They need to be buffered because metadata messages can come _after_
+// data messages.
 func (c *Computation) bufferDataMessages() {
 	buffer := make([]*messages.DataMessage, 0)
 	var nextMessage *messages.DataMessage
@@ -314,8 +241,10 @@ func (c *Computation) bufferDataMessages() {
 		}
 
 		select {
-		case msg := <- c.dataChBuffer:
-			c.dataCh <- msg
+		case msg, ok := <-c.dataChBuffer:
+			if ok {
+				c.dataCh <- msg
+			}
 		default:
 		}
 
@@ -328,20 +257,20 @@ func (c *Computation) bufferDataMessages() {
 				nextMessage, buffer = buffer[0], buffer[1:]
 			}
 			select {
-			case <-c.ctx.Done():
-				return
 			case c.dataCh <- nextMessage:
 				nextMessage = nil
-			case msg := <-c.dataChBuffer:
+			case msg, ok := <-c.dataChBuffer:
+				if !ok {
+					return
+				}
 				buffer = append(buffer, msg)
 			}
 		} else {
-			select {
-			case <-c.ctx.Done():
+			msg, ok := <-c.dataChBuffer
+			if !ok {
 				return
-			case msg := <-c.dataChBuffer:
-				buffer = append(buffer, msg)
 			}
+			buffer = append(buffer, msg)
 		}
 	}
 }
@@ -360,12 +289,6 @@ func (c *Computation) bufferExpirationMessages() {
 			c.expirationCh <- buffer[i]
 		}
 
-		select {
-		case msg := <- c.expirationChBuffer:
-			c.expirationCh <- msg
-		default:
-		}
-
 		close(c.expirationCh)
 	}()
 	for {
@@ -375,121 +298,107 @@ func (c *Computation) bufferExpirationMessages() {
 			}
 
 			select {
-			case <-c.ctx.Done():
-				return
 			case c.expirationCh <- nextMessage:
 				nextMessage = nil
-			case msg := <-c.expirationChBuffer:
+			case msg, ok := <-c.expirationChBuffer:
+				if !ok {
+					return
+				}
 				buffer = append(buffer, msg)
 			}
 		} else {
-			select {
-			case <-c.ctx.Done():
+			msg, ok := <-c.expirationChBuffer
+			if !ok {
 				return
-			case msg := <-c.expirationChBuffer:
-				buffer = append(buffer, msg)
 			}
+			buffer = append(buffer, msg)
 		}
 	}
 }
 
-// Data returns the channel on which data messages come.
+// Data returns the channel on which data messages come.  This channel will be closed when the
+// computation is finished.  To prevent goroutine leaks, you should read all messages from this
+// channel until it is closed.
 func (c *Computation) Data() <-chan *messages.DataMessage {
 	return c.dataCh
 }
 
-// Expirations returns a channel that will be sent messages about expired
-// TSIDs, i.e. time series that are no longer valid for this computation.
+// Expirations returns a channel that will be sent messages about expired TSIDs, i.e. time series
+// that are no longer valid for this computation. This channel will be closed when the computation
+// is finished. To prevent goroutine leaks, you should read all messages from this channel until it
+// is closed.
 func (c *Computation) Expirations() <-chan *messages.ExpiredTSIDMessage {
 	return c.expirationCh
 }
 
-// IsFinished returns true if the computation is done and no more data should
-// be expected from it.
-func (c *Computation) IsFinished() bool {
-	// The context will have a non-nil err if it was cancelled.
-	return c.ctx.Err() != nil
-}
-
-// Detach the computation on the backend by using the channel name.
-func (c *Computation) Detach() error {
-	return c.DetachWithReason("")
+// Detach the computation on the backend
+func (c *Computation) Detach(ctx context.Context) error {
+	return c.DetachWithReason(ctx, "")
 }
 
 // DetachWithReason detaches the computation with a given reason. This reason will
 // be reflected in the control message that signals the end of the job/channel
-func (c *Computation) DetachWithReason(reason string) error {
-	return c.client.Detach(&DetachRequest{
+func (c *Computation) DetachWithReason(ctx context.Context, reason string) error {
+	return c.client.Detach(ctx, &DetachRequest{
 		Reason:  reason,
-		Channel: c.channel.name,
+		Channel: c.name,
 	})
 }
 
 // Stop the computation on the backend.
-func (c *Computation) Stop() error {
-	return c.StopWithReason("")
+func (c *Computation) Stop(ctx context.Context) error {
+	return c.StopWithReason(ctx, "")
 }
 
 // StopWithReason stops the computation with a given reason. This reason will
 // be reflected in the control message that signals the end of the job/channel.
-func (c *Computation) StopWithReason(reason string) error {
-	return c.client.Stop(&StopRequest{
+func (c *Computation) StopWithReason(ctx context.Context, reason string) error {
+	handle, err := c.handle.Get(ctx)
+	if err != nil {
+		return err
+	}
+	return c.client.Stop(ctx, &StopRequest{
 		Reason: reason,
-		Handle: c.handle,
+		Handle: handle,
 	})
 }
 
-// Simple struct that allows one goroutine to signal a bunch of other
-// goroutines that are waiting on a condition, with a timeout.  It is basically
-// similar to sync.Cond except the lock in internal (but accessible) and you
-// can set a timeout.
-type updateSignal struct {
+func (c *Computation) shutdown() {
+	close(c.dataChBuffer)
+	close(c.expirationChBuffer)
+}
+
+var ErrMetadataTimeout = errors.New("metadata value did not come in time")
+
+type asyncMetadata[T any] struct {
 	sync.Mutex
-	s chan struct{}
+	sig chan struct{}
+	val T
 }
 
-// WaitWithTimeout waits for the given duration, remaining, for the signal to
-// be triggered. It is assumed that the caller holds u.Mutex upon calling.
-// When this function returns, that mutex will be relocked, but will have been
-// unlocked for some time while waiting.  The remaining arg will be updated in
-// place to contain the remaining time when the function returned.
-func (u *updateSignal) WaitWithTimeout(ctx context.Context, remaining *time.Duration) error {
-	start := time.Now()
-
-	if u.s == nil {
-		u.reset()
+func (a *asyncMetadata[T]) ensureInit() {
+	a.Lock()
+	if a.sig == nil {
+		a.sig = make(chan struct{})
 	}
-	sig := u.s
-	u.Unlock()
-	defer func() {
-		newRemaining := *remaining - time.Since(start)
-		if newRemaining > 0 {
-			*remaining = newRemaining
-		} else {
-			*remaining = 0
-		}
-	}()
-	defer u.Lock()
+	a.Unlock()
+}
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, *remaining)
-	defer cancel()
+func (a *asyncMetadata[T]) Set(val T) {
+	a.ensureInit()
+	a.Lock()
+	a.val = val
+	close(a.sig)
+	a.Unlock()
+}
+
+func (a *asyncMetadata[T]) Get(ctx context.Context) (T, error) {
+	a.ensureInit()
 	select {
-	case <-ctxTimeout.Done():
-		return ctxTimeout.Err()
-	case <-sig:
-		return nil
+	case <-ctx.Done():
+		var t T
+		return t, ErrMetadataTimeout
+	case <-a.sig:
+		return a.val, nil
 	}
-}
-
-func (u *updateSignal) reset() {
-	u.s = make(chan struct{})
-}
-
-func (u *updateSignal) SignalAll() {
-	u.Lock()
-	if u.s != nil {
-		close(u.s)
-		u.reset()
-	}
-	u.Unlock()
 }

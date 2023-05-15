@@ -9,6 +9,7 @@ import (
 )
 
 func TestSerializeExecuteRequest(t *testing.T) {
+	t.Parallel()
 	er := ExecuteRequest{
 		Program:    "data(cpu.utilization).publish()",
 		Start:      time.Unix(5000, 0),
@@ -21,5 +22,4 @@ func TestSerializeExecuteRequest(t *testing.T) {
 	serialized, err := json.Marshal(er)
 	require.Nil(t, err)
 	require.Equal(t, `{"type":"execute","program":"data(cpu.utilization).publish()","channel":"","start":5000000,"stop":6000000,"resolution":5000,"maxDelay":3000,"immediate":false,"timezone":""}`, string(serialized))
-
 }
