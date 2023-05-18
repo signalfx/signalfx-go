@@ -52,6 +52,7 @@ const (
 	AWSGAME_LIFT                 AwsService = "AWS/GameLift"
 	AWSGLOBAL_ACCELERATOR        AwsService = "AWS/GlobalAccelerator"
 	AWSINSPECTOR                 AwsService = "AWS/Inspector"
+	AWSINTERNET_MONITOR          AwsService = "AWS/InternetMonitor"
 	AWSIO_T                      AwsService = "AWS/IoT"
 	AWSIO_T_ANALYTICS            AwsService = "AWS/IoTAnalytics"
 	AWSKAFKA                     AwsService = "AWS/Kafka"
@@ -144,6 +145,7 @@ var AWSServiceNames = map[string]AwsService{
 	"AWS/FSx":                     AWSFSX,
 	"AWS/GameLift":                AWSGAME_LIFT,
 	"AWS/GlobalAccelerator":       AWSGLOBAL_ACCELERATOR,
+	"AWS/InternetMonitor":         AWSINTERNET_MONITOR,
 	"AWS/Inspector":               AWSINSPECTOR,
 	"AWS/IoT":                     AWSIO_T,
 	"AWS/IoTAnalytics":            AWSIO_T_ANALYTICS,
