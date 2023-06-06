@@ -21,6 +21,8 @@ type Computation struct {
 	// An intermediate channel for data messages where they can be buffered if
 	// nothing is currently pulling data messages.
 	dataChBuffer       chan *messages.DataMessage
+	eventCh            chan *messages.EventMessage
+	eventChBuffer      chan *messages.EventMessage
 	expirationCh       chan *messages.ExpiredTSIDMessage
 	expirationChBuffer chan *messages.ExpiredTSIDMessage
 
@@ -64,13 +66,17 @@ func newComputation(channel <-chan messages.Message, name string, client *Client
 		client:             client,
 		dataCh:             make(chan *messages.DataMessage),
 		dataChBuffer:       make(chan *messages.DataMessage),
+		eventCh:            make(chan *messages.EventMessage),
+		eventChBuffer:      make(chan *messages.EventMessage),
 		expirationCh:       make(chan *messages.ExpiredTSIDMessage),
 		expirationChBuffer: make(chan *messages.ExpiredTSIDMessage),
 		tsidMetadata:       make(map[idtool.ID]*asyncMetadata[*messages.MetadataProperties]),
 	}
 
-	go comp.bufferDataMessages()
-	go comp.bufferExpirationMessages()
+	go bufferMessages(comp.dataChBuffer, comp.dataCh)
+	go bufferMessages(comp.expirationChBuffer, comp.expirationCh)
+	go bufferMessages(comp.eventChBuffer, comp.eventCh)
+
 	go func() {
 		err := comp.watchMessages()
 
@@ -221,75 +227,25 @@ func (c *Computation) processMessage(m messages.Message) error {
 		}
 		c.tsidMetadata[v.TSID].Set(&v.Properties)
 		c.Unlock()
+	case *messages.EventMessage:
+		c.eventChBuffer <- v
 	}
 	return nil
 }
 
-// Buffer up data messages indefinitely until another goroutine reads them off of c.messages, which
-// is an unbuffered channel. They need to be buffered because metadata messages can come _after_
-// data messages.
-func (c *Computation) bufferDataMessages() {
-	buffer := make([]*messages.DataMessage, 0)
-	var nextMessage *messages.DataMessage
+func bufferMessages[T any](in chan *T, out chan *T) {
+	buffer := make([]*T, 0)
+	var nextMessage *T
 
 	defer func() {
 		if nextMessage != nil {
-			c.dataCh <- nextMessage
+			out <- nextMessage
 		}
 		for i := range buffer {
-			c.dataCh <- buffer[i]
+			out <- buffer[i]
 		}
 
-		select {
-		case msg, ok := <-c.dataChBuffer:
-			if ok {
-				c.dataCh <- msg
-			}
-		default:
-		}
-
-		close(c.dataCh)
-	}()
-
-	for {
-		if len(buffer) > 0 {
-			if nextMessage == nil {
-				nextMessage, buffer = buffer[0], buffer[1:]
-			}
-			select {
-			case c.dataCh <- nextMessage:
-				nextMessage = nil
-			case msg, ok := <-c.dataChBuffer:
-				if !ok {
-					return
-				}
-				buffer = append(buffer, msg)
-			}
-		} else {
-			msg, ok := <-c.dataChBuffer
-			if !ok {
-				return
-			}
-			buffer = append(buffer, msg)
-		}
-	}
-}
-
-// Buffer up expiration messages indefinitely until another goroutine reads
-// them off of c.expirationCh, which is an unbuffered channel.
-func (c *Computation) bufferExpirationMessages() {
-	buffer := make([]*messages.ExpiredTSIDMessage, 0)
-	var nextMessage *messages.ExpiredTSIDMessage
-
-	defer func() {
-		if nextMessage != nil {
-			c.expirationCh <- nextMessage
-		}
-		for i := range buffer {
-			c.expirationCh <- buffer[i]
-		}
-
-		close(c.expirationCh)
+		close(out)
 	}()
 	for {
 		if len(buffer) > 0 {
@@ -298,16 +254,16 @@ func (c *Computation) bufferExpirationMessages() {
 			}
 
 			select {
-			case c.expirationCh <- nextMessage:
+			case out <- nextMessage:
 				nextMessage = nil
-			case msg, ok := <-c.expirationChBuffer:
+			case msg, ok := <-in:
 				if !ok {
 					return
 				}
 				buffer = append(buffer, msg)
 			}
 		} else {
-			msg, ok := <-c.expirationChBuffer
+			msg, ok := <-in
 			if !ok {
 				return
 			}
@@ -329,6 +285,11 @@ func (c *Computation) Data() <-chan *messages.DataMessage {
 // is closed.
 func (c *Computation) Expirations() <-chan *messages.ExpiredTSIDMessage {
 	return c.expirationCh
+}
+
+// Events returns a channel that receives event/alert messages from the signalflow computation.
+func (c *Computation) Events() <-chan *messages.EventMessage {
+	return c.eventCh
 }
 
 // Detach the computation on the backend

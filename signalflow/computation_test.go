@@ -12,28 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func waitForDataMsg(t *testing.T, comp *Computation) (messages.Message, error) {
-	t.Helper()
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-	for {
-		select {
-		case m := <-comp.Data():
-			if m == nil {
-				continue
-			}
-			return m, nil
-		case <-ctx.Done():
-			err := comp.Err()
-			if err != nil {
-				return nil, err
-			}
-
-			t.Fatal("data message didn't get buffered")
-		}
-	}
-}
-
 func TestBuffersDataMessages(t *testing.T) {
 	t.Parallel()
 	ch := make(chan messages.Message)
@@ -57,8 +35,8 @@ func TestBuffersDataMessages(t *testing.T) {
 
 	ch <- &messages.InfoMessage{}
 
-	msg, _ := waitForDataMsg(t, comp)
-	require.Equal(t, idtool.ID(4000), msg.(*messages.DataMessage).Payloads[0].TSID)
+	msg := waitForMsg(t, comp.Data(), comp)
+	require.Equal(t, idtool.ID(4000), msg.Payloads[0].TSID)
 
 	ch <- &messages.DataMessage{
 		Payloads: []messages.DataPayload{
@@ -67,28 +45,23 @@ func TestBuffersDataMessages(t *testing.T) {
 			},
 		},
 	}
-	msg, _ = waitForDataMsg(t, comp)
-	require.Equal(t, idtool.ID(4001), msg.(*messages.DataMessage).Payloads[0].TSID)
+	msg = waitForMsg(t, comp.Data(), comp)
+	require.Equal(t, idtool.ID(4001), msg.Payloads[0].TSID)
 }
 
-func waitForExpiryMsg(t *testing.T, comp *Computation) (messages.Message, error) {
+func waitForMsg[T any](t *testing.T, ch <-chan *T, comp *Computation) *T {
 	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	for {
 		select {
-		case m := <-comp.Expirations():
-			if m == nil {
-				continue
+		case m, ok := <-ch:
+			if !ok {
+				require.FailNow(t, "message channel closed unexpected")
 			}
-			return m, nil
+			return m
 		case <-ctx.Done():
-			err := comp.Err()
-			if err != nil {
-				return nil, err
-			}
-
-			t.Fatal("data message didn't get buffered")
+			require.FailNow(t, "message didn't arrive in timeout with error: %v", comp.Err())
 		}
 	}
 }
@@ -112,14 +85,39 @@ func TestBuffersExpiryMessages(t *testing.T) {
 
 	ch <- &messages.InfoMessage{}
 
-	msg, _ := waitForExpiryMsg(t, comp)
-	require.Equal(t, idtool.ID(4000).String(), msg.(*messages.ExpiredTSIDMessage).TSID)
+	msg := waitForMsg(t, comp.Expirations(), comp)
+	require.Equal(t, idtool.ID(4000).String(), msg.TSID)
 
 	ch <- &messages.ExpiredTSIDMessage{
 		TSID: idtool.ID(4001).String(),
 	}
-	msg, _ = waitForExpiryMsg(t, comp)
-	require.Equal(t, idtool.ID(4001).String(), msg.(*messages.ExpiredTSIDMessage).TSID)
+	msg = waitForMsg(t, comp.Expirations(), comp)
+	require.Equal(t, idtool.ID(4001).String(), msg.TSID)
+}
+
+func TestBuffersEventMessages(t *testing.T) {
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer close(ch)
+	ch <- &messages.EventMessage{}
+	ch <- &messages.MetadataMessage{
+		TSID: idtool.ID(4000),
+	}
+
+	md, _ := comp.TSIDMetadata(context.Background(), 4000)
+	require.NotNil(t, md)
+
+	ch <- &messages.InfoMessage{}
+
+	msg := waitForMsg(t, comp.Events(), comp)
+	require.NotNil(t, msg)
+
+	ch <- &messages.EventMessage{}
+	msg = waitForMsg(t, comp.Events(), comp)
+	require.NotNil(t, msg)
 }
 
 func mustParse(m messages.Message, err error) messages.Message {
@@ -302,11 +300,7 @@ func TestComputationError(t *testing.T) {
 		"message": "We hit some error"
 	}`), true))
 
-	_, err := waitForDataMsg(t, comp)
-	if err == nil {
-		t.Fatal("Expected computation error")
-	}
-
+	err := waitForComputationError(t, comp)
 	var ce *ComputationError
 	if !errors.As(err, &ce) {
 		t.FailNow()
@@ -330,11 +324,7 @@ func TestComputationErrorWithNullMessage(t *testing.T) {
 		"message": null
 	}`), true))
 
-	_, err := waitForDataMsg(t, comp)
-	if err == nil {
-		t.Fatal("Expected computation error")
-	}
-
+	err := waitForComputationError(t, comp)
 	var ce *ComputationError
 	if !errors.As(err, &ce) {
 		t.FailNow()
@@ -342,6 +332,21 @@ func TestComputationErrorWithNullMessage(t *testing.T) {
 	require.Equal(t, 400, ce.Code)
 	require.Equal(t, "ANALYTICS_INTERNAL_ERROR", ce.ErrorType)
 	require.Equal(t, "", ce.Message)
+}
+
+func waitForComputationError(t *testing.T, comp *Computation) error {
+	t.Helper()
+	start := time.Now()
+	var err error
+	for time.Since(start) < 3*time.Second {
+		err = comp.Err()
+		if err != nil {
+			return err
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	require.FailNow(t, "computation did not fail")
+	return nil
 }
 
 func TestComputationFinish(t *testing.T) {
