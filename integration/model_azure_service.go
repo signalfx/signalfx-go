@@ -2,6 +2,9 @@ package integration
 
 type AzureService string
 
+// Deprecated: the following constants are deprecated and this list is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the AzureService type as required.
+// For example: AzureService("AWS/FooBar")
 const (
 	AZURE_MICROSOFT_ANALYSISSERVICES_SERVERS                     AzureService = "microsoft.analysisservices/servers"
 	AZURE_MICROSOFT_APIMANAGEMENT_SERVICE                        AzureService = "microsoft.apimanagement/service"
@@ -86,6 +89,9 @@ const (
 	AZURE_MICROSOFT_WEB_SITES_SLOTS                              AzureService = "microsoft.web/sites/slots"
 )
 
+// Deprecated: the following map is deprecated and it is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the AzureService type as required.
+// For example: AzureService("microsoft.foo/bar")
 var AzureServiceNames = map[string]AzureService{
 	"microsoft.analysisservices/servers":                        AZURE_MICROSOFT_ANALYSISSERVICES_SERVERS,
 	"microsoft.apimanagement/service":                           AZURE_MICROSOFT_APIMANAGEMENT_SERVICE,

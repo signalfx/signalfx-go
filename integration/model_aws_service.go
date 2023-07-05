@@ -11,6 +11,9 @@ package integration
 
 type AwsService string
 
+// Deprecated: the following constants are deprecated and this list is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the AwsService type as required.
+// For example: AwsService("AWS/FooBar")
 const (
 	AWSACP_PRIVATE_CA            AwsService = "AWS/ACMPrivateCA"
 	AWSAMAZON_MQ                 AwsService = "AWS/AmazonMQ"
@@ -104,6 +107,9 @@ const (
 	WAF                          AwsService = "WAF"
 )
 
+// Deprecated: the following map is deprecated and it is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the AwsService type as required.
+// For example: AwsService("AWS/FooBar")
 var AWSServiceNames = map[string]AwsService{
 	"AWS/ACMPrivateCA":            AWSACP_PRIVATE_CA,
 	"AWS/AmazonMQ":                AWSAMAZON_MQ,

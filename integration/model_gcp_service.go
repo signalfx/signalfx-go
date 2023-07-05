@@ -2,6 +2,9 @@ package integration
 
 type GcpService string
 
+// Deprecated: the following constants are deprecated and this list is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the GcpService type as required.
+// For example: GcpService("foo")
 const (
 	GCP_APPENGINE        GcpService = "appengine"
 	GCP_BIGQUERY         GcpService = "bigquery"
@@ -36,6 +39,9 @@ const (
 	GCP_VPN              GcpService = "vpn"
 )
 
+// Deprecated: the following map is deprecated and it is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the GcpService type as required.
+// For example: GcpService("foo")
 var GcpServiceNames = map[string]GcpService{
 	"appengine":        GCP_APPENGINE,
 	"bigquery":         GCP_BIGQUERY,

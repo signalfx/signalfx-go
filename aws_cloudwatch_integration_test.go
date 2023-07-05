@@ -40,11 +40,21 @@ func TestUpdateAWSCloudWatchIntegration(t *testing.T) {
 
 	mux.HandleFunc("/v2/integration/id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "integration/create_aws_success.json"))
 
-	result, err := client.UpdateAWSCloudWatchIntegration(context.Background(), "id", &integration.AwsCloudWatchIntegration{
-		Type: "AWSCloudWatch",
-	})
+	cwIntegration := integration.AwsCloudWatchIntegration{
+		NamespaceSyncRules: []*integration.AwsNameSpaceSyncRule{
+			{
+				Namespace: "AWS/SomeNewNamespace",
+			},
+		},
+		Services: []integration.AwsService{"AWS/AnotherNewNamespace"},
+		Type:     "AWSCloudWatch",
+	}
+	result, err := client.UpdateAWSCloudWatchIntegration(context.Background(), "id", &cwIntegration)
 	assert.NoError(t, err, "Unexpected error creating integration")
 	assert.Equal(t, "string", result.Name, "Name does not match")
+	assert.Equal(t, integration.AwsService("AWS/SomeNewNamespace"), result.NamespaceSyncRules[0].Namespace,
+		"NamespaceSyncRules[0].Namespace does not match")
+	assert.Equal(t, integration.AwsService("AWS/AnotherNewNamespace"), result.Services[0], "Services[0] does not match")
 }
 
 func TestUpdateAWSCloudWatchIntegrationMetricStatsToSync(t *testing.T) {
