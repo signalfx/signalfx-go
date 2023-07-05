@@ -32,7 +32,7 @@
         "action": "Exclude",
         "source": "string"
       },
-      "namespace": "AWS/ApiGateway"
+      "namespace": "AWS/SomeNewNamespace"
     }
   ],
   "pollRate": 600000,
@@ -41,7 +41,7 @@
   ],
   "roleArn": "string",
   "services": [
-    "AWS/ApiGateway"
+    "AWS/AnotherNewNamespace"
   ],
   "sfxAwsAccountArn": "arn:aws:iam::1234567890:root",
   "token": "string",
