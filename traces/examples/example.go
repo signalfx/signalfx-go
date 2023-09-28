@@ -17,7 +17,7 @@ func main() {
 	}
 
 	// Then do things!
-	trace, err := client.GetTrace(context.Background(), "630ca8464142face")
+	trace, err := client.GetTrace(context.Background(), "63d16b254ec5e80d")
 	if err != nil {
 		panic(err)
 	}
