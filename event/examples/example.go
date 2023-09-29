@@ -12,7 +12,10 @@ import (
 func main() {
 	httpClient := &http.Client{}
 	token := os.Getenv("SIGNALFX_API_TOKEN")
-	client, err := signalfx.NewClient(token, signalfx.HTTPClient(httpClient), signalfx.APIUrl("https://api.eu0.signalfx.com"))
+	client, err := signalfx.NewClient(token, signalfx.HTTPClient(httpClient),
+		signalfx.APIUrl("https://api.eu0.signalfx.com"),
+		signalfx.FrontendUrl("https://app.eu0.signalfx.com"),
+	)
 	if err != nil {
 		panic(err)
 	}

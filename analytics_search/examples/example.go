@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/signalfx/signalfx-go"
+	"github.com/signalfx/signalfx-go/analytics_search"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -20,11 +22,16 @@ func main() {
 	}
 
 	// Then do things!
-	trace, err := client.GetTrace(context.Background(), "63d16b254ec5e80d")
+	search, err := client.StartAnalyticsSearch(context.Background(), time.Now().Add(-10*time.Minute), time.Now(), &analytics_search.TraceFilter{
+		Tags: []analytics_search.Tag{
+			{
+				Tag:       "sf_error",
+				Operation: "IN",
+				Values:    []string{"true"},
+			},
+		}}, []analytics_search.SpanFilter{})
 	if err != nil {
 		panic(err)
 	}
-	for _, span := range trace {
-		fmt.Printf("%+v\n", span)
-	}
+	fmt.Printf("%+v\n", search)
 }

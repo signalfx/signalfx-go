@@ -11,6 +11,7 @@ import (
 
 // DefaultAPIURL is the default URL for making API requests
 const DefaultAPIURL = "https://api.signalfx.com"
+const DefaultFrontendAPIURL = "https://app.signalfx.com"
 
 // AuthHeaderKey is the HTTP header used to pass along the auth token
 // Note that while HTTP headers are case insensitive this header is case
@@ -19,10 +20,11 @@ const AuthHeaderKey = "X-Sf-Token"
 
 // Client is a SignalFx API client.
 type Client struct {
-	baseURL    string
-	httpClient *http.Client
-	authToken  string
-	userAgent  string
+	baseURL         string
+	baseFrontendURL string
+	httpClient      *http.Client
+	authToken       string
+	userAgent       string
 }
 
 // ClientParam is an option for NewClient. Its implementation borrows
@@ -33,7 +35,8 @@ type ClientParam func(*Client) error
 // NewClient creates a new SignalFx client using the specified token.
 func NewClient(token string, options ...ClientParam) (*Client, error) {
 	client := &Client{
-		baseURL: DefaultAPIURL,
+		baseURL:         DefaultAPIURL,
+		baseFrontendURL: DefaultFrontendAPIURL,
 		httpClient: &http.Client{
 			Timeout: time.Second * 30,
 		},
@@ -54,6 +57,16 @@ func NewClient(token string, options ...ClientParam) (*Client, error) {
 func APIUrl(apiURL string) ClientParam {
 	return func(client *Client) error {
 		client.baseURL = apiURL
+		return nil
+	}
+}
+
+// FrontendUrl sets the URL that our client will communicate with for frontend requests, allowing
+// it to be adjusted to another URL for testing or communication with other
+// SignalFx clusters. Example `"https://api.signalfx.com"`.
+func FrontendUrl(frontendURL string) ClientParam {
+	return func(client *Client) error {
+		client.baseFrontendURL = frontendURL
 		return nil
 	}
 }
@@ -80,6 +93,10 @@ func (c *Client) doRequest(ctx context.Context, method string, path string, para
 	return c.doRequestWithToken(ctx, method, path, params, body, c.authToken)
 }
 
+func (c *Client) doFrontendRequest(ctx context.Context, method string, path string, params url.Values, body io.Reader) (*http.Response, error) {
+	return c.doFrontendRequestWithToken(ctx, method, path, params, body, c.authToken)
+}
+
 func (c *Client) doRequestWithToken(ctx context.Context, method string, path string, params url.Values, body io.Reader, token string) (*http.Response, error) {
 	destURL, err := url.Parse(c.baseURL)
 	if err != nil {
@@ -96,6 +113,31 @@ func (c *Client) doRequestWithToken(ctx context.Context, method string, path str
 	}
 	req.Header.Set("User-Agent", c.userAgent)
 	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	return c.httpClient.Do(req)
+}
+
+func (c *Client) doFrontendRequestWithToken(ctx context.Context, method string, path string, params url.Values, body io.Reader, token string) (*http.Response, error) {
+	destURL, err := url.Parse(c.baseFrontendURL)
+	if err != nil {
+		return nil, err
+	}
+	destURL.Path = stdpath.Join(destURL.Path, path)
+
+	if params != nil {
+		destURL.RawQuery = params.Encode()
+	}
+	urldest := destURL.String()
+	req, err := http.NewRequestWithContext(ctx, method, urldest, body)
+	if token != "" {
+		req.Header.Set(AuthHeaderKey, token)
+	}
+	req.Header.Set("User-Agent", c.userAgent)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 	if err != nil {
 		return nil, err
 	}
