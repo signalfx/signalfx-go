@@ -38,3 +38,20 @@ type Tag struct {
 	Operation string   `json:"operation"`
 	Values    []string `json:"values"`
 }
+
+type StartAnalyticsSearchVariables struct {
+	Parameters Parameters `json:"parameters,omitempty"`
+}
+
+type Parameters struct {
+	SectionsParameters []SectionParams  `json:"sectionsParameters"`
+	SharedParameters   SharedParameters `json:"sharedParameters"`
+}
+
+// These variables are dependent on the type of request being made
+type SharedParameters interface{}
+
+type SectionParams struct {
+	SectionType string `json:"sectionType"`
+	Limit       int    `json:"limit,omitempty"`
+}

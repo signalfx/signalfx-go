@@ -33,5 +33,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	isReady := false
+	var traces []analytics_search.LegacyTraceExample
+	for !isReady {
+		isReady, traces, err = client.GetAnalyticsSearch(context.Background(), search)
+		if err != nil {
+			panic(err)
+		}
+		time.Sleep(1 * time.Second)
+	}
+
 	fmt.Printf("%+v\n", search)
+	fmt.Printf("%+v\n", traces)
 }
