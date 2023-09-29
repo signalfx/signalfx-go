@@ -27,7 +27,7 @@ func (c *Client) GraphQLRequest(ctx context.Context, request graphql.Request, re
 		return err
 	}
 
-	resp, err := c.doFrontendRequest(ctx, "POST", GraphQLAPIURL, params, body)
+	resp, err := c.doRequest(ctx, "POST", GraphQLAPIURL, params, body)
 	if resp != nil {
 		defer resp.Body.Close()
 	}
