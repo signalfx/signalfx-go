@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// Then do things!
-	search, err := client.StartAnalyticsSearch(context.Background(), time.Now().Add(-10*time.Minute), time.Now(), &analytics_search.TraceFilter{
+	search, err := client.StartTraceSearch(context.Background(), time.Now().Add(-10*time.Minute), time.Now(), &analytics_search.TraceFilter{
 		Tags: []analytics_search.Tag{
 			{
 				Tag:       "sf_error",
@@ -37,7 +37,7 @@ func main() {
 	isReady := false
 	var traces []analytics_search.LegacyTraceExample
 	for !isReady {
-		isReady, traces, err = client.GetAnalyticsSearch(context.Background(), search)
+		isReady, traces, err = client.GetTraceSearch(context.Background(), search)
 		if err != nil {
 			panic(err)
 		}
