@@ -333,8 +333,9 @@ var ErrMetadataTimeout = errors.New("metadata value did not come in time")
 
 type asyncMetadata[T any] struct {
 	sync.Mutex
-	sig chan struct{}
-	val T
+	sig   chan struct{}
+	isSet bool
+	val   T
 }
 
 func (a *asyncMetadata[T]) ensureInit() {
@@ -349,7 +350,10 @@ func (a *asyncMetadata[T]) Set(val T) {
 	a.ensureInit()
 	a.Lock()
 	a.val = val
-	close(a.sig)
+	if !a.isSet {
+		close(a.sig)
+		a.isSet = true
+	}
 	a.Unlock()
 }
 
