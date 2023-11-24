@@ -22,9 +22,11 @@ type Computation struct {
 	// nothing is currently pulling data messages.
 	dataChBuffer       chan *messages.DataMessage
 	eventCh            chan *messages.EventMessage
+	infoCh             chan *messages.InfoMessage
 	eventChBuffer      chan *messages.EventMessage
 	expirationCh       chan *messages.ExpiredTSIDMessage
 	expirationChBuffer chan *messages.ExpiredTSIDMessage
+	infoChBuffer       chan *messages.InfoMessage
 
 	errMutex  sync.RWMutex
 	lastError error
@@ -67,15 +69,18 @@ func newComputation(channel <-chan messages.Message, name string, client *Client
 		dataCh:             make(chan *messages.DataMessage),
 		dataChBuffer:       make(chan *messages.DataMessage),
 		eventCh:            make(chan *messages.EventMessage),
+		infoCh:             make(chan *messages.InfoMessage),
 		eventChBuffer:      make(chan *messages.EventMessage),
 		expirationCh:       make(chan *messages.ExpiredTSIDMessage),
 		expirationChBuffer: make(chan *messages.ExpiredTSIDMessage),
+		infoChBuffer:       make(chan *messages.InfoMessage),
 		tsidMetadata:       make(map[idtool.ID]*asyncMetadata[*messages.MetadataProperties]),
 	}
 
 	go bufferMessages(comp.dataChBuffer, comp.dataCh)
 	go bufferMessages(comp.expirationChBuffer, comp.expirationCh)
 	go bufferMessages(comp.eventChBuffer, comp.eventCh)
+	go bufferMessages(comp.infoChBuffer, comp.infoCh)
 
 	go func() {
 		err := comp.watchMessages()
@@ -207,6 +212,7 @@ func (c *Computation) processMessage(m messages.Message) error {
 		case messages.GroupByMissingProperty:
 			c.groupByMissingProperties.Set(v.MessageBlock.Contents.(messages.GroupByMissingPropertyContents).GroupByMissingProperties())
 		}
+		c.infoChBuffer <- v
 	case *messages.ErrorMessage:
 		rawData := v.RawData()
 		computationError := ComputationError{}
@@ -290,6 +296,11 @@ func (c *Computation) Expirations() <-chan *messages.ExpiredTSIDMessage {
 // Events returns a channel that receives event/alert messages from the signalflow computation.
 func (c *Computation) Events() <-chan *messages.EventMessage {
 	return c.eventCh
+}
+
+// Info returns a channel that receives info messages from the signalflow computation.
+func (c *Computation) Info() <-chan *messages.InfoMessage {
+	return c.infoCh
 }
 
 // Detach the computation on the backend
