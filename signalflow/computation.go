@@ -338,6 +338,7 @@ func (c *Computation) StopWithReason(ctx context.Context, reason string) error {
 func (c *Computation) shutdown() {
 	close(c.dataChBuffer)
 	close(c.expirationChBuffer)
+	close(c.infoChBuffer)
 }
 
 var ErrMetadataTimeout = errors.New("metadata value did not come in time")
