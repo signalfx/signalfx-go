@@ -9,7 +9,7 @@
   "accountType": "string",
   "accountStatus": "string",
   "accountKey": "string",
-  "accountRenews": "string",
+  "accountRenews": true,
   "accountValidUntil": 1626384630000,
   "dpmLimit": 0
 }

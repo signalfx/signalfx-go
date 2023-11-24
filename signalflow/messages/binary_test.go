@@ -29,8 +29,14 @@ func TestDecodeBinaryMessage(t *testing.T) {
 
 	assert.Equal(t, dm.Type(), DataType)
 	assert.Equal(t, dm.Channel(), "channel-1")
+
 	assert.Equal(t, dm.TimestampMillis, uint64(1504064040000))
-	assert.Equal(t, dm.Timestamp().Unix(), time.Date(2017, 8, 29, 23, 34, 00, 0, time.FixedZone("EDT", -4*60*60)).Unix())
+	assert.Equal(
+		t,
+		dm.Timestamp().Unix(),
+		time.Date(2017, 8, 29, 23, 34, 0, 0, time.FixedZone("EDT", -4*60*60)).Unix(),
+	)
+
 	assert.Len(t, dm.Payloads, 16)
 	assert.Equal(t, dm.Payloads[0].Value(), 691.1)
 	assert.Equal(t, dm.Payloads[0].TSID, idtool.ID(3079061720))

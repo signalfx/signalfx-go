@@ -66,8 +66,8 @@ type BaseJSONMessage struct {
 	rawData    map[string]interface{}
 }
 
-func (bjm *BaseJSONMessage) JSONBase() *BaseJSONMessage {
-	return bjm
+func (j *BaseJSONMessage) JSONBase() *BaseJSONMessage {
+	return j
 }
 
 // The raw message deserialized from JSON. Only applicable for JSON
@@ -95,15 +95,15 @@ type BaseJSONChannelMessage struct {
 }
 
 func (j *BaseJSONChannelMessage) String() string {
-	return fmt.Sprintf("%s", j.BaseJSONMessage.rawMessage)
+	return string(j.BaseJSONMessage.rawMessage)
 }
 
 type TimestampedMessage struct {
 	TimestampMillis uint64 `json:"timestampMs"`
 }
 
-func (tsm *TimestampedMessage) Timestamp() time.Time {
-	return time.Unix(0, int64(tsm.TimestampMillis*uint64(time.Millisecond)))
+func (m *TimestampedMessage) Timestamp() time.Time {
+	return time.Unix(0, int64(m.TimestampMillis*uint64(time.Millisecond)))
 }
 
 type AuthenticatedMessage struct {
@@ -118,7 +118,7 @@ func ParseMessage(msg []byte, isText bool) (Message, error) {
 	if isText {
 		var baseMessage BaseMessage
 		if err := json.Unmarshal(msg, &baseMessage); err != nil {
-			return nil, fmt.Errorf("couldn't unmarshal JSON websocket message: %v", err)
+			return nil, fmt.Errorf("couldn't unmarshal JSON websocket message: %w", err)
 		}
 		return parseJSONMessage(&baseMessage, msg)
 	}

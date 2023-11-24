@@ -12,6 +12,7 @@ func (at AuthType) MarshalJSON() ([]byte, error) {
 }
 
 type AuthRequest struct {
+	// This should not be set manually.
 	Type AuthType `json:"type"`
 	// The Auth token for the org
 	Token     string `json:"token"`
@@ -24,7 +25,11 @@ func (ExecuteType) MarshalJSON() ([]byte, error) {
 	return []byte(`"execute"`), nil
 }
 
+// See
+// https://dev.splunk.com/observability/docs/signalflow/messages/websocket_request_messages#Execute-message-properties
+// for details on the fields.
 type ExecuteRequest struct {
+	// This should not be set manually
 	Type         ExecuteType   `json:"type"`
 	Program      string        `json:"program"`
 	Channel      string        `json:"channel"`
@@ -66,6 +71,7 @@ func (DetachType) MarshalJSON() ([]byte, error) {
 }
 
 type DetachRequest struct {
+	// This should not be set manually
 	Type    DetachType `json:"type"`
 	Channel string     `json:"channel"`
 	Reason  string     `json:"reason"`
@@ -78,6 +84,7 @@ func (StopType) MarshalJSON() ([]byte, error) {
 }
 
 type StopRequest struct {
+	// This should not be set manually
 	Type   StopType `json:"type"`
 	Handle string   `json:"handle"`
 	Reason string   `json:"reason"`

@@ -1,14 +1,14 @@
 package signalflow
 
 import (
-	"fmt"
+	"context"
 	"math/rand"
 	"strconv"
 	"testing"
 	"time"
 
 	"github.com/signalfx/signalfx-go/idtool"
-	"github.com/signalfx/signalfx-go/signalflow/messages"
+	"github.com/signalfx/signalfx-go/signalflow/v2/messages"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,6 +25,7 @@ type testCase struct {
 }
 
 func TestFakeBackend(t *testing.T) {
+	t.Parallel()
 
 	now := time.Now()
 	testCases := []testCase{
@@ -42,11 +43,11 @@ func TestFakeBackend(t *testing.T) {
 		},
 		{
 			timeSeriesProperties: []map[string]string{
-				map[string]string{
+				{
 					"dim1": "val1",
 					"dim2": "val2",
 				},
-				map[string]string{
+				{
 					"dim1": "val1",
 				},
 			},
@@ -64,46 +65,49 @@ func TestFakeBackend(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		fakeBackend := NewRunningFakeBackend()
-		tsids := []idtool.ID{}
-		for _, _ = range testCase.timeSeriesProperties {
-			tsids = append(tsids, idtool.ID(rand.Int63()))
-		}
-		for i, ts := range testCase.timeSeriesProperties {
-			fakeBackend.AddTSIDMetadata(tsids[i], &messages.MetadataProperties{
-				Metric:           program,
-				CustomProperties: ts,
-			})
-			fakeBackend.SetTSIDFloatData(tsids[i], 0)
-		}
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			fakeBackend := NewRunningFakeBackend()
+			tsids := []idtool.ID{}
+			for range testCase.timeSeriesProperties {
+				tsids = append(tsids, idtool.ID(rand.Int63()))
+			}
+			for i, ts := range testCase.timeSeriesProperties {
+				fakeBackend.AddTSIDMetadata(tsids[i], &messages.MetadataProperties{
+					Metric:           program,
+					CustomProperties: ts,
+				})
+				fakeBackend.SetTSIDFloatData(tsids[i], 0)
+			}
 
-		fakeBackend.AddProgramTSIDs(program, tsids)
+			fakeBackend.AddProgramTSIDs(program, tsids)
 
-		// connect N clients so we can prove the fakebackend is not killed by the first client disconnecting
-		for i := 1; i <= testCase.numberOfSfxClients; i++ {
-			sfxClient, _ := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
-			processClient(t, sfxClient, testCase, i)
-		}
-
+			// connect N clients so we can prove the fakebackend is not killed by the first client disconnecting
+			for i := 1; i <= testCase.numberOfSfxClients; i++ {
+				sfxClient, _ := NewClient(StreamURL(fakeBackend.URL()), AccessToken(fakeBackend.AccessToken))
+				processClient(t, sfxClient, testCase, i)
+			}
+		})
 	}
-
 }
 
 func processClient(t *testing.T, sfxClient *Client, testCase testCase, connectionCount int) {
-
-	data, _ := sfxClient.Execute(&ExecuteRequest{
+	t.Helper()
+	data, _ := sfxClient.Execute(context.Background(), &ExecuteRequest{
 		Program:      program,
 		StartMs:      testCase.startMs,
 		StopMs:       testCase.stopMs,
 		ResolutionMs: testCase.resolutionSecs * 1000,
 	})
+
 	timestamps := []int64{}
 	datapointCount := 0
 	for msg := range data.Data() {
 		timestamps = append(timestamps, int64(msg.TimestampMillis))
 		datapoints := []map[string]string{}
 		for _, pl := range msg.Payloads {
-			meta := data.TSIDMetadata(pl.TSID)
+			meta, _ := data.TSIDMetadata(context.Background(), pl.TSID)
 			dims := map[string]string{}
 			for k, v := range meta.CustomProperties {
 				dims[k] = v
@@ -113,15 +117,9 @@ func processClient(t *testing.T, sfxClient *Client, testCase testCase, connectio
 		}
 		// the datapoints should be always the same the fed in mts
 		assert.Equal(t, testCase.timeSeriesProperties, datapoints, testCase.name+": datapoints are wrong on connection "+strconv.Itoa(connectionCount))
-
-		if data.IsFinished() {
-			sfxClient.Close()
-			break
-		}
 	}
 
 	assert.Equal(t, testCase.expectedTimestamps, timestamps, testCase.name+": timestamps in metrics are wrong on connection "+strconv.Itoa(connectionCount))
 	// the number of datapoints should be the number of resolution windows multiplied by the number of MTS in each timestamp payload
 	assert.Equal(t, len(testCase.expectedTimestamps)*len(testCase.timeSeriesProperties), datapointCount, testCase.name+": amount of datapoints unexpected on connection "+strconv.Itoa(connectionCount))
-	fmt.Println("finisged " + strconv.Itoa(connectionCount))
 }

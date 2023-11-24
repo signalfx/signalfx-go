@@ -17,7 +17,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/signalfx/signalfx-go/idtool"
-	"github.com/signalfx/signalfx-go/signalflow/messages"
+	"github.com/signalfx/signalfx-go/signalflow/v2/messages"
 )
 
 var upgrader = websocket.Upgrader{} // use default options
@@ -45,6 +45,7 @@ type FakeBackend struct {
 	programErrors        map[string]string
 	runningJobsByProgram map[string]int
 	cancelFuncsByHandle  map[string]context.CancelFunc
+	cancelFuncsByChannel map[string]context.CancelFunc
 	server               *httptest.Server
 	handleIdx            int
 }
@@ -83,8 +84,10 @@ func (f *FakeBackend) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read err:", err)
-			break
+			if !errors.Is(err, net.ErrClosed) {
+				log.Println("read err:", err)
+			}
+			return
 		}
 
 		var in map[string]interface{}
@@ -114,9 +117,6 @@ func (f *FakeBackend) unregisterConn(conn *websocket.Conn) {
 }
 
 func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]interface{}, textMsgs chan<- string, binMsgs chan<- []byte) error {
-	f.Lock()
-	defer f.Unlock()
-
 	typ, ok := message["type"].(string)
 	if !ok {
 		textMsgs <- `{"type": "error"}`
@@ -137,6 +137,10 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 		if cancel := f.cancelFuncsByHandle[message["handle"].(string)]; cancel != nil {
 			cancel()
 		}
+	case "detach":
+		if cancel := f.cancelFuncsByChannel[message["channel"].(string)]; cancel != nil {
+			cancel()
+		}
 	case "execute":
 		if !f.authenticated {
 			return errors.New("not authenticated")
@@ -155,6 +159,7 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 
 		execCtx, cancel := context.WithCancel(ctx)
 		f.cancelFuncsByHandle[handle] = cancel
+		f.cancelFuncsByChannel[ch] = cancel
 
 		log.Printf("Executing SignalFlow program %s with tsids %v and handle %s", program, programTSIDs, handle)
 		f.runningJobsByProgram[program]++
@@ -209,6 +214,8 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 			}
 		}
 
+		log.Print("done sending metadata messages")
+
 		// Send data periodically until the connection is closed.
 		iterations := 0
 		go func() {
@@ -216,6 +223,7 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 			for {
 				select {
 				case <-execCtx.Done():
+					log.Printf("sending done")
 					f.Lock()
 					f.runningJobsByProgram[program]--
 					f.Unlock()
@@ -228,16 +236,18 @@ func (f *FakeBackend) handleMessage(ctx context.Context, message map[string]inte
 							valsWithTSID = append(valsWithTSID, tsidVal{TSID: tsid, Val: *data})
 						}
 					}
+					f.Unlock()
 					metricTime := startMs + uint64(iterations*resolutionMs)
 					if stopMs != 0 && metricTime > stopMs {
+						log.Printf("sending channel end")
 						// tell the client the computation is complete
 						textMsgs <- fmt.Sprintf(`{"type": "control-message", "channel": "%s", "event": "END_OF_CHANNEL", "handle": "%s"}`, ch, handle)
-					} else {
-						binMsgs <- makeDataMessage(ch, valsWithTSID, metricTime)
+						return
 					}
-					f.Unlock()
+					log.Printf("sending data message")
+					binMsgs <- makeDataMessage(ch, valsWithTSID, metricTime)
+					log.Printf("done sending data message")
 					iterations++
-
 				}
 			}
 		}()
@@ -289,6 +299,7 @@ func (f *FakeBackend) Start() {
 	f.programErrors = map[string]string{}
 	f.runningJobsByProgram = map[string]int{}
 	f.cancelFuncsByHandle = map[string]context.CancelFunc{}
+	f.cancelFuncsByChannel = map[string]context.CancelFunc{}
 	f.conns = map[*websocket.Conn]bool{}
 	f.server = httptest.NewServer(f)
 }

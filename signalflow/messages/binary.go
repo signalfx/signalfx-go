@@ -6,7 +6,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math"
 
 	"github.com/signalfx/signalfx-go/idtool"
@@ -143,7 +143,7 @@ func parseBinaryMessage(msg []byte) (Message, error) {
 		if err != nil {
 			return nil, err
 		}
-		rest, err = ioutil.ReadAll(reader)
+		rest, err = io.ReadAll(reader)
 		if err != nil {
 			return nil, err
 		}

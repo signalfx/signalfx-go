@@ -11,6 +11,9 @@ package integration
 
 type AwsService string
 
+// Deprecated: the following constants are deprecated and this list is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the AwsService type as required.
+// For example: AwsService("AWS/FooBar")
 const (
 	AWSACP_PRIVATE_CA            AwsService = "AWS/ACMPrivateCA"
 	AWSAMAZON_MQ                 AwsService = "AWS/AmazonMQ"
@@ -50,6 +53,7 @@ const (
 	AWSFIREHOSE                  AwsService = "AWS/Firehose"
 	AWSFSX                       AwsService = "AWS/FSx"
 	AWSGAME_LIFT                 AwsService = "AWS/GameLift"
+	AWSGLOBAL_ACCELERATOR        AwsService = "AWS/GlobalAccelerator"
 	AWSINSPECTOR                 AwsService = "AWS/Inspector"
 	AWSIO_T                      AwsService = "AWS/IoT"
 	AWSIO_T_ANALYTICS            AwsService = "AWS/IoTAnalytics"
@@ -103,6 +107,9 @@ const (
 	WAF                          AwsService = "WAF"
 )
 
+// Deprecated: the following map is deprecated and it is not going to be maintained anymore.
+// Please use regular strings or convert regular strings to the AwsService type as required.
+// For example: AwsService("AWS/FooBar")
 var AWSServiceNames = map[string]AwsService{
 	"AWS/ACMPrivateCA":            AWSACP_PRIVATE_CA,
 	"AWS/AmazonMQ":                AWSAMAZON_MQ,
@@ -142,6 +149,7 @@ var AWSServiceNames = map[string]AwsService{
 	"AWS/Firehose":                AWSFIREHOSE,
 	"AWS/FSx":                     AWSFSX,
 	"AWS/GameLift":                AWSGAME_LIFT,
+	"AWS/GlobalAccelerator":       AWSGLOBAL_ACCELERATOR,
 	"AWS/Inspector":               AWSINSPECTOR,
 	"AWS/IoT":                     AWSIO_T,
 	"AWS/IoTAnalytics":            AWSIO_T_ANALYTICS,
