@@ -120,6 +120,31 @@ func TestBuffersEventMessages(t *testing.T) {
 	require.NotNil(t, msg)
 }
 
+func TestBuffersInfoMessages(t *testing.T) {
+	t.Parallel()
+	ch := make(chan messages.Message)
+	comp := newComputation(ch, "ch1", &Client{
+		defaultMetadataTimeout: 1 * time.Second,
+	})
+	defer close(ch)
+	ch <- &messages.InfoMessage{}
+	ch <- &messages.MetadataMessage{
+		TSID: idtool.ID(4000),
+	}
+
+	md, _ := comp.TSIDMetadata(context.Background(), 4000)
+	require.NotNil(t, md)
+
+	ch <- &messages.InfoMessage{}
+
+	msg := waitForMsg(t, comp.Info(), comp)
+	require.NotNil(t, msg)
+
+	ch <- &messages.InfoMessage{}
+	msg = waitForMsg(t, comp.Info(), comp)
+	require.NotNil(t, msg)
+}
+
 func mustParse(m messages.Message, err error) messages.Message {
 	if err != nil {
 		panic(err)

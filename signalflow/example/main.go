@@ -70,6 +70,12 @@ func main() {
 	}()
 
 	go func() {
+		for msg := range comp.Info() {
+			log.Printf("Got info message %s", msg.MessageBlock.ContentsRaw)
+		}
+	}()
+
+	go func() {
 		time.Sleep(duration)
 		if err := comp.Stop(context.Background()); err != nil {
 			log.Printf("Failed to stop computation: %v", err)
