@@ -1,0 +1,30 @@
+{
+  "id": "12345",
+  "inputs": {
+    "goodEventsLabel": "G",
+    "programText": "G = data('spans.count', filter=filter('sf_error', 'false') and filter('sf_environment', 'lab0') and filter('sf_service', 'signalboost'))\nT = data('spans.count', filter=filter('sf_environment', 'lab0') and filter('sf_service', 'signalboost'))",
+    "totalEventsLabel": "T"
+  },
+  "name": "SLO testing",
+  "targets": [
+    {
+      "compliancePeriod": "7d",
+      "slo": 99.99,
+      "sloAlertRules": [
+        {
+          "rules": [
+            {
+              "parameters": {
+                "fireLasting": "5m"
+              },
+              "severity": "Major"
+            }
+          ],
+          "type": "BREACH"
+        }
+      ],
+      "type": "RollingWindow"
+    }
+  ],
+  "type": "RequestBased"
+}
