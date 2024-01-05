@@ -1,0 +1,30 @@
+{
+  "id": "12345",
+  "inputs": {
+    "goodEventsLabel": "G",
+    "programText": "G = data('spans.count', filter=filter('sf_error', 'false') and filter('sf_environment', 'lab0') and filter('sf_service', 'signalboost'))\nT = data('spans.count', filter=filter('sf_environment', 'lab0') and filter('sf_service', 'signalboost'))",
+    "totalEventsLabel": "T"
+  },
+  "name": "SLO testing",
+  "targets": [
+    {
+      "cycleType": "month",
+      "slo": 95.0,
+      "sloAlertRules": [
+        {
+          "rules": [
+            {
+              "parameters": {
+                "fireLasting": "10m"
+              },
+              "severity": "Critical"
+            }
+          ],
+          "type": "ERROR_BUDGET_LEFT"
+        }
+      ],
+      "type": "CalendarWindow"
+    }
+  ],
+  "type": "RequestBased"
+}
