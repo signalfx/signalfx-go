@@ -23,6 +23,8 @@
 // request at a time to ingest/gateway is probably not going to get enough
 // throughput, as usually the network and HTTP RTT is the bottleneck at that
 // point.
+//
+// Deprecated: Use OpenTelemetry Go instead.
 package writer
 
 //go:generate sh -c "cd template && ./gen.sh"
