@@ -4,7 +4,7 @@ See the [godoc](https://godoc.org/github.com/signalfx/signalfx-go/writer) for
 information on what they are and how to use them.
 
 > [!WARNING]  
-> `writer` package is **deprecated** and no longer supported.
+> `writer` package is **deprecated** and will reach End of Support on October 18, 2024.
 > Use OpenTelemetry Go instead.
 
 ## Compiling
