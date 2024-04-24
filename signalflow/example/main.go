@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/signalfx/signalfx-go/signalflow/v2"
+	"github.com/signalfx/signalfx-go/signalflow/v2" //nolint:staticcheck // Users should use github.com/signalfx/signalflow-client-go/signalflow instead.
 )
 
 func main() {
