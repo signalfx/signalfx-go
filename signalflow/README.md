@@ -3,6 +3,10 @@
 This is a client for [SignalFlow](https://dev.splunk.com/observability/docs/signalflow) that lets
 you stream and analyze metric data in real-time for your organization.
 
+> [!WARNING]  
+> `github.com/signalfx/signalfx-go/signalflow/v2` package is **deprecated**.
+> Use [`github.com/signalfx/signalflow-client-go/signalflow`](https://pkg.go.dev/github.com/signalfx/signalflow-client-go/signalflow) instead.
+
 ## Installation
 
 **You must use Go 1.19+ for the v2 of this client.**

@@ -1,3 +1,4 @@
+// Deprecated: Use github.com/signalfx/signalflow-client-go/signalflow instead.
 module github.com/signalfx/signalfx-go/signalflow/v2
 
 go 1.19
