@@ -5,7 +5,7 @@ you stream and analyze metric data in real-time for your organization.
 
 > [!WARNING]  
 > `github.com/signalfx/signalfx-go/signalflow/v2` package is **deprecated**.
-> Use [`github.com/signalfx/signalflow-client-go/signalflow`](https://pkg.go.dev/github.com/signalfx/signalflow-client-go/signalflow) instead.
+> Use [`github.com/signalfx/signalflow-client-go/v2/signalflow`](https://pkg.go.dev/github.com/signalfx/signalflow-client-go/v2/signalflow) instead.
 
 ## Installation
 
