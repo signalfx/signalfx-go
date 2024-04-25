@@ -8,4 +8,6 @@
 // after a short delay.
 //
 // SignalFlow is documented at https://dev.splunk.com/observability/docs/signalflow/messages.
+//
+// Deprecated: Use github.com/signalfx/signalflow-client-go/v2/signalflow instead.
 package signalflow
