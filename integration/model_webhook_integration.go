@@ -27,7 +27,9 @@ type WebhookIntegration struct {
 	Name string `json:"name,omitempty"`
 	Type Type   `json:"type"`
 	// Webhook URL
-	Url          string                 `json:"url,omitempty"`
-	SharedSecret string                 `json:"sharedSecret,omitempty"`
-	Headers      map[string]interface{} `json:"headers,omitempty"`
+	Url             string                 `json:"url,omitempty"`
+	SharedSecret    string                 `json:"sharedSecret,omitempty"`
+	Headers         map[string]interface{} `json:"headers,omitempty"`
+	Method          string                 `json:"method,omitempty"`
+	PayloadTemplate string                 `json:"payloadTemplate,omitempty"`
 }

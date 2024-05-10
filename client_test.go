@@ -50,6 +50,16 @@ func verifyRequest(t *testing.T, method string, expectToken bool, status int, pa
 	})
 }
 
+func verifyRequestWithJsonBody(t *testing.T, method string, expectToken bool, status int, params url.Values, jsonBody string, resultPath string) func(w http.ResponseWriter, r *http.Request) {
+	return createResponse(t, status, resultPath, func(t *testing.T, r *http.Request) {
+		verifyHeaders(t, r, expectToken)
+		verifyParams(t, r, params)
+		verifyJsonBody(t, r, jsonBody)
+
+		assert.Equal(t, method, r.Method, "Incorrect HTTP method")
+	})
+}
+
 func verifyHeaders(t *testing.T, r *http.Request, expectToken bool) {
 	if val, ok := r.Header[AuthHeaderKey]; ok {
 		assert.Equal(t, []string{TestToken}, val, "Incorrect auth token in headers")
@@ -77,6 +87,16 @@ func verifyParams(t *testing.T, r *http.Request, params url.Values) {
 			assert.Contains(t, params, k, "Request contains unexpected query parameter %q", k)
 		}
 	}
+}
+
+func verifyJsonBody(t *testing.T, r *http.Request, jsonBody string) {
+	actualBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		assert.Fail(t, "Error reading request body: %v", err)
+	}
+
+	actualJsonBody := string(actualBody)
+	assert.JSONEq(t, jsonBody, actualJsonBody, "Expected body: %s, got: %s", jsonBody, actualJsonBody)
 }
 
 func createResponse(t *testing.T, status int, resultPath string, requestValidator func(t *testing.T, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
