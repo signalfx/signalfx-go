@@ -9,5 +9,7 @@
   "headers": {},
   "sharedSecret": "pa$$word",
   "type": "Webhook",
-  "url": "https://webhook.site/<key>"
+  "url": "https://webhook.site/<key>",
+  "method": "POST",
+  "payloadTemplate": "{\"incidentId\": \"{{{incidentId}}}\"}"
 }
