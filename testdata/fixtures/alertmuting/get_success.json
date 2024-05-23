@@ -12,5 +12,9 @@
   "lastUpdated": 1557689430000,
   "lastUpdatedBy": "string",
   "startTime": 0,
-  "stopTime": 0
+  "stopTime": 0,
+  "recurrence": {
+    "unit": "d",
+    "value": 10
+  }
 }

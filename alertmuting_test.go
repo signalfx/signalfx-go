@@ -69,6 +69,9 @@ func TestGetAlertMutingRule(t *testing.T) {
 	result, err := client.GetAlertMutingRule(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting alert mutnig rule")
 	assert.Equal(t, result.Description, "string", "Name does not match")
+	assert.NotNil(t, result.Recurrence, "Recurrence is nil")
+	assert.Equal(t, "d", result.Recurrence.Unit, "Recurrence Unit does not match")
+	assert.Equal(t, int32(10), result.Recurrence.Value, "Recurrence Value does not match")
 	assert.Equal(t, "server6", result.Filters[0].PropertyValue.Values[1], "Property Value does not match")
 }
 
@@ -115,8 +118,15 @@ func TestUpdateAlertMutingRule(t *testing.T) {
 
 	result, err := client.UpdateAlertMutingRule(context.Background(), "string", &alertmuting.CreateUpdateAlertMutingRuleRequest{
 		Description: "string",
+		Recurrence: &alertmuting.AlertMutingRuleRecurrence{
+			Unit:  "d",
+			Value: 10,
+		},
 	})
 	assert.NoError(t, err, "Unexpected error updating alert muting rule")
+	assert.NotNil(t, result.Recurrence, "Recurrence is nil")
+	assert.Equal(t, "d", result.Recurrence.Unit, "Recurrence Unit does not match")
+	assert.Equal(t, int32(10), result.Recurrence.Value, "Recurrence Value does not match")
 	assert.Equal(t, "string", result.Description, "Description does not match")
 }
 
