@@ -12,7 +12,7 @@ package detector
 // If your organization has the \"write permissions\" feature enabled, you can use this object to specify the user and team IDs that have write access to the object you're specifying.
 type AuthorizedWriters struct {
 	// An array of team IDs that have write access to this object
-	Teams []string `json:"teams,omitempty"`
+	Teams []string `json:"teams"`
 	// An array of user IDs that have write access to this object
-	Users []string `json:"users,omitempty"`
+	Users []string `json:"users"`
 }

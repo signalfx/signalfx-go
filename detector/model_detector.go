@@ -45,9 +45,9 @@ type Detector struct {
 	ProgramText string  `json:"programText,omitempty"`
 	Rules       []*Rule `json:"rules,omitempty"`
 	// A an array of keywords that filters detectors by one of their fields. Use tags to indicate the state of a detector or its data source (for example, you can label a detector with a \"prod\" tag to indicate that it monitors a production environment).
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 	// IDs of teams associated with this detector. Teams associated with a detector can see the detector and its active alerts on the team's landing page in the web UI. The list of teams associated with a detector is independent of notification settings.  Teams specified in this field don\\'\\'t automatically get notified of new alerts, and teams that choose to get alerts do not have to display the detector on their team landing page in the web application.
-	Teams []string `json:"teams,omitempty"`
+	Teams []string `json:"teams"`
 	// Options that control the appearance of a detector in the SignalFx web UI.
 	VisualizationOptions *Visualization `json:"visualizationOptions,omitempty"`
 }
