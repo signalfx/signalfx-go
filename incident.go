@@ -50,6 +50,13 @@ func (c *Client) GetIncidents(ctx context.Context, includeResolved bool, limit i
 	if resp != nil {
 		defer resp.Body.Close()
 	}
+	if resp.StatusCode != http.StatusOK {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		return nil, fmt.Errorf(string(body))
+	}
 	if err != nil {
 		return nil, err
 	}
