@@ -12,6 +12,8 @@
   "customProperties": "string",
   "description": "string",
   "id": "string",
+  "parentDetectorId": "string",
+  "detectorOrigin": "Standard",
   "labelResolutions": {
     "DetectorA": 3000,
     "DetectorB": 5000
