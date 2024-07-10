@@ -34,4 +34,8 @@ type ValidateDetectorRequestModel struct {
 	Teams []string `json:"teams,omitempty"`
 	// Options that control the appearance of a detector in the SignalFx web UI. Each element in the array is a 'Visualization'.
 	VisualizationOptions []Visualization `json:"visualizationOptions,omitempty"`
+	// ID of the parent detector from which this detector is customized and created. This property is required for detectors with detectorOrigin of type AutoDetectCustomization.
+	ParentDetectorId string `json:"parentDetectorId,omitempty"`
+	// Indicates how a detector was created. The possible values are: Standard, AutoDetect, AutoDetectCustomization.You can only use Standard or AutoDetectCustomization to create custom detectors.
+	DetectorOrigin string `json:"detectorOrigin,omitempty"`
 }
