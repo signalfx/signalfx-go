@@ -9,13 +9,55 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCreateArchivedMetricRuleset(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc(MetricRulesetApiURL, verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "metric_ruleset/create_archived_ruleset_success.json"))
+
+	dest := "Archived"
+	ruleName := "TestRule"
+	filterNot := false
+	filterPropertyValue := "container_id"
+	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
+		MetricName: "container_cpu_utilization",
+		Version:    1,
+		ExceptionRules: []metric_ruleset.ExceptionRule{
+			{
+				Name:    ruleName,
+				Enabled: true,
+				Matcher: metric_ruleset.ExceptionRuleMatcher{
+					Type: "dimension",
+					Filters: []metric_ruleset.PropertyFilter{
+						{
+							NOT:           &filterNot,
+							Property:      &filterPropertyValue,
+							PropertyValue: []string{"cont_a", "cont_b"},
+						},
+					},
+				},
+			},
+		},
+		RoutingRule: metric_ruleset.RoutingRule{
+			Destination: (*string)(&dest),
+		},
+	})
+
+	assert.NoError(t, err, "Unexpected error creating metric ruleset")
+	assert.Equal(t, "container_cpu_utilization", *result.MetricName, "MetricName does not match")
+	assert.Equal(t, 1, len(result.ExceptionRules), "Unexpected length of exception rules array")
+	assert.Equal(t, 1, len(result.ExceptionRules[0].Matcher.Filters), "Unexpected length of exception rule filter array")
+	assert.Equal(t, 2, len(result.ExceptionRules[0].Matcher.Filters[0].PropertyValue), "Unexpected length of exception rule filter property values array")
+	assert.Equal(t, dest, *result.RoutingRule.Destination, "RoutingRule destination does not match expected")
+}
+
 func TestCreateMetricRuleset(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
 	mux.HandleFunc(MetricRulesetApiURL, verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "metric_ruleset/create_ruleset_success.json"))
 
-	dest := metric_ruleset.FULL_FIDELITY
+	dest := "RealTime"
 	dropDimensions := false
 	ruleName := "TestRule"
 	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
@@ -27,6 +69,7 @@ func TestCreateMetricRuleset(t *testing.T) {
 				Enabled: true,
 				Matcher: metric_ruleset.MetricMatcher{
 					DimensionMatcher: &metric_ruleset.DimensionMatcher{
+						Type:    "dimension",
 						Filters: []metric_ruleset.PropertyFilter{},
 					},
 				},
@@ -49,6 +92,7 @@ func TestCreateMetricRuleset(t *testing.T) {
 	assert.Equal(t, "container_cpu_utilization", *result.MetricName, "MetricName does not match")
 	assert.Equal(t, 1, len(result.AggregationRules), "Unexpected length of aggregation rules array")
 	assert.Equal(t, "rollup", result.AggregationRules[0].Aggregator.RollupAggregator.Type, "Aggregation Rule type does not match expected")
+	assert.Equal(t, dest, *result.RoutingRule.Destination, "RoutingRule destination does not match expected")
 }
 
 func TestGetMetricRuleset(t *testing.T) {
@@ -69,7 +113,7 @@ func TestUpdateMetricRuleset(t *testing.T) {
 	mux.HandleFunc(MetricRulesetApiURL+"/TestId", verifyRequest(t, http.MethodPut, true, http.StatusOK, nil, "metric_ruleset/update_ruleset_success.json"))
 
 	metricName := "container_cpu_utilization"
-	dest := metric_ruleset.DROP
+	dest := "Drop"
 	version := int64(2)
 	dropDimensions := false
 	ruleName := "UpdatedName"
