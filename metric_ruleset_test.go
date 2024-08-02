@@ -26,7 +26,7 @@ func TestCreateArchivedMetricRuleset(t *testing.T) {
 			{
 				Name:    ruleName,
 				Enabled: true,
-				Matcher: metric_ruleset.ExceptionRuleMatcher{
+				Matcher: metric_ruleset.DimensionMatcher{
 					Type: "dimension",
 					Filters: []metric_ruleset.PropertyFilter{
 						{

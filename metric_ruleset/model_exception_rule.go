@@ -20,7 +20,8 @@ type ExceptionRule struct {
 	Name string `json:"name"`
 	// Whether to reroute the metric with the specified dimension. If false, the rule remains defined but will not reroute metrics. 
 	Enabled bool `json:"enabled"`
-	Matcher ExceptionRuleMatcher `json:"matcher"`
+	// Finds the metric to reroute. 
+	Matcher DimensionMatcher `json:"matcher"`
 	// Contains fields for the restoration job. The restoration job reroutes metrics from the archival route to the real-time route.  
 	Restoration []ExceptionRuleRestorationFields `json:"restoration,omitempty"`
 	// Information about an exception rule. 
@@ -33,7 +34,7 @@ type _ExceptionRule ExceptionRule
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewExceptionRule(name string, enabled bool, matcher ExceptionRuleMatcher) *ExceptionRule {
+func NewExceptionRule(name string, enabled bool, matcher DimensionMatcher) *ExceptionRule {
 	this := ExceptionRule{}
 	this.Name = name
 	this.Enabled = enabled
@@ -98,9 +99,9 @@ func (o *ExceptionRule) SetEnabled(v bool) {
 }
 
 // GetMatcher returns the Matcher field value
-func (o *ExceptionRule) GetMatcher() ExceptionRuleMatcher {
+func (o *ExceptionRule) GetMatcher() DimensionMatcher {
 	if o == nil {
-		var ret ExceptionRuleMatcher
+		var ret DimensionMatcher
 		return ret
 	}
 
@@ -109,7 +110,7 @@ func (o *ExceptionRule) GetMatcher() ExceptionRuleMatcher {
 
 // GetMatcherOk returns a tuple with the Matcher field value
 // and a boolean to check if the value has been set.
-func (o *ExceptionRule) GetMatcherOk() (*ExceptionRuleMatcher, bool) {
+func (o *ExceptionRule) GetMatcherOk() (*DimensionMatcher, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -117,7 +118,7 @@ func (o *ExceptionRule) GetMatcherOk() (*ExceptionRuleMatcher, bool) {
 }
 
 // SetMatcher sets field value
-func (o *ExceptionRule) SetMatcher(v ExceptionRuleMatcher) {
+func (o *ExceptionRule) SetMatcher(v DimensionMatcher) {
 	o.Matcher = v
 }
 
