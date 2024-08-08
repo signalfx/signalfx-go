@@ -19,7 +19,7 @@ type ExceptionRuleRestorationFields struct {
 	// ID of the restoration job. 
 	RestorationId *string `json:"restorationId,omitempty"`
 	// Time at which the API begins the restoration job. 
-	StartTime *int32 `json:"startTime,omitempty"`
+	StartTime *int64 `json:"startTime,omitempty"`
 }
 
 // NewExceptionRuleRestorationFields instantiates a new ExceptionRuleRestorationFields object
@@ -72,9 +72,9 @@ func (o *ExceptionRuleRestorationFields) SetRestorationId(v string) {
 }
 
 // GetStartTime returns the StartTime field value if set, zero value otherwise.
-func (o *ExceptionRuleRestorationFields) GetStartTime() int32 {
+func (o *ExceptionRuleRestorationFields) GetStartTime() int64 {
 	if o == nil || isNil(o.StartTime) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.StartTime
@@ -82,7 +82,7 @@ func (o *ExceptionRuleRestorationFields) GetStartTime() int32 {
 
 // GetStartTimeOk returns a tuple with the StartTime field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ExceptionRuleRestorationFields) GetStartTimeOk() (*int32, bool) {
+func (o *ExceptionRuleRestorationFields) GetStartTimeOk() (*int64, bool) {
 	if o == nil || isNil(o.StartTime) {
 		return nil, false
 	}
@@ -98,20 +98,12 @@ func (o *ExceptionRuleRestorationFields) HasStartTime() bool {
 	return false
 }
 
-// SetStartTime gets a reference to the given int32 and assigns it to the StartTime field.
-func (o *ExceptionRuleRestorationFields) SetStartTime(v int32) {
+// SetStartTime gets a reference to the given int64 and assigns it to the StartTime field.
+func (o *ExceptionRuleRestorationFields) SetStartTime(v int64) {
 	o.StartTime = &v
 }
 
 func (o ExceptionRuleRestorationFields) MarshalJSON() ([]byte, error) {
-	toSerialize,err := o.ToMap()
-	if err != nil {
-		return []byte{}, err
-	}
-	return json.Marshal(toSerialize)
-}
-
-func (o ExceptionRuleRestorationFields) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !isNil(o.RestorationId) {
 		toSerialize["restorationId"] = o.RestorationId
@@ -119,7 +111,7 @@ func (o ExceptionRuleRestorationFields) ToMap() (map[string]interface{}, error) 
 	if !isNil(o.StartTime) {
 		toSerialize["startTime"] = o.StartTime
 	}
-	return toSerialize, nil
+	return json.Marshal(toSerialize)
 }
 
 type NullableExceptionRuleRestorationFields struct {
