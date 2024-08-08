@@ -19,5 +19,5 @@ README* @signalfx/gdi-docs @signalfx/gdi-data-collection-approvers
 #
 #####################################################
 
-metric_ruleset/ @signalfx/echoi-splk
-metric_ruleset*.go @signalfx/echoi-splk
+metric_ruleset/ @echoi-splk
+metric_ruleset*.go @echoi-splk
