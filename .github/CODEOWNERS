@@ -12,3 +12,12 @@
 *.rst @signalfx/gdi-docs @signalfx/gdi-data-collection-approvers
 docs/ @signalfx/gdi-docs @signalfx/gdi-data-collection-approvers
 README* @signalfx/gdi-docs @signalfx/gdi-data-collection-approvers
+
+#####################################################
+#
+# Metric ruleset
+#
+#####################################################
+
+metric_ruleset/ @signalfx/echoi-splk
+metric_ruleset*.go @signalfx/echoi-splk
