@@ -23,7 +23,7 @@ type ExceptionRule struct {
 	// Finds the metric to reroute. 
 	Matcher DimensionMatcher `json:"matcher"`
 	// Contains fields for the restoration job. The restoration job reroutes metrics from the archival route to the real-time route.  
-	Restoration []ExceptionRuleRestorationFields `json:"restoration,omitempty"`
+	Restoration *ExceptionRuleRestorationFields `json:"restoration,omitempty"`
 	// Information about an exception rule. 
 	Description *string `json:"description,omitempty"`
 }
@@ -123,17 +123,17 @@ func (o *ExceptionRule) SetMatcher(v DimensionMatcher) {
 }
 
 // GetRestoration returns the Restoration field value if set, zero value otherwise.
-func (o *ExceptionRule) GetRestoration() []ExceptionRuleRestorationFields {
+func (o *ExceptionRule) GetRestoration() ExceptionRuleRestorationFields {
 	if o == nil || isNil(o.Restoration) {
-		var ret []ExceptionRuleRestorationFields
+		var ret ExceptionRuleRestorationFields
 		return ret
 	}
-	return o.Restoration
+	return *o.Restoration
 }
 
 // GetRestorationOk returns a tuple with the Restoration field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ExceptionRule) GetRestorationOk() ([]ExceptionRuleRestorationFields, bool) {
+func (o *ExceptionRule) GetRestorationOk() (*ExceptionRuleRestorationFields, bool) {
 	if o == nil || isNil(o.Restoration) {
 		return nil, false
 	}
@@ -150,8 +150,8 @@ func (o *ExceptionRule) HasRestoration() bool {
 }
 
 // SetRestoration gets a reference to the given []ExceptionRuleRestorationFields and assigns it to the Restoration field.
-func (o *ExceptionRule) SetRestoration(v []ExceptionRuleRestorationFields) {
-	o.Restoration = v
+func (o *ExceptionRule) SetRestoration(v ExceptionRuleRestorationFields) {
+	o.Restoration = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise.
