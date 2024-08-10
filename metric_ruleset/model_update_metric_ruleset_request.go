@@ -18,6 +18,8 @@ import (
 type UpdateMetricRulesetRequest struct {
 	// Aggregation rules in the ruleset 
 	AggregationRules []AggregationRule `json:"aggregationRules,omitempty"`
+	// List of exception rules. Exception rules reroute a metric time series (MTS) from an archival route to a real-time route if the MTS contains values that match those of a specified filter. 
+	ExceptionRules []ExceptionRule `json:"exceptionRules,omitempty"`
 	// Name of the metric 
 	MetricName *string `json:"metricName,omitempty"`
 	RoutingRule *RoutingRule `json:"routingRule,omitempty"`
@@ -72,6 +74,38 @@ func (o *UpdateMetricRulesetRequest) HasAggregationRules() bool {
 // SetAggregationRules gets a reference to the given []AggregationRule and assigns it to the AggregationRules field.
 func (o *UpdateMetricRulesetRequest) SetAggregationRules(v []AggregationRule) {
 	o.AggregationRules = v
+}
+
+// GetExceptionRules returns the ExceptionRules field value if set, zero value otherwise.
+func (o *UpdateMetricRulesetRequest) GetExceptionRules() []ExceptionRule {
+        if o == nil || isNil(o.ExceptionRules) {
+                var ret []ExceptionRule
+                return ret
+        }
+        return o.ExceptionRules
+}
+
+// GetExceptionRulesOk returns a tuple with the ExceptionRules field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UpdateMetricRulesetRequest) GetExceptionRulesOk() ([]ExceptionRule, bool) {
+        if o == nil || isNil(o.ExceptionRules) {
+    return nil, false
+        }
+        return o.ExceptionRules, true
+}
+
+// HasExceptionRules returns a boolean if a field has been set.
+func (o *UpdateMetricRulesetRequest) HasExceptionRules() bool {
+        if o != nil && !isNil(o.ExceptionRules) {
+                return true
+        }
+
+        return false
+}
+
+// SetExceptionRules gets a reference to the given []ExceptionRule and assigns it to the ExceptionRules field.
+func (o *UpdateMetricRulesetRequest) SetExceptionRules(v []ExceptionRule) {
+        o.ExceptionRules = v
 }
 
 // GetMetricName returns the MetricName field value if set, zero value otherwise.
@@ -174,6 +208,9 @@ func (o UpdateMetricRulesetRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if !isNil(o.AggregationRules) {
 		toSerialize["aggregationRules"] = o.AggregationRules
+	}
+	if !isNil(o.ExceptionRules) {
+		toSerialize["exceptionRules"] = o.ExceptionRules
 	}
 	if !isNil(o.MetricName) {
 		toSerialize["metricName"] = o.MetricName
