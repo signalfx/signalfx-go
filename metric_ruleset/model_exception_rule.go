@@ -179,25 +179,17 @@ func (o *ExceptionRule) SetDescription(v string) {
 }
 
 func (o ExceptionRule) MarshalJSON() ([]byte, error) {
-	toSerialize,err := o.ToMap()
-	if err != nil {
-		return []byte{}, err
-	}
-	return json.Marshal(toSerialize)
-}
-
-func (o ExceptionRule) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["name"] = o.Name
 	toSerialize["enabled"] = o.Enabled
 	toSerialize["matcher"] = o.Matcher
-	if !isNil(o.Restoration) {
+	if !isNil(o.Restoration) && !isNil(o.Restoration.StartTime) && *o.Restoration.StartTime > int64(0) {
 		toSerialize["restoration"] = o.Restoration
 	}
 	if !isNil(o.Description) {
 		toSerialize["description"] = o.Description
 	}
-	return toSerialize, nil
+	return json.Marshal(toSerialize)
 }
 
 type NullableExceptionRule struct {
