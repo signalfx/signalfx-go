@@ -105,10 +105,10 @@ func (o *ExceptionRuleRestorationFields) SetStartTime(v int64) {
 
 func (o ExceptionRuleRestorationFields) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if !isNil(o.RestorationId) {
+	if !isNil(o.RestorationId) && len(*o.RestorationId) > 0 {
 		toSerialize["restorationId"] = o.RestorationId
 	}
-	if !isNil(o.StartTime) {
+	if !isNil(o.StartTime) && *o.StartTime > int64(0) {
 		toSerialize["startTime"] = o.StartTime
 	}
 	return json.Marshal(toSerialize)

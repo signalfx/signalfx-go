@@ -10,7 +10,8 @@
           } ],
         "type": "dimension"
       },
-      "name": "TestRule"
+      "name": "TestRule",
+      "description": "exception rule 1"
     }
   ],
   "created": 1674598662022,
@@ -21,6 +22,7 @@
   "lastUpdatedBy": "TestUpdatedId",
   "lastUpdatedByName": "TestName",
   "metricName": "container_cpu_utilization",
+  "description": "Metric ruleset for container_cpu_utilization",
   "routingRule": {
     "destination": "Archived"
   },
