@@ -22,6 +22,8 @@ type CreateMetricRulesetRequest struct {
 	ExceptionRules []ExceptionRule `json:"exceptionRules,omitempty"`
 	// Name of the metric 
 	MetricName string `json:"metricName"`
+	// Information about the metric ruleset.
+	Description *string `json:"description,omitempty"`
 	RoutingRule RoutingRule `json:"routingRule"`
 	// Version of the ruleset 
 	Version int64 `json:"version"`
@@ -135,6 +137,38 @@ func (o *CreateMetricRulesetRequest) SetMetricName(v string) {
 	o.MetricName = v
 }
 
+// GetDescription returns the Description field value if set, zero value otherwise.
+func (o *CreateMetricRulesetRequest) GetDescription() string {
+	if o == nil || isNil(o.Description) {
+		var ret string
+		return ret
+	}
+	return *o.Description
+}
+
+// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateMetricRulesetRequest) GetDescriptionOk() (*string, bool) {
+	if o == nil || isNil(o.Description) {
+		return nil, false
+	}
+	return o.Description, true
+}
+
+// HasDescription returns a boolean if a field has been set.
+func (o *CreateMetricRulesetRequest) HasDescription() bool {
+	if o != nil && !isNil(o.Description) {
+		return true
+	}
+
+	return false
+}
+
+// SetDescription gets a reference to the given string and assigns it to the Description field.
+func (o *CreateMetricRulesetRequest) SetDescription(v string) {
+	o.Description = &v
+}
+
 // GetRoutingRule returns the RoutingRule field value
 func (o *CreateMetricRulesetRequest) GetRoutingRule() RoutingRule {
 	if o == nil {
@@ -192,6 +226,9 @@ func (o CreateMetricRulesetRequest) MarshalJSON() ([]byte, error) {
 		toSerialize["exceptionRules"] = o.ExceptionRules
 	}
 	toSerialize["metricName"] = o.MetricName
+	if !isNil(o.Description) {
+		toSerialize["description"] = o.Description
+	}
 	toSerialize["routingRule"] = o.RoutingRule
 	toSerialize["version"] = o.Version
 	return json.Marshal(toSerialize)

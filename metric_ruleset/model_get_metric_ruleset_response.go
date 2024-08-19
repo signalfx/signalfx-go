@@ -36,6 +36,8 @@ type GetMetricRulesetResponse struct {
 	LastUpdated *int64 `json:"lastUpdated,omitempty"`
 	// Name of the metric 
 	MetricName *string `json:"metricName,omitempty"`
+	// Information about an aggregation rule. 
+	Description *string `json:"description,omitempty"`
 	RoutingRule *RoutingRule `json:"routingRule,omitempty"`
 	// Version of the ruleset 
 	Version *int64 `json:"version,omitempty"`
@@ -378,6 +380,38 @@ func (o *GetMetricRulesetResponse) SetMetricName(v string) {
 	o.MetricName = &v
 }
 
+// GetDescription returns the Description field value if set, zero value otherwise.
+func (o *GetMetricRulesetResponse) GetDescription() string {
+	if o == nil || isNil(o.Description) {
+		var ret string
+		return ret
+	}
+	return *o.Description
+}
+
+// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GetMetricRulesetResponse) GetDescriptionOk() (*string, bool) {
+	if o == nil || isNil(o.Description) {
+		return nil, false
+	}
+	return o.Description, true
+}
+
+// HasDescription returns a boolean if a field has been set.
+func (o *GetMetricRulesetResponse) HasDescription() bool {
+	if o != nil && !isNil(o.Description) {
+		return true
+	}
+
+	return false
+}
+
+// SetDescription gets a reference to the given string and assigns it to the Description field.
+func (o *GetMetricRulesetResponse) SetDescription(v string) {
+	o.Description = &v
+}
+
 // GetRoutingRule returns the RoutingRule field value if set, zero value otherwise.
 func (o *GetMetricRulesetResponse) GetRoutingRule() RoutingRule {
 	if o == nil || isNil(o.RoutingRule) {
@@ -473,6 +507,9 @@ func (o GetMetricRulesetResponse) MarshalJSON() ([]byte, error) {
 	}
 	if !isNil(o.MetricName) {
 		toSerialize["metricName"] = o.MetricName
+	}
+	if !isNil(o.Description) {
+		toSerialize["description"] = o.Description
 	}
 	if !isNil(o.RoutingRule) {
 		toSerialize["routingRule"] = o.RoutingRule

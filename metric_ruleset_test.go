@@ -16,16 +16,21 @@ func TestCreateArchivedMetricRuleset(t *testing.T) {
 	mux.HandleFunc(MetricRulesetApiURL, verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "metric_ruleset/create_archived_ruleset_success.json"))
 
 	dest := "Archived"
+	metricName := "container_cpu_utilization"
 	ruleName := "TestRule"
+	rulesetDescription := "Metric ruleset for container_cpu_utilization"
+	exceptionRuleDescription := "exception rule 1"
 	filterNot := false
 	filterPropertyValue := "container_id"
 	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
-		MetricName: "container_cpu_utilization",
-		Version:    1,
+		MetricName:  metricName,
+		Description: &rulesetDescription,
+		Version:     1,
 		ExceptionRules: []metric_ruleset.ExceptionRule{
 			{
-				Name:    ruleName,
-				Enabled: true,
+				Name:        ruleName,
+				Description: &exceptionRuleDescription,
+				Enabled:     true,
 				Matcher: metric_ruleset.DimensionMatcher{
 					Type: "dimension",
 					Filters: []metric_ruleset.PropertyFilter{
@@ -44,8 +49,11 @@ func TestCreateArchivedMetricRuleset(t *testing.T) {
 	})
 
 	assert.NoError(t, err, "Unexpected error creating metric ruleset")
-	assert.Equal(t, "container_cpu_utilization", *result.MetricName, "MetricName does not match")
+	assert.Equal(t, metricName, *result.MetricName, "MetricName does not match")
+	assert.Equal(t, rulesetDescription, *result.Description, "Description does not match")
 	assert.Equal(t, 1, len(result.ExceptionRules), "Unexpected length of exception rules array")
+	assert.Equal(t, ruleName, result.ExceptionRules[0].Name, "Exception rule name does not match")
+	assert.Equal(t, &exceptionRuleDescription, result.ExceptionRules[0].Description, "Exception rule description does not match")
 	assert.Equal(t, 1, len(result.ExceptionRules[0].Matcher.Filters), "Unexpected length of exception rule filter array")
 	assert.Equal(t, 2, len(result.ExceptionRules[0].Matcher.Filters[0].PropertyValue), "Unexpected length of exception rule filter property values array")
 	assert.Equal(t, dest, *result.RoutingRule.Destination, "RoutingRule destination does not match expected")
