@@ -24,7 +24,7 @@ func TestCreateArchivedMetricRuleset(t *testing.T) {
 	filterNot := false
 	filterPropertyValue := "container_id"
 	startTime := (time.Now().Unix() - 900) * 1000
-	stopTime := (time.Now().Unix() - 900) * 1000
+	stopTime := (time.Now().Unix() - 200) * 1000
 	result, err := client.CreateMetricRuleset(context.Background(), &metric_ruleset.CreateMetricRulesetRequest{
 		MetricName:  metricName,
 		Description: &rulesetDescription,
@@ -61,7 +61,6 @@ func TestCreateArchivedMetricRuleset(t *testing.T) {
 	assert.NotNil(t, restorationID, "Restoration ID is null")
 	assert.NotNil(t, &startTime, "StartTime is null")
 	assert.NotNil(t, &stopTime, "StartTime is null")
-	//assert.Equal(t, &stopTime, *result.ExceptionRules[0].Restoration.StopTime, "StopTime dont match")
 	assert.Equal(t, metricName, *result.MetricName, "MetricName does not match")
 	assert.Equal(t, rulesetDescription, *result.Description, "Description does not match")
 	assert.Equal(t, 1, len(result.ExceptionRules), "Unexpected length of exception rules array")
