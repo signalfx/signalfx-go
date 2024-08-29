@@ -10,6 +10,11 @@
           } ],
         "type": "dimension"
       },
+      "restoration" : {
+        "restorationId" : "GWBTAQwAAAA",
+        "startTime" : 1724793174572,
+        "stopTime" : 1724796774661
+      },
       "name": "TestRule",
       "description": "exception rule 1"
     }
