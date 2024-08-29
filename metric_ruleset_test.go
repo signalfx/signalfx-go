@@ -61,7 +61,7 @@ func TestCreateArchivedMetricRuleset(t *testing.T) {
 	assert.NotNil(t, restorationID, "Restoration ID is null")
 	assert.Equal(t, restorationID, *result.ExceptionRules[0].Restoration.RestorationId, "Restoration ID does not match")
 	assert.Equal(t, int64(1724793174572), *result.ExceptionRules[0].Restoration.StartTime, "StartTime does not match")
-	assert.NotNil(t, int64(1724796774661), *result.ExceptionRules[0].Restoration.StopTime, "StartTime does not match")
+	assert.Equal(t, int64(1724796774661), *result.ExceptionRules[0].Restoration.StopTime, "StopTime does not match")
 	assert.Equal(t, metricName, *result.MetricName, "MetricName does not match")
 	assert.Equal(t, rulesetDescription, *result.Description, "Description does not match")
 	assert.Equal(t, 1, len(result.ExceptionRules), "Unexpected length of exception rules array")
