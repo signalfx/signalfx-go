@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -18,16 +17,13 @@ const MetricRulesetApiURL = "/v2/metricruleset"
 // GetMetricRuleset gets a metric ruleset.
 func (c *Client) GetMetricRuleset(ctx context.Context, id string) (*metric_ruleset.GetMetricRulesetResponse, error) {
 	resp, err := c.doRequest(ctx, http.MethodGet, MetricRulesetApiURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	metricRuleset := &metric_ruleset.GetMetricRulesetResponse{}
@@ -53,9 +49,8 @@ func (c *Client) CreateMetricRuleset(ctx context.Context, metricRuleset *metric_
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	createdMetricRuleset := &metric_ruleset.CreateMetricRulesetResponse{}
@@ -73,17 +68,13 @@ func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRules
 	}
 
 	resp, err := c.doRequest(ctx, http.MethodPut, MetricRulesetApiURL+"/"+id, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	updatedMetricRuleset := &metric_ruleset.UpdateMetricRulesetResponse{}
@@ -96,17 +87,13 @@ func (c *Client) UpdateMetricRuleset(ctx context.Context, id string, metricRules
 // DeleteMetricRuleset deletes a metric ruleset.
 func (c *Client) DeleteMetricRuleset(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, http.MethodDelete, MetricRulesetApiURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 
 	io.Copy(ioutil.Discard, resp.Body)
@@ -121,16 +108,13 @@ func (c *Client) GenerateAggregationMetricName(ctx context.Context, generateAggr
 	}
 
 	resp, err := c.doRequest(ctx, http.MethodPost, MetricRulesetApiURL+"/generateAggregationMetricName", nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return "", fmt.Errorf("bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return "", err
 	}
 
 	respBody, err := ioutil.ReadAll(resp.Body)

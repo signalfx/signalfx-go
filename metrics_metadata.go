@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -29,16 +28,13 @@ const TagAPIURL = "/v2/tag"
 // GetDimension gets a dimension.
 func (c *Client) GetDimension(ctx context.Context, key string, value string) (*metrics_metadata.Dimension, error) {
 	resp, err := c.doRequest(ctx, "GET", DimensionAPIURL+"/"+key+"/"+value, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDimension := &metrics_metadata.Dimension{}
@@ -56,16 +52,13 @@ func (c *Client) UpdateDimension(ctx context.Context, key string, value string, 
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", DimensionAPIURL+"/"+key+"/"+value, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDimension := &metrics_metadata.Dimension{}
@@ -87,16 +80,13 @@ func (c *Client) SearchDimension(ctx context.Context, query string, orderBy stri
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest(ctx, "GET", DimensionAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDimensions := &metrics_metadata.DimensionQueryResponseModel{}
@@ -118,16 +108,13 @@ func (c *Client) SearchMetric(ctx context.Context, query string, orderBy string,
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest(ctx, "GET", MetricAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMetrics := &metrics_metadata.RetrieveMetricMetadataResponseModel{}
@@ -141,16 +128,13 @@ func (c *Client) SearchMetric(ctx context.Context, query string, orderBy string,
 // GetMetric retrieves a single metric by name.
 func (c *Client) GetMetric(ctx context.Context, name string) (*metrics_metadata.Metric, error) {
 	resp, err := c.doRequest(ctx, "GET", MetricAPIURL+"/"+name, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMetric := &metrics_metadata.Metric{}
@@ -169,16 +153,13 @@ func (c *Client) CreateUpdateMetric(ctx context.Context, name string, cumr *metr
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", MetricAPIURL+"/"+name, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMetric := &metrics_metadata.Metric{}
@@ -192,16 +173,13 @@ func (c *Client) CreateUpdateMetric(ctx context.Context, name string, cumr *metr
 // GetMetricTimeSeries retrieves a metric time series by id.
 func (c *Client) GetMetricTimeSeries(ctx context.Context, id string) (*metrics_metadata.MetricTimeSeries, error) {
 	resp, err := c.doRequest(ctx, "GET", MetricTimeSeriesAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMetricTimeSeries := &metrics_metadata.MetricTimeSeries{}
@@ -223,16 +201,13 @@ func (c *Client) SearchMetricTimeSeries(ctx context.Context, query string, order
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest(ctx, "GET", MetricTimeSeriesAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMTS := &metrics_metadata.MetricTimeSeriesRetrieveResponseModel{}
@@ -254,16 +229,13 @@ func (c *Client) SearchTag(ctx context.Context, query string, orderBy string, li
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest(ctx, "GET", TagAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTags := &metrics_metadata.TagRetrieveResponseModel{}
@@ -277,16 +249,13 @@ func (c *Client) SearchTag(ctx context.Context, query string, orderBy string, li
 // GetTag gets a tag by name
 func (c *Client) GetTag(ctx context.Context, name string) (*metrics_metadata.Tag, error) {
 	resp, err := c.doRequest(ctx, "GET", TagAPIURL+"/"+name, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTag := &metrics_metadata.Tag{}
@@ -300,16 +269,13 @@ func (c *Client) GetTag(ctx context.Context, name string) (*metrics_metadata.Tag
 // DeleteTag deletes a tag.
 func (c *Client) DeleteTag(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", TagAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -324,16 +290,13 @@ func (c *Client) CreateUpdateTag(ctx context.Context, name string, cutr *metrics
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", TagAPIURL+"/"+name, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTag := &metrics_metadata.Tag{}

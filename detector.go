@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -25,16 +24,13 @@ func (c *Client) CreateDetector(ctx context.Context, detectorRequest *detector.C
 	}
 
 	resp, err := c.doRequest(ctx, "POST", DetectorAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDetector := &detector.Detector{}
@@ -48,16 +44,13 @@ func (c *Client) CreateDetector(ctx context.Context, detectorRequest *detector.C
 // DeleteDetector deletes a detector.
 func (c *Client) DeleteDetector(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", DetectorAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -72,16 +65,13 @@ func (c *Client) DisableDetector(ctx context.Context, id string, labels []string
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", DetectorAPIURL+"/"+id+"/disable", nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -96,16 +86,13 @@ func (c *Client) EnableDetector(ctx context.Context, id string, labels []string)
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", DetectorAPIURL+"/"+id+"/enable", nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -115,16 +102,13 @@ func (c *Client) EnableDetector(ctx context.Context, id string, labels []string)
 // GetDetector gets a detector.
 func (c *Client) GetDetector(ctx context.Context, id string) (*detector.Detector, error) {
 	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDetector := &detector.Detector{}
@@ -143,16 +127,13 @@ func (c *Client) UpdateDetector(ctx context.Context, id string, detectorRequest 
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", DetectorAPIURL+"/"+id, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDetector := &detector.Detector{}
@@ -174,16 +155,13 @@ func (c *Client) SearchDetectors(ctx context.Context, limit int, name string, of
 	}
 
 	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDetectors := &detector.SearchResults{}
@@ -202,16 +180,13 @@ func (c *Client) GetDetectorEvents(ctx context.Context, id string, from int, to 
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("limit", strconv.Itoa(limit))
 	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL+"/"+id+"/events", params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	var events []*detector.Event
@@ -228,16 +203,13 @@ func (c *Client) GetDetectorIncidents(ctx context.Context, id string, offset int
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("limit", strconv.Itoa(limit))
 	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL+"/"+id+"/incidents", params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	var incidents []*detector.Incident
@@ -256,16 +228,13 @@ func (c *Client) ValidateDetector(ctx context.Context, detectorRequest *detector
 	}
 
 	resp, err := c.doRequest(ctx, "POST", DetectorAPIURL+"/validate", nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 

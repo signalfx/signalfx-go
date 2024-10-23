@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -20,16 +19,13 @@ func (c *Client) CreateVictorOpsIntegration(ctx context.Context, oi *integration
 	}
 
 	resp, err := c.doRequest(ctx, "POST", IntegrationAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalIntegration := integration.VictorOpsIntegration{}
@@ -43,16 +39,13 @@ func (c *Client) CreateVictorOpsIntegration(ctx context.Context, oi *integration
 // GetVictorOpsIntegration retrieves an VictorOps integration.
 func (c *Client) GetVictorOpsIntegration(ctx context.Context, id string) (*integration.VictorOpsIntegration, error) {
 	resp, err := c.doRequest(ctx, "GET", IntegrationAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalIntegration := integration.VictorOpsIntegration{}
@@ -71,16 +64,13 @@ func (c *Client) UpdateVictorOpsIntegration(ctx context.Context, id string, oi *
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", IntegrationAPIURL+"/"+id, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalIntegration := integration.VictorOpsIntegration{}
@@ -94,16 +84,13 @@ func (c *Client) UpdateVictorOpsIntegration(ctx context.Context, id string, oi *
 // DeleteVictorOpsIntegration deletes an VictorOps integration.
 func (c *Client) DeleteVictorOpsIntegration(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", IntegrationAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 

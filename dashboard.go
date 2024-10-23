@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -27,16 +26,13 @@ func (c *Client) CreateDashboard(ctx context.Context, dashboardRequest *dashboar
 	}
 
 	resp, err := c.doRequest(ctx, "POST", DashboardAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDashboard := &dashboard.Dashboard{}
@@ -50,16 +46,13 @@ func (c *Client) CreateDashboard(ctx context.Context, dashboardRequest *dashboar
 // DeleteDashboard deletes a dashboard.
 func (c *Client) DeleteDashboard(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", DashboardAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -69,16 +62,13 @@ func (c *Client) DeleteDashboard(ctx context.Context, id string) error {
 // GetDashboard gets a dashboard.
 func (c *Client) GetDashboard(ctx context.Context, id string) (*dashboard.Dashboard, error) {
 	resp, err := c.doRequest(ctx, "GET", DashboardAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDashboard := &dashboard.Dashboard{}
@@ -97,16 +87,13 @@ func (c *Client) UpdateDashboard(ctx context.Context, id string, dashboardReques
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", DashboardAPIURL+"/"+id, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDashboard := &dashboard.Dashboard{}
@@ -126,16 +113,13 @@ func (c *Client) SearchDashboard(ctx context.Context, limit int, name string, of
 	params.Add("tags", tags)
 
 	resp, err := c.doRequest(ctx, "GET", DashboardAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDashboards := &dashboard.SearchResult{}

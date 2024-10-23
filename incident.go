@@ -3,7 +3,6 @@ package signalfx
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -19,16 +18,13 @@ const IncidentAPIURL = "/v2/incident"
 // Get incident with the given id
 func (c *Client) GetIncident(ctx context.Context, id string) (*detector.Incident, error) {
 	resp, err := c.doRequest(ctx, "GET", IncidentAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalIncident := &detector.Incident{}
@@ -47,17 +43,11 @@ func (c *Client) GetIncidents(ctx context.Context, includeResolved bool, limit i
 	params.Add("query", query)
 	params.Add("offset", strconv.Itoa(offset))
 	resp, err := c.doRequest(ctx, "GET", IncidentAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-	if resp.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-		return nil, fmt.Errorf(string(body))
-	}
 	if err != nil {
+		return nil, err
+	}
+
+	if err = newResponseError(resp, http.StatusOK); err != nil {
 		return nil, err
 	}
 

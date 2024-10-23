@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/signalfx/signalfx-go/slo"
 	"io"
 	"net/http"
+
+	"github.com/signalfx/signalfx-go/slo"
 )
 
 const SloAPIURL = "/v2/slo"
@@ -47,17 +47,13 @@ func (c *Client) executeSloRequest(ctx context.Context, url string, method strin
 	}
 
 	resp, err := c.doRequest(ctx, method, url, nil, body)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != expectedValidStatus {
-		message, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, expectedValidStatus); err != nil {
+		return nil, err
 	}
 
 	if resp.Body != nil {

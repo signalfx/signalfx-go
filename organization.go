@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -22,16 +21,13 @@ const OrganizationMembersAPIURL = "/v2/organization/members"
 // GetOrganization gets an organization.
 func (c *Client) GetOrganization(ctx context.Context, id string) (*organization.Organization, error) {
 	resp, err := c.doRequest(ctx, "GET", OrganizationAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalOrganization := &organization.Organization{}
@@ -45,16 +41,13 @@ func (c *Client) GetOrganization(ctx context.Context, id string) (*organization.
 // GetMember gets a member.
 func (c *Client) GetMember(ctx context.Context, id string) (*organization.Member, error) {
 	resp, err := c.doRequest(ctx, "GET", OrganizationMemberAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMember := &organization.Member{}
@@ -68,16 +61,13 @@ func (c *Client) GetMember(ctx context.Context, id string) (*organization.Member
 // DeleteMember deletes a detector.
 func (c *Client) DeleteMember(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", OrganizationMemberAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -92,16 +82,13 @@ func (c *Client) InviteMember(ctx context.Context, inviteRequest *organization.C
 	}
 
 	resp, err := c.doRequest(ctx, "POST", OrganizationMemberAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMember := &organization.Member{}
@@ -120,16 +107,13 @@ func (c *Client) UpdateMember(ctx context.Context, id string, updateRequest *org
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", OrganizationMemberAPIURL+"/"+id, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMember := &organization.Member{}
@@ -148,16 +132,13 @@ func (c *Client) InviteMembers(ctx context.Context, inviteRequest *organization.
 	}
 
 	resp, err := c.doRequest(ctx, "POST", OrganizationMembersAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMembers := &organization.InviteMembersRequest{}
@@ -177,16 +158,13 @@ func (c *Client) GetOrganizationMembers(ctx context.Context, limit int, query st
 	params.Add("orderBy", orderBy)
 
 	resp, err := c.doRequest(ctx, "GET", OrganizationMemberAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalMembers := &organization.MemberSearchResults{}
