@@ -38,12 +38,29 @@ func newResponseError(resp *http.Response, target int, targets ...int) error {
 	}
 }
 
-// IsResponseError is convenience function to see
-// if it can convert into RequestError.
-func IsResponseError(err error) (*ResponseError, bool) {
-	var re *ResponseError
-	if errors.As(err, &re) {
-		return err.(*ResponseError), true
+// AsResponseError is a convenience function to check the error
+// to see if it contains an `ResponseError` and returns the value with true.
+// If the error was initially joined using [errors.Join], it will check each error
+// within the list and return the first matching error.
+func AsResponseError(err error) (*ResponseError, bool) {
+	// When `errors.Join` is called, it returns an error that
+	// matches the provided interface.
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		for _, err := range joined.Unwrap() {
+			if re, ok := AsResponseError(err); ok {
+				return re, ok
+			}
+		}
+		return nil, false
+	}
+
+	for err != nil {
+		if re, ok := err.(*ResponseError); ok {
+			return re, true
+		}
+		// In case the error is wrapped using `fmt.Errorf`
+		// this will also account for that.
+		err = errors.Unwrap(err)
 	}
 	return nil, false
 }

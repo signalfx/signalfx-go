@@ -2,6 +2,7 @@ package signalfx
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -130,12 +131,22 @@ func TestIsRequestError(t *testing.T) {
 			err:      &ResponseError{},
 			expected: true,
 		},
+		{
+			name:     "joined errors",
+			err:      errors.Join(errors.New("boom"), &ResponseError{}),
+			expected: true,
+		},
+		{
+			name:     "fmt error",
+			err:      fmt.Errorf("check permissions: %w", &ResponseError{}),
+			expected: true,
+		},
 	} {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, ok := IsResponseError(tc.err)
+			_, ok := AsResponseError(tc.err)
 			assert.Equal(t, tc.expected, ok, "Must match the expected value")
 		})
 	}
