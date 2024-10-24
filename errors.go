@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 )
 
 // ResponseError captures the error details
@@ -22,11 +23,8 @@ func newResponseError(resp *http.Response, target int, targets ...int) error {
 		return nil
 	}
 
-	// Once upgraded to go 1.22+, replace for slices.Contains
-	for _, code := range append([]int{target}, targets...) {
-		if resp.StatusCode == code {
-			return nil
-		}
+	if slices.Contains(append([]int{target}, targets...), resp.StatusCode) {
+		return nil
 	}
 
 	details, _ := io.ReadAll(resp.Body)
