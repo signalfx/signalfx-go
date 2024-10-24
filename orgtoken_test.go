@@ -9,6 +9,7 @@ import (
 
 	"github.com/signalfx/signalfx-go/orgtoken"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCreateOrgToken(t *testing.T) {
@@ -47,7 +48,7 @@ func TestDeleteOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/token/{tokenName...}", verifyRequest(t, "DELETE", true, http.StatusNoContent, nil, ""))
 
 	err := client.DeleteOrgToken(context.Background(), "string/fart")
 	assert.NoError(t, err, "Unexpected error deleting token")
@@ -67,21 +68,21 @@ func TestGetOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "GET", true, http.StatusOK, nil, "orgtoken/get_success.json"))
+	mux.HandleFunc("/v2/token/{tokenName...}", verifyRequest(t, "GET", true, http.StatusOK, nil, "orgtoken/get_success.json"))
 
 	result, err := client.GetOrgToken(context.Background(), "string/fart")
-	assert.NoError(t, err, "Unexpected error getting token")
-	assert.Equal(t, result.Name, "string", "Name does not match")
+	require.NoError(t, err, "Unexpected error getting token")
+	require.Equal(t, result.Name, "string", "Name does not match")
 }
 
 func TestGetMissingOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/token/{tokenName...}", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetOrgToken(context.Background(), "string/fart")
-	assert.Error(t, err, "Should have gotten an error from a missing token")
+	require.Error(t, err, "Should have gotten an error from a missing token")
 	assert.Nil(t, result, "Should have gotten a nil result from a missing token")
 }
 
@@ -100,7 +101,7 @@ func TestSearchOrgToken(t *testing.T) {
 	mux.HandleFunc("/v2/token", verifyRequest(t, "GET", true, http.StatusOK, params, "orgtoken/search_success.json"))
 
 	results, err := client.SearchOrgTokens(context.Background(), limit, name, offset)
-	assert.NoError(t, err, "Unexpected error search token")
+	require.NoError(t, err, "Unexpected error search token")
 	assert.Equal(t, int32(2), results.Count, "Incorrect number of results")
 }
 
@@ -126,12 +127,12 @@ func TestUpdateOrgToken(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/token/string%2Ffart", verifyRequest(t, "PUT", true, http.StatusOK, nil, "orgtoken/update_success.json"))
+	mux.HandleFunc("/v2/token/{tokenName...}", verifyRequest(t, "PUT", true, http.StatusOK, nil, "orgtoken/update_success.json"))
 
 	result, err := client.UpdateOrgToken(context.Background(), "string/fart", &orgtoken.CreateUpdateTokenRequest{
 		Name: "string",
 	})
-	assert.NoError(t, err, "Unexpected error updating token")
+	require.NoError(t, err, "Unexpected error updating token")
 	assert.Equal(t, "string", result.Name, "Name does not match")
 }
 
@@ -144,6 +145,6 @@ func TestUpdateMissingOrgToken(t *testing.T) {
 	result, err := client.UpdateOrgToken(context.Background(), "string", &orgtoken.CreateUpdateTokenRequest{
 		Name: "string",
 	})
-	assert.Error(t, err, "Should have gotten an error from an update on a missing token")
+	require.Error(t, err, "Should have gotten an error from an update on a missing token")
 	assert.Nil(t, result, "Should have gotten a nil result from an update on a missing token")
 }
