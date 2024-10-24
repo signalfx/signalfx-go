@@ -10,7 +10,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -69,9 +68,8 @@ func (c *Client) doIntegrationRequest(ctx context.Context, url string, method st
 		return err
 	}
 
-	if resp.StatusCode != status {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, status); err != nil {
+		return err
 	}
 
 	if out != nil {

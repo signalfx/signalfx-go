@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -26,16 +25,13 @@ func (c *Client) CreateTeam(ctx context.Context, t *team.CreateUpdateTeamRequest
 	}
 
 	resp, err := c.doRequest(ctx, "POST", TeamAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTeam := &team.Team{}
@@ -49,15 +45,13 @@ func (c *Client) CreateTeam(ctx context.Context, t *team.CreateUpdateTeamRequest
 // DeleteTeam deletes a team.
 func (c *Client) DeleteTeam(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", TeamAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		return errors.New("Unexpected status code: " + resp.Status)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -67,15 +61,13 @@ func (c *Client) DeleteTeam(ctx context.Context, id string) error {
 // GetTeam gets a team.
 func (c *Client) GetTeam(ctx context.Context, id string) (*team.Team, error) {
 	resp, err := c.doRequest(ctx, "GET", TeamAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTeam := &team.Team{}
@@ -94,15 +86,13 @@ func (c *Client) UpdateTeam(ctx context.Context, id string, t *team.CreateUpdate
 	}
 
 	resp, err := c.doRequest(ctx, "PUT", TeamAPIURL+"/"+id, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTeam := &team.Team{}
@@ -122,16 +112,13 @@ func (c *Client) SearchTeam(ctx context.Context, limit int, name string, offset 
 	params.Add("tags", tags)
 
 	resp, err := c.doRequest(ctx, "GET", TeamAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTeams := &team.SearchResults{}
@@ -147,16 +134,13 @@ func (c *Client) LinkDetectorToTeam(ctx context.Context, id string, detectorID s
 	targetURL := fmt.Sprintf("%s/%s/detector/%s", TeamAPIURL, id, detectorID)
 	resp, err := c.doRequest(ctx, "POST", targetURL, nil, nil)
 
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 
 	return nil
@@ -167,16 +151,13 @@ func (c *Client) UnlinkDetectorFromTeam(ctx context.Context, id string, detector
 	targetURL := fmt.Sprintf("%s/%s/detector/%s", TeamAPIURL, id, detectorID)
 	resp, err := c.doRequest(ctx, "DELETE", targetURL, nil, nil)
 
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 
 	return nil
@@ -186,17 +167,13 @@ func (c *Client) UnlinkDetectorFromTeam(ctx context.Context, id string, detector
 func (c *Client) LinkDashboardGroupToTeam(ctx context.Context, id string, dashboardGroupID string) error {
 	targetURL := fmt.Sprintf("%s/%s/dashboardgroup/%s", TeamAPIURL, id, dashboardGroupID)
 	resp, err := c.doRequest(ctx, "POST", targetURL, nil, nil)
-
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 
 	return nil
@@ -207,16 +184,13 @@ func (c *Client) UnlinkDashboardGroupFromTeam(ctx context.Context, id string, da
 	targetURL := fmt.Sprintf("%s/%s/dashboardgroup/%s", TeamAPIURL, id, dashboardGroupID)
 	resp, err := c.doRequest(ctx, "DELETE", targetURL, nil, nil)
 
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 
 	return nil

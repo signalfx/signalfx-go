@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -25,16 +24,13 @@ func (c *Client) CreateDataLink(ctx context.Context, dataLinkRequest *datalink.C
 	}
 
 	resp, err := c.doRequest(ctx, "POST", DataLinkAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDataLink := &datalink.DataLink{}
@@ -48,19 +44,17 @@ func (c *Client) CreateDataLink(ctx context.Context, dataLinkRequest *datalink.C
 // DeleteDataLink deletes a data link.
 func (c *Client) DeleteDataLink(ctx context.Context, id string) error {
 	resp, err := c.doRequest(ctx, "DELETE", DataLinkAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	// The API returns a 200 here, which I think is a mistake so covering for
 	// future changes.
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent, http.StatusOK); err != nil {
+		return err
 	}
+
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	return nil
@@ -69,16 +63,13 @@ func (c *Client) DeleteDataLink(ctx context.Context, id string) error {
 // GetDataLink gets a data link.
 func (c *Client) GetDataLink(ctx context.Context, id string) (*datalink.DataLink, error) {
 	resp, err := c.doRequest(ctx, "GET", DataLinkAPIURL+"/"+id, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDataLink := &datalink.DataLink{}
@@ -98,16 +89,14 @@ func (c *Client) UpdateDataLink(ctx context.Context, id string, dataLinkRequest 
 
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest(ctx, "PUT", DataLinkAPIURL+"/"+encodedName, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
+
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDataLink := &datalink.DataLink{}
@@ -126,16 +115,13 @@ func (c *Client) SearchDataLinks(ctx context.Context, limit int, context string,
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest(ctx, "GET", DataLinkAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalDataLinks := &datalink.SearchResults{}

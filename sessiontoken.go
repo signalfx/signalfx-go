@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -25,16 +24,13 @@ func (c *Client) CreateSessionToken(ctx context.Context, tokenRequest *sessionto
 	// we need to explicitly pass an empty token (which means it wont get set in the header)
 	// the API accepts either no token or a valid token, but not an empty token.
 	resp, err := c.doRequestWithToken(ctx, "POST", SessionTokenAPIURL, nil, bytes.NewReader(payload), "")
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	sessionToken := &sessiontoken.Token{}
@@ -48,16 +44,13 @@ func (c *Client) CreateSessionToken(ctx context.Context, tokenRequest *sessionto
 // DeleteOrgToken deletes a token.
 func (c *Client) DeleteSessionToken(ctx context.Context, token string) error {
 	resp, err := c.doRequestWithToken(ctx, "DELETE", SessionTokenAPIURL, nil, nil, token)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 

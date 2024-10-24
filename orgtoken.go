@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -25,16 +24,13 @@ func (c *Client) CreateOrgToken(ctx context.Context, tokenRequest *orgtoken.Crea
 	}
 
 	resp, err := c.doRequest(ctx, "POST", TokenAPIURL, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalToken := &orgtoken.Token{}
@@ -49,16 +45,13 @@ func (c *Client) CreateOrgToken(ctx context.Context, tokenRequest *orgtoken.Crea
 func (c *Client) DeleteOrgToken(ctx context.Context, name string) error {
 	encodedName := url.PathEscape(name)
 	resp, err := c.doRequest(ctx, "DELETE", TokenAPIURL+"/"+encodedName, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
 	}
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
@@ -69,16 +62,13 @@ func (c *Client) DeleteOrgToken(ctx context.Context, name string) error {
 func (c *Client) GetOrgToken(ctx context.Context, id string) (*orgtoken.Token, error) {
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest(ctx, "GET", TokenAPIURL+"/"+encodedName, nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalToken := &orgtoken.Token{}
@@ -98,16 +88,13 @@ func (c *Client) UpdateOrgToken(ctx context.Context, id string, tokenRequest *or
 
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest(ctx, "PUT", TokenAPIURL+"/"+encodedName, nil, bytes.NewReader(payload))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Bad status %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalToken := &orgtoken.Token{}
@@ -126,16 +113,13 @@ func (c *Client) SearchOrgTokens(ctx context.Context, limit int, name string, of
 	params.Add("offset", strconv.Itoa(offset))
 
 	resp, err := c.doRequest(ctx, "GET", TokenAPIURL, params, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		message, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf("Unexpected status code: %d: %s", resp.StatusCode, message)
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
 	}
 
 	finalTokens := &orgtoken.SearchResults{}
