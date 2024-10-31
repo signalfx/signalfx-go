@@ -34,7 +34,33 @@ func TestBadCreateChart(t *testing.T) {
 		Name: "string",
 	})
 	assert.Error(t, err, "Expected error creating bad chart")
-	assert.Nil(t, result, "Exepcted nil result creating bad chart")
+	assert.Nil(t, result, "Expected nil result creating bad chart")
+}
+
+func TestCreateSloChart(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/chart/createSloChart", verifyRequest(t, "POST", true, http.StatusOK, nil, "chart/create_success.json"))
+
+	result, err := client.CreateSloChart(context.Background(), &chart.CreateUpdateSloChartRequest{
+		SloId: "slo-id",
+	})
+	assert.NoError(t, err, "Unexpected error creating chart")
+	assert.Equal(t, "slo-id", result.SloId, "SLO ID does not match")
+}
+
+func TestBadCreateSloChart(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/chart/createSloChart", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+
+	result, err := client.CreateSloChart(context.Background(), &chart.CreateUpdateSloChartRequest{
+		SloId: "slo-id",
+	})
+	assert.Error(t, err, "Expected error creating bad chart")
+	assert.Nil(t, result, "Expected nil result creating bad chart")
 }
 
 func TestDeleteChart(t *testing.T) {
@@ -141,6 +167,32 @@ func TestUpdateMissingChart(t *testing.T) {
 
 	result, err := client.UpdateChart(context.Background(), "string", &chart.CreateUpdateChartRequest{
 		Name: "string",
+	})
+	assert.Error(t, err, "Expected error updating chart")
+	assert.Nil(t, result, "Expected nil result updating chart")
+}
+
+func TestUpdateSloChart(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/chart/updateSloChart/slo-id", verifyRequest(t, "PUT", true, http.StatusOK, nil, "chart/update_success.json"))
+
+	result, err := client.UpdateSloChart(context.Background(), "slo-id", &chart.CreateUpdateSloChartRequest{
+		SloId: "slo-id",
+	})
+	assert.NoError(t, err, "Unexpected error updating chart")
+	assert.Equal(t, "slo-id", result.SloId, "SLO ID does not match")
+}
+
+func TestUpdateMissingSloChart(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/chart/updateSloChart/slo-id", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
+
+	result, err := client.UpdateSloChart(context.Background(), "slo-id", &chart.CreateUpdateSloChartRequest{
+		SloId: "slo-id",
 	})
 	assert.Error(t, err, "Expected error updating chart")
 	assert.Nil(t, result, "Expected nil result updating chart")

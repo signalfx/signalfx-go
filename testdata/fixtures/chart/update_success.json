@@ -104,5 +104,6 @@
   "programText": "string",
   "tags": [
     "string"
-  ]
+  ],
+  "sloId": "slo-id"
 }
