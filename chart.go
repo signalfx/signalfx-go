@@ -15,15 +15,26 @@ import (
 
 // ChartAPIURL is the base URL for interacting with charts.
 const ChartAPIURL = "/v2/chart"
+const CreateSloChartAPIURL = ChartAPIURL + "/createSloChart"
+const UpdateSloChartAPIURL = ChartAPIURL + "/updateSloChart"
 
 // CreateChart creates a chart.
 func (c *Client) CreateChart(ctx context.Context, chartRequest *chart.CreateUpdateChartRequest) (*chart.Chart, error) {
+	return c.internalCreateChart(ctx, chartRequest, ChartAPIURL)
+}
+
+// CreateSloChart creates a SLO chart.
+func (c *Client) CreateSloChart(ctx context.Context, chartRequest *chart.CreateUpdateSloChartRequest) (*chart.Chart, error) {
+	return c.internalCreateChart(ctx, chartRequest, CreateSloChartAPIURL)
+}
+
+func (c *Client) internalCreateChart(ctx context.Context, chartRequest interface{}, url string) (*chart.Chart, error) {
 	payload, err := json.Marshal(chartRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.doRequest(ctx, "POST", ChartAPIURL, nil, bytes.NewReader(payload))
+	resp, err := c.doRequest(ctx, "POST", url, nil, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
@@ -79,12 +90,21 @@ func (c *Client) GetChart(ctx context.Context, id string) (*chart.Chart, error) 
 
 // UpdateChart updates a chart.
 func (c *Client) UpdateChart(ctx context.Context, id string, chartRequest *chart.CreateUpdateChartRequest) (*chart.Chart, error) {
+	return c.internalUpdateChart(ctx, id, chartRequest, ChartAPIURL)
+}
+
+// UpdateSloChart updates an SLO chart.
+func (c *Client) UpdateSloChart(ctx context.Context, id string, chartRequest *chart.CreateUpdateSloChartRequest) (*chart.Chart, error) {
+	return c.internalUpdateChart(ctx, id, chartRequest, UpdateSloChartAPIURL)
+}
+
+func (c *Client) internalUpdateChart(ctx context.Context, id string, chartRequest interface{}, url string) (*chart.Chart, error) {
 	payload, err := json.Marshal(chartRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.doRequest(ctx, "PUT", ChartAPIURL+"/"+id, nil, bytes.NewReader(payload))
+	resp, err := c.doRequest(ctx, "PUT", url+"/"+id, nil, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}

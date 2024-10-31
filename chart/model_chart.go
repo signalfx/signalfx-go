@@ -31,4 +31,6 @@ type Chart struct {
 	ProgramText string `json:"programText,omitempty"`
 	// An array that contains tag values. You can use tags to search for or filter charts. One use is to tag charts that are in production with the value `prod`.
 	Tags []string `json:"tags,omitempty"`
+	// ID of an SLO instance attached to this chart
+	SloId string `json:"sloId,omitempty"`
 }
