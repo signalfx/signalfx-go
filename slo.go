@@ -56,12 +56,13 @@ func (c *Client) executeSloRequest(ctx context.Context, url string, method strin
 		return nil, err
 	}
 
-	if resp.Body != nil {
-		returnedSlo := &slo.SloObject{}
-		err = json.NewDecoder(resp.Body).Decode(returnedSlo)
-		return returnedSlo, nil
-	} else {
+	if expectedValidStatus == http.StatusNoContent {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, nil
 	}
+
+	returnedSlo := &slo.SloObject{}
+	err = json.NewDecoder(resp.Body).Decode(returnedSlo)
+	_, _ = io.Copy(io.Discard, resp.Body)
+	return returnedSlo, err
 }
