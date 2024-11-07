@@ -122,6 +122,27 @@ func (c *Client) internalUpdateChart(ctx context.Context, id string, chartReques
 	return finalChart, err
 }
 
+// ValidateChart validates a chart.
+func (c *Client) ValidateChart(ctx context.Context, chartRequest *chart.CreateUpdateChartRequest) error {
+	payload, err := json.Marshal(chartRequest)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest(ctx, "POST", ChartAPIURL+"/validate", nil, bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
+	}
+	_, _ = io.Copy(io.Discard, resp.Body)
+
+	return nil
+}
+
 // SearchCharts searches for charts, given a query string in `name`.
 func (c *Client) SearchCharts(ctx context.Context, limit int, name string, offset int, tags string) (*chart.SearchResult, error) {
 	params := url.Values{}

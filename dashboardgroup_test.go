@@ -146,3 +146,27 @@ func TestUpdateDashboardGroup(t *testing.T) {
 	assert.Error(t, err, "Should have error updating missing dashboard group")
 	assert.Nil(t, result, "Should have nil result")
 }
+
+func TestValidateDashboardGroup(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+
+	err := client.ValidateDashboardGroup(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
+		Name: "string",
+	})
+	assert.NoError(t, err, "Unexpected error validating dashboard group")
+}
+
+func TestValidateDashboardGroupBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+
+	err := client.ValidateDashboardGroup(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should have gotten an error from invalid dashboard group")
+}

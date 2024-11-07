@@ -109,6 +109,27 @@ func (c *Client) UpdateDashboardGroup(ctx context.Context, id string, dashboardG
 	return finalDashboardGroup, err
 }
 
+// ValidateDashboardGroup validates a dashboard grouop.
+func (c *Client) ValidateDashboardGroup(ctx context.Context, dashboardGroupRequest *dashboard_group.CreateUpdateDashboardGroupRequest) error {
+	payload, err := json.Marshal(dashboardGroupRequest)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest(ctx, "POST", DashboardGroupAPIURL+"/validate", nil, bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
+	}
+	_, _ = io.Copy(io.Discard, resp.Body)
+
+	return nil
+}
+
 // SearchDashboardGroup searches for dashboard groups, given a query string in `name`.
 func (c *Client) SearchDashboardGroups(ctx context.Context, limit int, name string, offset int) (*dashboard_group.SearchResult, error) {
 	params := url.Values{}

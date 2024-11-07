@@ -104,6 +104,27 @@ func (c *Client) UpdateDashboard(ctx context.Context, id string, dashboardReques
 	return finalDashboard, err
 }
 
+// ValidateDashboard validates a dashboard.
+func (c *Client) ValidateDashboard(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest) error {
+	payload, err := json.Marshal(dashboardRequest)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest(ctx, "POST", DashboardAPIURL+"/validate", nil, bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusNoContent); err != nil {
+		return err
+	}
+	_, _ = io.Copy(io.Discard, resp.Body)
+
+	return nil
+}
+
 // SearchDashboard searches for dashboards, given a query string in `name`.
 func (c *Client) SearchDashboard(ctx context.Context, limit int, name string, offset int, tags string) (*dashboard.SearchResult, error) {
 	params := url.Values{}
