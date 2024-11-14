@@ -33,9 +33,12 @@ type GCPIntegration struct {
 	// Array of GCP services that you want SignalFx to monitor. SignalFx only supports certain services, and if you specify an unsupported one, you receive an API error. The supported services are: <br>   * appengine   * bigquery   * bigtable   * cloudfunctions   * cloudiot   * cloudsql   * cloudtasks   * compute   * container   * dataflow   * datastore   * firebasedatabase   * firebasehosting   * interconnect   * loadbalancing   * logging   * ml   * monitoring   * pubsub   * router   * serviceruntime   * spanner   * storage   * vpn
 	Services []GcpService `json:"services,omitempty"`
 	// A list of additional GCP service domain names that you want to monitor using Observability Cloud. Use this list to specify services that Observability Cloud doesn't support. If you specify an invalid name, the system responds to your API request with an HTTP response code <i>400</i>.
-	CustomMetricTypeDomains []string `json:"customMetricTypeDomains,omitempty"`
+	CustomMetricTypeDomains []string      `json:"customMetricTypeDomains,omitempty"`
+	AuthMethod              GCPAuthMethod `json:"authMethod,omitempty"`
 	// List of GCP project that you want SignalFx to monitor, in the form of a JSON array of objects
-	ProjectServiceKeys []*GCPProject `json:"projectServiceKeys,omitempty"`
+	ProjectServiceKeys []*GCPProject          `json:"projectServiceKeys,omitempty"`
+	WifConfigs         []*GCPProjectWIFConfig `json:"workloadIdentityFederationConfigs,omitempty"`
+	WifSplunkIdentity  map[string]string      `json:"wifSplunkIdentity,omitempty"`
 	// When this value is set to true Observability Cloud will force usage of a quota from the project where metrics are stored. For this to work the service account provided for the project needs to be provided with serviceusage.services.use permission or Service Usage Consumer role in this project. When set to false default quota settings are used.
 	UseMetricSourceProjectForQuota bool `json:"useMetricSourceProjectForQuota,omitempty"`
 	// List of custom metadata keys that you want SignalFx to collect for Compute Engine Instances, in the form of a JSON array. Refer to Google's GCP documentation to find out the names you want to include.

@@ -28,6 +28,71 @@ func TestMarshalGCPIntegrationWithPollRateMs(t *testing.T) {
 	assert.Equal(t, `{"enabled":false,"type":"","pollRate":90000}`, string(payload), "payload does not match")
 }
 
+func TestMarshalGCPIntegrationWithSAKeyConfig(t *testing.T) {
+	payload, err := json.Marshal(GCPIntegration{
+		ProjectServiceKeys: []*GCPProject{
+			{
+				ProjectId:  "prj-id-123",
+				ProjectKey: "{\"some\":\"key\"}",
+			},
+		},
+	})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","projectServiceKeys":[{"projectId":"prj-id-123","projectKey":"{\"some\":\"key\"}"}]}`, string(payload), "payload does not match")
+}
+
+func TestMarshalGCPIntegrationWithWIFConfig(t *testing.T) {
+	payload, err := json.Marshal(GCPIntegration{
+		AuthMethod: WORKLOAD_IDENTITY_FEDERATION,
+		WifConfigs: []*GCPProjectWIFConfig{
+			{
+				ProjectId: "prj-id-123",
+				WIFConfig: "{\"some\":\"config\"}",
+			},
+		},
+	})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","authMethod":"WORKLOAD_IDENTITY_FEDERATION","workloadIdentityFederationConfigs":[{"projectId":"prj-id-123","wifConfig":"{\"some\":\"config\"}"}]}`, string(payload), "payload does not match")
+}
+
+func TestUnMarshalGCPIntegrationWithWIFConfig(t *testing.T) {
+	GCP := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"authMethod":"WORKLOAD_IDENTITY_FEDERATION","wifSplunkIdentity":{"account_id": "123", "aws_role_arn": "arn:aws:sts::123:assumed-role/splunk-o11y"},"workloadIdentityFederationConfigs":[{"projectId":"prj-id-123","wifConfig":"{\"some\":\"config\"}"}]}`), &GCP)
+
+	expectedSplunkIdentity := map[string]string{
+		"account_id":   "123",
+		"aws_role_arn": "arn:aws:sts::123:assumed-role/splunk-o11y",
+	}
+	expectedConfigs := []*GCPProjectWIFConfig{
+		{
+			ProjectId: "prj-id-123",
+			WIFConfig: "{\"some\":\"config\"}",
+		},
+	}
+	expectedAuthMethod := WORKLOAD_IDENTITY_FEDERATION
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.EqualValues(t, expectedConfigs, GCP.WifConfigs, "WifConfigs do not match")
+	assert.EqualValues(t, expectedSplunkIdentity, GCP.WifSplunkIdentity, "WifSplunkIdentity does not match")
+	assert.EqualValues(t, expectedAuthMethod, GCP.AuthMethod, "AuthMethod does not match")
+}
+
+func TestUnMarshalGCPIntegrationWithSAKeysHidden(t *testing.T) {
+	GCP := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"projectServiceKeys":[{"projectId":"prj-id-123"}]}`), &GCP)
+
+	expectedConfigs := []*GCPProject{
+		{
+			ProjectId: "prj-id-123",
+		},
+	}
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.EqualValues(t, expectedConfigs, GCP.ProjectServiceKeys, "ProjectServiceKeys do not match")
+}
+
 func TestUnmarshalGCPIntegrationWithPollRate(t *testing.T) {
 	GCP := GCPIntegration{}
 	err := json.Unmarshal([]byte(`{"pollRate":60000}`), &GCP)
