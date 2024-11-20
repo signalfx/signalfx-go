@@ -64,6 +64,9 @@ func AsResponseError(err error) (*ResponseError, bool) {
 }
 
 func (re *ResponseError) Error() string {
+	if re.details != "" {
+		return fmt.Sprintf("route %q had issues with status code %d: %s", re.route, re.code, re.details)
+	}
 	return fmt.Sprintf("route %q had issues with status code %d", re.route, re.code)
 }
 

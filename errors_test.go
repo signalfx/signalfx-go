@@ -27,7 +27,7 @@ func TestRequestError(t *testing.T) {
 				route:   "/internal/heathz",
 				details: "failed due to overworked",
 			},
-			err: "route \"/internal/heathz\" had issues with status code 404",
+			err: "route \"/internal/heathz\" had issues with status code 404: failed due to overworked",
 		},
 		{
 			name: "missed details",
