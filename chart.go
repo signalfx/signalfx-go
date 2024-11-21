@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -20,106 +19,75 @@ const UpdateSloChartAPIURL = ChartAPIURL + "/updateSloChart"
 
 // CreateChart creates a chart.
 func (c *Client) CreateChart(ctx context.Context, chartRequest *chart.CreateUpdateChartRequest) (*chart.Chart, error) {
-	return c.internalCreateChart(ctx, chartRequest, ChartAPIURL)
+	return c.executeChartRequest(ctx, ChartAPIURL, http.MethodPost, http.StatusOK, chartRequest)
 }
 
 // CreateSloChart creates a SLO chart.
 func (c *Client) CreateSloChart(ctx context.Context, chartRequest *chart.CreateUpdateSloChartRequest) (*chart.Chart, error) {
-	return c.internalCreateChart(ctx, chartRequest, CreateSloChartAPIURL)
-}
-
-func (c *Client) internalCreateChart(ctx context.Context, chartRequest interface{}, url string) (*chart.Chart, error) {
-	payload, err := json.Marshal(chartRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.doRequest(ctx, "POST", url, nil, bytes.NewReader(payload))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if err = newResponseError(resp, http.StatusOK); err != nil {
-		return nil, err
-	}
-
-	finalChart := &chart.Chart{}
-
-	err = json.NewDecoder(resp.Body).Decode(finalChart)
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
-
-	return finalChart, err
+	return c.executeChartRequest(ctx, CreateSloChartAPIURL, http.MethodPost, http.StatusOK, chartRequest)
 }
 
 // DeleteChart deletes a chart.
 func (c *Client) DeleteChart(ctx context.Context, id string) error {
-	resp, err := c.doRequest(ctx, "DELETE", ChartAPIURL+"/"+id, nil, nil)
-	if err != nil {
-		return err
+	_, err := c.executeChartRequest(ctx, ChartAPIURL+"/"+id, http.MethodDelete, http.StatusOK, nil)
+	if err == io.EOF {
+		// Expected error as delete request returns status 200 instead of 204
+		return nil
 	}
-	defer resp.Body.Close()
-
-	if err = newResponseError(resp, http.StatusOK); err != nil {
-		return err
-	}
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
-
-	return nil
+	return err
 }
 
 // GetChart gets a chart.
 func (c *Client) GetChart(ctx context.Context, id string) (*chart.Chart, error) {
-	resp, err := c.doRequest(ctx, "GET", ChartAPIURL+"/"+id, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if err = newResponseError(resp, http.StatusOK); err != nil {
-		return nil, err
-	}
-
-	finalChart := &chart.Chart{}
-
-	err = json.NewDecoder(resp.Body).Decode(finalChart)
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
-
-	return finalChart, err
+	return c.executeChartRequest(ctx, ChartAPIURL+"/"+id, http.MethodGet, http.StatusOK, nil)
 }
 
 // UpdateChart updates a chart.
 func (c *Client) UpdateChart(ctx context.Context, id string, chartRequest *chart.CreateUpdateChartRequest) (*chart.Chart, error) {
-	return c.internalUpdateChart(ctx, id, chartRequest, ChartAPIURL)
+	return c.executeChartRequest(ctx, ChartAPIURL+"/"+id, http.MethodPut, http.StatusOK, chartRequest)
 }
 
 // UpdateSloChart updates an SLO chart.
 func (c *Client) UpdateSloChart(ctx context.Context, id string, chartRequest *chart.CreateUpdateSloChartRequest) (*chart.Chart, error) {
-	return c.internalUpdateChart(ctx, id, chartRequest, UpdateSloChartAPIURL)
+	return c.executeChartRequest(ctx, UpdateSloChartAPIURL+"/"+id, http.MethodPut, http.StatusOK, chartRequest)
 }
 
-func (c *Client) internalUpdateChart(ctx context.Context, id string, chartRequest interface{}, url string) (*chart.Chart, error) {
-	payload, err := json.Marshal(chartRequest)
-	if err != nil {
-		return nil, err
+// ValidateChart validates a chart.
+func (c *Client) ValidateChart(ctx context.Context, chartRequest *chart.CreateUpdateChartRequest) error {
+	_, err := c.executeChartRequest(ctx, ChartAPIURL+"/validate", http.MethodPost, http.StatusNoContent, chartRequest)
+	return err
+}
+
+func (c *Client) executeChartRequest(ctx context.Context, url string, method string, expectedValidStatus int, chartRequest interface{}) (*chart.Chart, error) {
+	var body io.Reader
+	if chartRequest != nil {
+		payload, err := json.Marshal(chartRequest)
+		if err != nil {
+			return nil, err
+		}
+
+		body = bytes.NewReader(payload)
 	}
 
-	resp, err := c.doRequest(ctx, "PUT", url+"/"+id, nil, bytes.NewReader(payload))
+	resp, err := c.doRequest(ctx, method, url, nil, body)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if err = newResponseError(resp, http.StatusOK); err != nil {
+	if err = newResponseError(resp, expectedValidStatus); err != nil {
 		return nil, err
 	}
 
-	finalChart := &chart.Chart{}
+	if expectedValidStatus == http.StatusNoContent {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, nil
+	}
 
-	err = json.NewDecoder(resp.Body).Decode(finalChart)
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
-
-	return finalChart, err
+	returnedChart := &chart.Chart{}
+	err = json.NewDecoder(resp.Body).Decode(returnedChart)
+	_, _ = io.Copy(io.Discard, resp.Body)
+	return returnedChart, err
 }
 
 // SearchCharts searches for charts, given a query string in `name`.
@@ -147,7 +115,7 @@ func (c *Client) SearchCharts(ctx context.Context, limit int, name string, offse
 	finalCharts := &chart.SearchResult{}
 
 	err = json.NewDecoder(resp.Body).Decode(finalCharts)
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 
 	return finalCharts, err
 }

@@ -145,3 +145,27 @@ func TestUpdateMissingDashboard(t *testing.T) {
 	assert.Error(t, err, "Should've gotten an error from a missing dashboard update")
 	assert.Nil(t, result, "Should've gotten a nil dashboard from a missing dashboard update")
 }
+
+func TestValidateDashboard(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+
+	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
+		Name: "string",
+	})
+	assert.NoError(t, err, "Unexpected error creating dashboard")
+}
+
+func TestValidateBadDashboard(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+
+	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Should have gotten an error code for a bad dashboard")
+}

@@ -197,3 +197,27 @@ func TestUpdateMissingSloChart(t *testing.T) {
 	assert.Error(t, err, "Expected error updating chart")
 	assert.Nil(t, result, "Expected nil result updating chart")
 }
+
+func TestValidateChart(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/chart/validate", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+
+	err := client.ValidateChart(context.Background(), &chart.CreateUpdateChartRequest{
+		Name: "string",
+	})
+	assert.NoError(t, err, "Unexpected error creating chart")
+}
+
+func TestBadValidateChart(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/chart/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+
+	err := client.ValidateChart(context.Background(), &chart.CreateUpdateChartRequest{
+		Name: "string",
+	})
+	assert.Error(t, err, "Expected error creating bad chart")
+}
