@@ -119,6 +119,33 @@ func (c *Client) GetDetector(ctx context.Context, id string) (*detector.Detector
 	return finalDetector, err
 }
 
+// GetDetectors gets all detectors.
+func (c *Client) GetDetectors(ctx context.Context, limit int, name string, offset int) ([]*detector.Detector, error) {
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("name", name)
+	params.Add("offset", strconv.Itoa(offset))
+	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
+	}
+
+	var allDetectors = struct{
+		Count int `json:"count"`
+		Results []*detector.Detector `json:"results"`
+	}{}
+
+	err = json.NewDecoder(resp.Body).Decode(&allDetectors)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
+
+	return allDetectors.Results, err
+}
+
 // UpdateDetector updates a detector.
 func (c *Client) UpdateDetector(ctx context.Context, id string, detectorRequest *detector.CreateUpdateDetectorRequest) (*detector.Detector, error) {
 	payload, err := json.Marshal(detectorRequest)

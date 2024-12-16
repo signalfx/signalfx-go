@@ -108,6 +108,20 @@ func TestGetDetector(t *testing.T) {
 	assert.Equal(t, result.Name, "string", "Name does not match")
 }
 
+func TestGetDetectors(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/detector", verifyRequest(t, "GET", true, http.StatusOK, nil, "detector/get_detectors.json"))
+
+	result, err := client.GetDetectors(context.Background(), 1000, "", 0)
+	assert.NoError(t, err, "Unexpected error getting all detectors")
+	assert.Equal(t, len(result), 2, "Incorrect number of detectors returned")
+	assert.Equal(t, result[0].Id, "string", "ID does not match")
+	assert.Equal(t, result[0].ProgramText, "string", "Program text field does not match")
+	assert.Equal(t, result[1].Id, "string1", "ID does not match")
+}
+
 func TestGetMissingDetector(t *testing.T) {
 	teardown := setup()
 	defer teardown()
