@@ -125,7 +125,7 @@ func (c *Client) GetDetectors(ctx context.Context, limit int, name string, offse
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("name", name)
 	params.Add("offset", strconv.Itoa(offset))
-	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL, nil, nil)
+	resp, err := c.doRequest(ctx, "GET", DetectorAPIURL, params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -135,8 +135,8 @@ func (c *Client) GetDetectors(ctx context.Context, limit int, name string, offse
 		return nil, err
 	}
 
-	var allDetectors = struct{
-		Count int `json:"count"`
+	var allDetectors = struct {
+		Count   int                  `json:"count"`
 		Results []*detector.Detector `json:"results"`
 	}{}
 
