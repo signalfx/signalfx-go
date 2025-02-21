@@ -1,7 +1,7 @@
 package notification
 
 type SplunkPlatformNotification struct {
-	// Tells SignalFx which system it should use to send the notification. For an Splunk Platform notification, this is always \"SplunkPlatform\".
+	// Type sets which system to use to send the notification. For a Splunk Platform notification, this is always \"SplunkPlatform\".
 	Type string `json:"type"`
 	// Tells SignalFX the HTTP Event Collector (HEC) URI for your Splunk platform instance
 	Url string `json:"url"`
