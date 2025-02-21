@@ -5,6 +5,6 @@ type SplunkPlatformNotification struct {
 	Type string `json:"type"`
 	// Url sets the HTTP Event Collector (HEC) URI for your Splunk platform instance
 	Url string `json:"url"`
-	//Enter the HTTP Event Collector token that allows access to your Splunk platform instance
+	//HecToken sets the HTTP Event Collector token that allows access to your Splunk platform instance
 	HecToken string `json:"hecToken"`
 }
