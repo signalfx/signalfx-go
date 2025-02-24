@@ -8,29 +8,31 @@
  */
 
 package integration
+
 // Type : Service that this integration object configures in SignalFx. This is an enumerated string that describes the service. SignalFx processes requests based on the type specified.<br> In addition, the \"type\" property controls OpenApi 3 validation. If you use a model for one service but specify the type for another service, OAS 3 validation programs may reject your request. <br> **For data collection services, the allowed values are:**<br>    * AWSCloudWatch   * Azure   * GCP   * NewRelic  **For SSO integrations, the allowed values are:**<br>   * ADFS   * AzureAD   * Bitium   * GoogleSaml   * Okta   * OneLogin   * PingOne  **For alerting services, the allowed values are:**<br>   * BigPanda   * Office365   * Opsgenie   * PagerDuty   * ServiceNow   * Slack   * VictorOps   * Webhook   * XMatters (note the capital \"X\")  ## Viewing request or response bodies To see the request or response body format, find it in the following dropdown box. To see a full list, click the down arrow and navigate with the vertical scrollbar.
 type Type string
 
 // List of Type
 const (
-	ADFS Type = "ADFS"
+	ADFS            Type = "ADFS"
 	AWS_CLOUD_WATCH Type = "AWSCloudWatch"
-	AZURE Type = "Azure"
-	AZURE_AD Type = "AzureAD"
-	BITIUM Type = "Bitium"
-	BIG_PANDA Type = "BigPanda"
-	GCP Type = "GCP"
-	GOOGLE_SAML Type = "GoogleSaml"
-	OFFICE365 Type = "Office365"
-	OKTA Type = "Okta"
-	ONE_LOGIN Type = "OneLogin"
-	OPSGENIE Type = "Opsgenie"
-	PAGER_DUTY Type = "PagerDuty"
-	PING_ONE Type = "PingOne"
-	NEW_RELIC Type = "NewRelic"
-	SERVICE_NOW Type = "ServiceNow"
-	SLACK Type = "Slack"
-	VICTOR_OPS Type = "VictorOps"
-	WEBHOOK Type = "Webhook"
-	X_MATTERS Type = "XMatters"
+	AZURE           Type = "Azure"
+	AZURE_AD        Type = "AzureAD"
+	BITIUM          Type = "Bitium"
+	BIG_PANDA       Type = "BigPanda"
+	GCP             Type = "GCP"
+	GOOGLE_SAML     Type = "GoogleSaml"
+	OFFICE365       Type = "Office365"
+	OKTA            Type = "Okta"
+	ONE_LOGIN       Type = "OneLogin"
+	OPSGENIE        Type = "Opsgenie"
+	PAGER_DUTY      Type = "PagerDuty"
+	PING_ONE        Type = "PingOne"
+	NEW_RELIC       Type = "NewRelic"
+	SERVICE_NOW     Type = "ServiceNow"
+	SLACK           Type = "Slack"
+	SPLUNK_PLATFORM Type = "SplunkPlatform"
+	VICTOR_OPS      Type = "VictorOps"
+	WEBHOOK         Type = "Webhook"
+	X_MATTERS       Type = "XMatters"
 )
