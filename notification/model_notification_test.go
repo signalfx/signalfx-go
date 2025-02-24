@@ -135,6 +135,14 @@ func TestNotificationUnmarshaJSON(t *testing.T) {
 			}},
 			errVal: "",
 		},
+		{
+			name:  "SplunkPlatform",
+			input: `{"type":"SplunkPlatform"}`,
+			expect: &Notification{Type: "SplunkPlatform", Value: &SplunkPlatformNotification{
+				Type: "SplunkPlatform",
+			}},
+			errVal: "",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
