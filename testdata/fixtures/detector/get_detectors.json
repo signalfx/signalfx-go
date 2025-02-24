@@ -101,6 +101,10 @@
               "channel": "limit-notifications",
               "credentialId": "ZZZZZZZAAAA",
               "type": "Slack"
+            },
+            {
+              "credentialId": "string",
+              "type": "SplunkPlatform"
             }
           ],
           "parameterizedBody": "string",
