@@ -48,6 +48,8 @@ func (n *Notification) UnmarshalJSON(data []byte) error {
 		n.Value = &WebhookNotification{}
 	case "XMatters":
 		n.Value = &XMattersNotification{}
+	case "SplunkPlatform":
+		n.Value = &SplunkPlatformNotification{}
 	default:
 		return fmt.Errorf("unknown notification type %q", typ.Type)
 	}
