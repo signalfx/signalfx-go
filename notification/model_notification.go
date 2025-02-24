@@ -49,7 +49,7 @@ func (n *Notification) UnmarshalJSON(data []byte) error {
 	case "XMatters":
 		n.Value = &XMattersNotification{}
 	default:
-		return fmt.Errorf("Unknown notification type %v", typ.Type)
+		return fmt.Errorf("unknown notification type %q", typ.Type)
 	}
 	return json.Unmarshal(data, n.Value)
 }
