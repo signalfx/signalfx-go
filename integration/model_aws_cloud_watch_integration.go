@@ -71,4 +71,6 @@ type AwsCloudWatchIntegration struct {
 	// CollectOnlyRecommendedStats is used to enforce an integration to only collected the AWS' recommended statistics for the configured services.
 	// The current list of recommended stats are listed here: https://docs.splunk.com/observability/en/gdi/get-data-in/connect/aws/aws-recommended-stats.html
 	CollectOnlyRecommendedStats bool `json:"collectOnlyRecommendedStats,omitempty"`
+	// If set to true, Splunk Observability Cloud accepts data from Metric Streams managed from the AWS console. The AWS account sending the Metric Streams and the AWS account in the Splunk Observability Cloud integration have to match.
+	MetricStreamsManagedExternally bool `json:"metricStreamsManagedExternally"`
 }
