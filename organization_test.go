@@ -16,11 +16,10 @@ func TestGetOrganization(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/organization/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_success.json"))
+	mux.HandleFunc("/v2/organization", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_success.json"))
 
-	result, err := client.GetOrganization(context.Background(), "string")
+	_, err := client.GetOrganization(context.Background())
 	assert.NoError(t, err, "Unexpected error getting organization")
-	assert.Equal(t, result.Id, "string", "Id does not match")
 }
 
 func TestGetMissingOrganization(t *testing.T) {
