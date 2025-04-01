@@ -19,7 +19,7 @@ const OrganizationMemberAPIURL = "/v2/organization/member"
 const OrganizationMembersAPIURL = "/v2/organization/members"
 
 // GetOrganization gets an organization associated with the token in use by the client.
-func (c *Client) GetOrganization(ctx context.Context) (*organization.Organization, error) {
+func (c *Client) GetOrganization(ctx context.Context, _ string) (*organization.Organization, error) {
 	resp, err := c.doRequest(ctx, "GET", OrganizationAPIURL, nil, nil)
 	if err != nil {
 		return nil, err

@@ -18,7 +18,7 @@ func TestGetOrganization(t *testing.T) {
 
 	mux.HandleFunc("/v2/organization", verifyRequest(t, "GET", true, http.StatusOK, nil, "organization/get_success.json"))
 
-	_, err := client.GetOrganization(context.Background())
+	_, err := client.GetOrganization(context.Background(), "")
 	assert.NoError(t, err, "Unexpected error getting organization")
 }
 
