@@ -73,6 +73,7 @@ func TestGetOrgToken(t *testing.T) {
 	result, err := client.GetOrgToken(context.Background(), "string/fart")
 	require.NoError(t, err, "Unexpected error getting token")
 	require.Equal(t, result.Name, "string", "Name does not match")
+	require.Equal(t, result.Id, "foobaz", "Name does not match")
 }
 
 func TestGetMissingOrgToken(t *testing.T) {

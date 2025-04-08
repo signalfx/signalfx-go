@@ -17,6 +17,8 @@ import (
 type Token struct {
 	// A label ( a **name** ) you assign to the token
 	Name string `json:"name"`
+	// SignalFx-assigned ID for this token
+	Id string `json:"id,omitempty"`
 	// Specify the scope this token applies to ex: API, INGEST, RUM etc...
 	AuthScopes []string `json:"authScopes,omitempty"`
 	// An extended description of the token
