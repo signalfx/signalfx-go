@@ -28,8 +28,9 @@ type Rule struct {
 	// Custom notification message *subject* for this rule. The message is displayed when the alert is triggered. The content is plain text. Escape quote characters with a backslash, and indicate a newline with the \"\\n\" string. To insert a SignalFx variable value, specify its name in curly brackets. Double curly brackets (\"{{ }}\") specify a variable that's inserted in place, but some characters in the result may trigger unintended results in SignalFx or the notification server. Triple curly brackets specify a variable that SignalFx escapes as needed so that characters such as quotation marks and angle brackets render properly in notification messages. If you\\'re unsure which style of variable to use, use triple braces, so that all content renders properly. SignalFx does provide recommendations for the notation style to use with each supported variable. For more information see the custom notification messages section of the [Detectors Overview](https://developers.signalfx.com/v2/reference.html#detectors-overview). A full list of available variables with their default notation recommendation is available in the [Message variables](https://docs.signalfx.com/en/latest/detect-alert/set-up-detectors.html#message-variables) section of the \"Set Up Detectors\" topic in the SignalFx User Guide.
 	ParameterizedSubject string `json:"parameterizedSubject,omitempty"`
 	// URL that you can refer to with the SignalFx `{{runbookURL}}` variable in the `parameterizedBody` or `parameterizedSubject` field.
-	RunbookUrl           string                `json:"runbookUrl,omitempty"`
-	Severity             Severity              `json:"severity,omitempty"`
-	Tip                  string                `json:"tip,omitempty"`
+	RunbookUrl string   `json:"runbookUrl,omitempty"`
+	Severity   Severity `json:"severity,omitempty"`
+	Tip        string   `json:"tip,omitempty"`
+	// Reminder notification in a detector rule lets you send multiple notifications for active alerts over a defined period of time.
 	ReminderNotification *ReminderNotification `json:"reminderNotification,omitempty"`
 }

@@ -255,9 +255,9 @@ func TestValidateDetector(t *testing.T) {
 				DetectLabel: "Test detector validation",
 				Severity:    detector.INFO,
 				ReminderNotification: &detector.ReminderNotification{
-					Interval: 100,
-					Timeout:  10000,
-					Type:     "TIMEOUT",
+					IntervalMs: 100,
+					TimeoutMs:  10000,
+					Type:       "TIMEOUT",
 				},
 			},
 		},
