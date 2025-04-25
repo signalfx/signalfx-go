@@ -254,6 +254,11 @@ func TestValidateDetector(t *testing.T) {
 				Description: "Maximum > 10 for 2m",
 				DetectLabel: "Test detector validation",
 				Severity:    detector.INFO,
+				ReminderNotification: &detector.ReminderNotification{
+					Interval: 100,
+					Timeout:  10000,
+					Type:     "TIMEOUT",
+				},
 			},
 		},
 	})
