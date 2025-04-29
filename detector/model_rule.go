@@ -31,4 +31,6 @@ type Rule struct {
 	RunbookUrl string   `json:"runbookUrl,omitempty"`
 	Severity   Severity `json:"severity,omitempty"`
 	Tip        string   `json:"tip,omitempty"`
+	// Reminder notification in a detector rule lets you send multiple notifications for active alerts over a defined period of time.
+	ReminderNotification *ReminderNotification `json:"reminderNotification,omitempty"`
 }

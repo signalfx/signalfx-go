@@ -38,6 +38,11 @@
       "parameterizedBody": "string",
       "parameterizedSubject": "string",
       "runbookUrl": "string",
+      "reminderNotification" : {
+        "interval" : 300000,
+        "timeout" : 3600000,
+        "type" : "TIMEOUT"
+      },
       "severity": "Critical"
     }
   ],
