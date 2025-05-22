@@ -151,7 +151,7 @@ func TestValidateDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
 
 	err := client.ValidateDashboardGroup(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
@@ -163,7 +163,7 @@ func TestValidateDashboardGroupBad(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/dashboardgroup/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	err := client.ValidateDashboardGroup(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",

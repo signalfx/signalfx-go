@@ -45,7 +45,7 @@ func (c *Client) UpdateDashboardGroup(ctx context.Context, id string, dashboardG
 
 // ValidateDashboardGroup validates a dashboard grouop.
 func (c *Client) ValidateDashboardGroup(ctx context.Context, dashboardGroupRequest *dashboard_group.CreateUpdateDashboardGroupRequest) error {
-	_, err := c.executeDashboardGroupRequest(ctx, DashboardGroupAPIURL+"/validate", http.MethodPost, http.StatusNoContent, dashboardGroupRequest, nil)
+	_, err := c.executeDashboardGroupRequest(ctx, DashboardGroupAPIURL+"/validate?validationMode=TERRAFORM", http.MethodPost, http.StatusNoContent, dashboardGroupRequest, nil)
 	return err
 }
 

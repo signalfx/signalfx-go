@@ -44,7 +44,7 @@ func (c *Client) UpdateDashboard(ctx context.Context, id string, dashboardReques
 
 // ValidateDashboard validates a dashboard.
 func (c *Client) ValidateDashboard(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest) error {
-	_, err := c.executeDashboardRequest(ctx, DashboardAPIURL+"/validate", http.MethodPost, http.StatusNoContent, dashboardRequest)
+	_, err := c.executeDashboardRequest(ctx, DashboardAPIURL+"/validate?validationMode=TERRAFORM", http.MethodPost, http.StatusNoContent, dashboardRequest)
 	return err
 }
 

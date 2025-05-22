@@ -150,7 +150,7 @@ func TestValidateDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
 
 	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -162,7 +162,7 @@ func TestValidateBadDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
 
 	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
