@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/signalfx/signalfx-go/dashboard_group"
+	"github.com/signalfx/signalfx-go/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -151,7 +152,8 @@ func TestValidateDashboardGroup(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+	params := url.Values{"validationMode": []string{"FULL"}}
+	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusNoContent, params, ""))
 
 	err := client.ValidateDashboardGroup(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
@@ -163,10 +165,33 @@ func TestValidateDashboardGroupBad(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboardgroup/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+	params := url.Values{"validationMode": []string{"FULL"}}
+	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusBadRequest, params, ""))
 
 	err := client.ValidateDashboardGroup(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Should have gotten an error from invalid dashboard group")
+}
+
+func TestValidateDashboardGroupWithMode(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	params := url.Values{"validationMode": []string{"TERRAFORM"}}
+	mux.HandleFunc("/v2/dashboardgroup/validate", verifyRequest(t, "POST", true, http.StatusNoContent, params, ""))
+	err := client.ValidateDashboardGroupWithMode(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
+		Name: "string",
+	}, util.TERRAFORM)
+	assert.NoError(t, err, "Unexpected error validating dashboard group")
+}
+
+func TestValidateDashboardGroupWithModeBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	err := client.ValidateDashboardGroupWithMode(context.Background(), &dashboard_group.CreateUpdateDashboardGroupRequest{
+		Name: "string",
+	}, "INVALID MODE")
+	assert.Error(t, err, "Should have gotten an error for invalid mode")
 }

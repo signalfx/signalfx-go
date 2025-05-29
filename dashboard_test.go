@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/signalfx/signalfx-go/dashboard"
+	"github.com/signalfx/signalfx-go/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -150,7 +151,8 @@ func TestValidateDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusNoContent, nil, ""))
+	params := url.Values{"validationMode": []string{"FULL"}}
+	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusNoContent, params, ""))
 
 	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -162,10 +164,34 @@ func TestValidateBadDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+	params := url.Values{"validationMode": []string{"FULL"}}
+	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusBadRequest, params, ""))
 
 	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
 	})
 	assert.Error(t, err, "Should have gotten an error code for a bad dashboard")
+}
+
+func TestValidateDashboardWithMode(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	params := url.Values{"validationMode": []string{"TERRAFORM"}}
+	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusNoContent, params, ""))
+
+	err := client.ValidateDashboardWithMode(context.Background(), &dashboard.CreateUpdateDashboardRequest{
+		Name: "string",
+	}, util.TERRAFORM)
+	assert.NoError(t, err, "Unexpected error creating dashboard")
+}
+
+func TestValidatDashboardWithModeBad(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	err := client.ValidateDashboardWithMode(context.Background(), &dashboard.CreateUpdateDashboardRequest{
+		Name: "string",
+	}, "IVALID MODE")
+	assert.Error(t, err, "Should have gotten an error code for invalid mode")
 }
