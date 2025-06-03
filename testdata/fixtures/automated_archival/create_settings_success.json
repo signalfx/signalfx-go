@@ -1,6 +1,10 @@
 {
-    "Version": 1,
-    "Enabled": true,
-    "LookbackPeriod": "P60D",
-    "GracePeriod": "P30D"
+    "created": 1674598662022,
+    "creator": "TestCreatorId",
+    "lastUpdated": 1674598662022,
+    "lastUpdatedBy": "TestUpdatedId",
+    "version": 1,
+    "enabled": true,
+    "lookbackPeriod": "P60D",
+    "gracePeriod": "P30D"
 }

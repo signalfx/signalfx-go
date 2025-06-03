@@ -22,7 +22,7 @@ func TestCreateSettings(t *testing.T) {
 	})
 
 	assert.NoError(t, err, "Unexpected error creating Automated Archival settings")
-	assert.Equal(t, 1, result.Version, "Version doesn't match")
+	assert.Equal(t, int64(1), result.Version, "Version doesn't match")
 	assert.Equal(t, true, result.Enabled, "Enabled doesn't match")
 	assert.Equal(t, "P60D", result.LookbackPeriod, "Lookback period doesn't match")
 	assert.Equal(t, "P30D", result.GracePeriod, "Grace period doesn't match")
