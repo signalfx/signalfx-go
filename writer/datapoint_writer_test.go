@@ -95,7 +95,7 @@ func TestDatapointWriter(t *testing.T) {
 		t.Parallel()
 		ts := setupDatapointTesting(1000)
 
-		ts.Writer.MaxBuffered = 20000
+		ts.Writer.MaxBuffered = 50000
 		ts.Writer.Start(ts.Ctx)
 
 		count := 0
