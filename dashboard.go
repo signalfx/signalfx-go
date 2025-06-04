@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/signalfx/signalfx-go/dashboard"
-	"github.com/signalfx/signalfx-go/util"
 )
 
 // TODO Create simple dashboard
@@ -45,12 +44,12 @@ func (c *Client) UpdateDashboard(ctx context.Context, id string, dashboardReques
 
 // ValidateDashboard validates a dashboard with default mode.
 func (c *Client) ValidateDashboard(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest) error {
-	return c.ValidateDashboardWithMode(ctx, dashboardRequest, util.FULL)
+	return c.ValidateDashboardWithMode(ctx, dashboardRequest, FULL)
 }
 
 // ValidateDashboard validates a dashboard.
-func (c *Client) ValidateDashboardWithMode(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest, validationMode util.ValidationMode) error {
-	if err := util.ValidateValidationMode(validationMode); err != nil {
+func (c *Client) ValidateDashboardWithMode(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest, validationMode VisualizationObjectsValidation) error {
+	if err := validationMode.Validate(); err != nil {
 		return err
 	}
 	params := url.Values{}

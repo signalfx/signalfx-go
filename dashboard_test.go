@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/signalfx/signalfx-go/dashboard"
-	"github.com/signalfx/signalfx-go/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +15,7 @@ func TestCreateDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "POST", true, http.StatusOK, nil, "dashboard/create_success.json"))
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, http.MethodPost, true, http.StatusOK, nil, "dashboard/create_success.json"))
 
 	result, err := client.CreateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -29,7 +28,7 @@ func TestCreateBadDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "POST", true, http.StatusBadRequest, nil, ""))
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, http.MethodPost, true, http.StatusBadRequest, nil, ""))
 
 	result, err := client.CreateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -42,7 +41,7 @@ func TestDeleteDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "DELETE", true, http.StatusOK, nil, ""))
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, http.MethodDelete, true, http.StatusOK, nil, ""))
 
 	err := client.DeleteDashboard(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error deleting dashboard")
@@ -52,7 +51,7 @@ func TestDeleteMissingDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "DELETE", true, http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, http.MethodDelete, true, http.StatusNotFound, nil, ""))
 
 	err := client.DeleteDashboard(context.Background(), "string")
 	assert.Error(t, err, "Should have gotten an error code for a missing dashboard")
@@ -62,7 +61,7 @@ func TestGetDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "GET", true, http.StatusOK, nil, "dashboard/get_success.json"))
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, http.MethodGet, true, http.StatusOK, nil, "dashboard/get_success.json"))
 
 	result, err := client.GetDashboard(context.Background(), "string")
 	assert.NoError(t, err, "Unexpected error getting dashboard")
@@ -73,7 +72,7 @@ func TestGetMissingDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "GET", true, http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, http.MethodGet, true, http.StatusNotFound, nil, ""))
 
 	result, err := client.GetDashboard(context.Background(), "string")
 	assert.Error(t, err, "Expected error getting missing dashboard")
@@ -94,7 +93,7 @@ func TestSearchDashboard(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "GET", true, http.StatusOK, params, "dashboard/search_success.json"))
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, http.MethodGet, true, http.StatusOK, params, "dashboard/search_success.json"))
 
 	results, err := client.SearchDashboard(context.Background(), limit, name, offset, tags)
 	assert.NoError(t, err, "Unexpected error search dashboard")
@@ -115,7 +114,7 @@ func TestSearchDashboardBad(t *testing.T) {
 	params.Add("offset", strconv.Itoa(offset))
 	params.Add("tags", tags)
 
-	mux.HandleFunc("/v2/dashboard", verifyRequest(t, "GET", true, http.StatusBadRequest, params, ""))
+	mux.HandleFunc("/v2/dashboard", verifyRequest(t, http.MethodGet, true, http.StatusBadRequest, params, ""))
 
 	_, err := client.SearchDashboard(context.Background(), limit, name, offset, tags)
 	assert.Error(t, err, "Unexpected error search dashboard")
@@ -125,7 +124,7 @@ func TestUpdateDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "dashboard/update_success.json"))
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, http.MethodPut, true, http.StatusOK, nil, "dashboard/update_success.json"))
 
 	result, err := client.UpdateDashboard(context.Background(), "string", &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -138,7 +137,7 @@ func TestUpdateMissingDashboard(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, "PUT", true, http.StatusNotFound, nil, ""))
+	mux.HandleFunc("/v2/dashboard/string", verifyRequest(t, http.MethodPut, true, http.StatusNotFound, nil, ""))
 
 	result, err := client.UpdateDashboard(context.Background(), "string", &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -152,7 +151,7 @@ func TestValidateDashboard(t *testing.T) {
 	defer teardown()
 
 	params := url.Values{"validationMode": []string{"FULL"}}
-	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusNoContent, params, ""))
+	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, http.MethodPost, true, http.StatusNoContent, params, ""))
 
 	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -165,7 +164,7 @@ func TestValidateBadDashboard(t *testing.T) {
 	defer teardown()
 
 	params := url.Values{"validationMode": []string{"FULL"}}
-	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, "POST", true, http.StatusBadRequest, params, ""))
+	mux.HandleFunc("/v2/dashboard/validate?validationMode=TERRAFORM", verifyRequest(t, http.MethodPost, true, http.StatusBadRequest, params, ""))
 
 	err := client.ValidateDashboard(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
@@ -178,11 +177,11 @@ func TestValidateDashboardWithMode(t *testing.T) {
 	defer teardown()
 
 	params := url.Values{"validationMode": []string{"TERRAFORM"}}
-	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, "POST", true, http.StatusNoContent, params, ""))
+	mux.HandleFunc("/v2/dashboard/validate", verifyRequest(t, http.MethodPost, true, http.StatusNoContent, params, ""))
 
 	err := client.ValidateDashboardWithMode(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
-	}, util.TERRAFORM)
+	}, TERRAFORM)
 	assert.NoError(t, err, "Unexpected error creating dashboard")
 }
 
