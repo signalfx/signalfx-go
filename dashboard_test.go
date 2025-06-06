@@ -191,6 +191,6 @@ func TestValidatDashboardWithModeBad(t *testing.T) {
 
 	err := client.ValidateDashboardWithMode(context.Background(), &dashboard.CreateUpdateDashboardRequest{
 		Name: "string",
-	}, "IVALID MODE")
+	}, "INVALID MODE")
 	assert.Error(t, err, "Should have gotten an error code for invalid mode")
 }
