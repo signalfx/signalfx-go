@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "enabled": true,
+    "lookbackPeriod": "P45D",
+    "gracePeriod": "P30D",
+    "created": 1674598662022,
+    "creator": "TestCreatorId",
+    "lastUpdated": 1674598662023,
+    "lastUpdatedBy": "TestUpdatedId"
+}
