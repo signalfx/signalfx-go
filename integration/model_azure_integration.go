@@ -51,8 +51,9 @@ type AzureIntegration struct {
 	// Flag determining whether SignalFx should also import metrics from Azure Monitor (when value is true) or only metadata (when value is false).
 	ImportAzureMonitor *bool `json:"importAzureMonitor,omitempty"`
 	// Azure ID of the Azure tenant. To learn how to get this ID, see the topic (https://docs.signalfx.com/en/latest/getting-started/send-data.html#connect-to-microsoft-azure)[Connect to Microsoft Azure] in the product documentation.
-	TenantId   string `json:"tenantId,omitempty"`
-	NamedToken string `json:"namedToken,omitempty"`
+	TenantId    string `json:"tenantId,omitempty"`
+	NamedToken  string `json:"namedToken,omitempty"`
+	UseBatchApi *bool  `json:"useBatchApi,omitempty"`
 }
 
 func (gcp *AzureIntegration) MarshalJSON() ([]byte, error) {
