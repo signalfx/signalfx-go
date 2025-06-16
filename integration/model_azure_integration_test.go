@@ -132,6 +132,30 @@ func TestUnmarshalAzureIntegrationWithImportAzureMonitorEmpty(t *testing.T) {
 	assert.Equal(t, (*bool)(nil), azure.ImportAzureMonitor, "ImportAzureMonitor does not match")
 }
 
+func TestUnmarshalAzureIntegrationWithUseBatchApiDisabled(t *testing.T) {
+	azure := AzureIntegration{}
+	err := json.Unmarshal([]byte(`{"useBatchApi":false}`), &azure)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, false, *azure.UseBatchApi, "UseBatchApi does not match")
+}
+
+func TestUnmarshalAzureIntegrationWithUseBatchApiEnabled(t *testing.T) {
+	azure := AzureIntegration{}
+	err := json.Unmarshal([]byte(`{"useBatchApi":true}`), &azure)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, true, *azure.UseBatchApi, "UseBatchApi does not match")
+}
+
+func TestUnmarshalAzureIntegrationWithUseBatchApiEmpty(t *testing.T) {
+	azure := AzureIntegration{}
+	err := json.Unmarshal([]byte(`{}`), &azure)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, (*bool)(nil), azure.UseBatchApi, "UseBatchApi does not match")
+}
+
 func newBoolPtr(val bool) *bool {
 	return &val
 }
