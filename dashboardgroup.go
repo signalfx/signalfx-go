@@ -43,9 +43,19 @@ func (c *Client) UpdateDashboardGroup(ctx context.Context, id string, dashboardG
 	return c.executeDashboardGroupRequest(ctx, DashboardGroupAPIURL+"/"+id, http.MethodPut, http.StatusOK, dashboardGroupRequest, nil)
 }
 
-// ValidateDashboardGroup validates a dashboard grouop.
+// ValidateDashboardGroup validates a dashboard grouop with default mode.
 func (c *Client) ValidateDashboardGroup(ctx context.Context, dashboardGroupRequest *dashboard_group.CreateUpdateDashboardGroupRequest) error {
-	_, err := c.executeDashboardGroupRequest(ctx, DashboardGroupAPIURL+"/validate", http.MethodPost, http.StatusNoContent, dashboardGroupRequest, nil)
+	return c.ValidateDashboardGroupWithMode(ctx, dashboardGroupRequest, FULL)
+}
+
+// ValidateDashboardGroupWithMode validates a dashboard grouop.
+func (c *Client) ValidateDashboardGroupWithMode(ctx context.Context, dashboardGroupRequest *dashboard_group.CreateUpdateDashboardGroupRequest, validationMode VisualizationObjectsValidation) error {
+	if err := validationMode.Validate(); err != nil {
+		return err
+	}
+	params := url.Values{}
+	params.Add("validationMode", string(validationMode))
+	_, err := c.executeDashboardGroupRequest(ctx, DashboardGroupAPIURL+"/validate", http.MethodPost, http.StatusNoContent, dashboardGroupRequest, params)
 	return err
 }
 

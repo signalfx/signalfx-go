@@ -19,12 +19,12 @@ const DashboardAPIURL = "/v2/dashboard"
 
 // CreateDashboard creates a dashboard.
 func (c *Client) CreateDashboard(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest) (*dashboard.Dashboard, error) {
-	return c.executeDashboardRequest(ctx, DashboardAPIURL, http.MethodPost, http.StatusOK, dashboardRequest)
+	return c.executeDashboardRequest(ctx, DashboardAPIURL, http.MethodPost, http.StatusOK, dashboardRequest, nil)
 }
 
 // DeleteDashboard deletes a dashboard.
 func (c *Client) DeleteDashboard(ctx context.Context, id string) error {
-	_, err := c.executeDashboardRequest(ctx, DashboardAPIURL+"/"+id, http.MethodDelete, http.StatusOK, nil)
+	_, err := c.executeDashboardRequest(ctx, DashboardAPIURL+"/"+id, http.MethodDelete, http.StatusOK, nil, nil)
 	if err == io.EOF {
 		// Expected error as delete request returns status 200 instead of 204
 		return nil
@@ -34,21 +34,31 @@ func (c *Client) DeleteDashboard(ctx context.Context, id string) error {
 
 // GetDashboard gets a dashboard.
 func (c *Client) GetDashboard(ctx context.Context, id string) (*dashboard.Dashboard, error) {
-	return c.executeDashboardRequest(ctx, DashboardAPIURL+"/"+id, http.MethodGet, http.StatusOK, nil)
+	return c.executeDashboardRequest(ctx, DashboardAPIURL+"/"+id, http.MethodGet, http.StatusOK, nil, nil)
 }
 
 // UpdateDashboard updates a dashboard.
 func (c *Client) UpdateDashboard(ctx context.Context, id string, dashboardRequest *dashboard.CreateUpdateDashboardRequest) (*dashboard.Dashboard, error) {
-	return c.executeDashboardRequest(ctx, DashboardAPIURL+"/"+id, http.MethodPut, http.StatusOK, dashboardRequest)
+	return c.executeDashboardRequest(ctx, DashboardAPIURL+"/"+id, http.MethodPut, http.StatusOK, dashboardRequest, nil)
+}
+
+// ValidateDashboard validates a dashboard with default mode.
+func (c *Client) ValidateDashboard(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest) error {
+	return c.ValidateDashboardWithMode(ctx, dashboardRequest, FULL)
 }
 
 // ValidateDashboard validates a dashboard.
-func (c *Client) ValidateDashboard(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest) error {
-	_, err := c.executeDashboardRequest(ctx, DashboardAPIURL+"/validate", http.MethodPost, http.StatusNoContent, dashboardRequest)
+func (c *Client) ValidateDashboardWithMode(ctx context.Context, dashboardRequest *dashboard.CreateUpdateDashboardRequest, validationMode VisualizationObjectsValidation) error {
+	if err := validationMode.Validate(); err != nil {
+		return err
+	}
+	params := url.Values{}
+	params.Add("validationMode", string(validationMode))
+	_, err := c.executeDashboardRequest(ctx, DashboardAPIURL+"/validate", http.MethodPost, http.StatusNoContent, dashboardRequest, params)
 	return err
 }
 
-func (c *Client) executeDashboardRequest(ctx context.Context, url string, method string, expectedValidStatus int, dashboardRequest *dashboard.CreateUpdateDashboardRequest) (*dashboard.Dashboard, error) {
+func (c *Client) executeDashboardRequest(ctx context.Context, url string, method string, expectedValidStatus int, dashboardRequest *dashboard.CreateUpdateDashboardRequest, params url.Values) (*dashboard.Dashboard, error) {
 	var body io.Reader
 	if dashboardRequest != nil {
 		payload, err := json.Marshal(dashboardRequest)
@@ -59,7 +69,7 @@ func (c *Client) executeDashboardRequest(ctx context.Context, url string, method
 		body = bytes.NewReader(payload)
 	}
 
-	resp, err := c.doRequest(ctx, method, url, nil, body)
+	resp, err := c.doRequest(ctx, method, url, params, body)
 	if err != nil {
 		return nil, err
 	}
