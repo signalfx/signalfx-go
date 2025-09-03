@@ -1,11 +1,13 @@
 package signalfx
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"net/http"
 	"net/url"
 	stdpath "path"
+	"sync"
 	"time"
 )
 
@@ -23,6 +25,7 @@ type Client struct {
 	httpClient *http.Client
 	authToken  string
 	userAgent  string
+	pool       sync.Pool
 }
 
 // ClientParam is an option for NewClient. Its implementation borrows
@@ -39,6 +42,11 @@ func NewClient(token string, options ...ClientParam) (*Client, error) {
 		},
 		authToken: token,
 		userAgent: "signalfx-go",
+		pool: sync.Pool{
+			New: func() any {
+				return bytes.NewBuffer(nil)
+			},
+		},
 	}
 
 	for _, option := range options {
@@ -101,4 +109,14 @@ func (c *Client) doRequestWithToken(ctx context.Context, method string, path str
 	}
 
 	return c.httpClient.Do(req)
+}
+
+func (c *Client) leaseBuffer() *bytes.Buffer {
+	buff := c.pool.Get().(*bytes.Buffer)
+	buff.Reset()
+	return buff
+}
+
+func (c *Client) releaseBuffer(buff *bytes.Buffer) {
+	c.pool.Put(buff)
 }

@@ -109,7 +109,7 @@ func createResponse(t *testing.T, status int, resultPath string, requestValidato
 		w.WriteHeader(status)
 
 		if resultPath != "" {
-			_, _ = fmt.Fprintf(w, fixture(resultPath))
+			_, _ = fmt.Fprint(w, fixture(resultPath))
 		}
 	}
 }
