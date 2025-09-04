@@ -28,6 +28,6 @@ func TestDerivedTypeComparison(t *testing.T) {
 	assert.NotEqual(t, AwsService("AWS/Foo"), "AWS/Foo", "Same value, different types")
 
 	assert.True(t, AwsService("AWS/Foo") == "AWS/Foo", "Golang revolution!")
-	assert.True(t, "AWS/Bar" == AwsService("AWS/Bar"), "Golang revolution!")
-	assert.True(t, "" == AwsService(""), "Golang revolution!")
+	assert.True(t, AwsService("AWS/Bar") == "AWS/Bar", "Golang revolution!")
+	assert.True(t, AwsService("") == "", "Golang revolution!")
 }
