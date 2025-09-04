@@ -1,13 +1,13 @@
 module github.com/signalfx/signalfx-go
 
-go 1.22
+go 1.23.0
 
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/mauricelam/genny v0.0.0-20190320071652-0800202903e5
 	github.com/signalfx/golib/v3 v3.3.47
 	github.com/stretchr/testify v1.8.2
-	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5
+	golang.org/x/oauth2 v0.27.0
 	golang.org/x/tools v0.1.5
 )
 
@@ -30,10 +30,8 @@ require (
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.22.0 // indirect
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
-	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
