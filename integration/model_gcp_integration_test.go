@@ -217,3 +217,49 @@ func TestUnmarshalGCPIntegrationWithImportGCPMetricsEmpty(t *testing.T) {
 	assert.Equal(t, (*bool)(nil), GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
 
 }
+
+func TestMarshalGCPIntegrationWithNewWifSchema(t *testing.T) {
+	projects := GCPProjects{
+		SelectedProjectIds: []string{"prj-id-123"},
+		SyncMode:           "SELECTED",
+	}
+	gcpInt := GCPIntegration{
+		Projects: &projects,
+	}
+	payload, err := json.Marshal(&gcpInt)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","projects":{"selectedProjectIds":["prj-id-123"],"syncMode":"SELECTED"}}`, string(payload), "payload does not match")
+	assert.Equal(t, int64(0), gcpInt.PollRateMs, "PollRateMs has been changed")
+
+}
+
+func TestMarshalGCPIntegrationWithEmptySelectedProjectsAndSyncModeAllReachable(t *testing.T) {
+	projects := GCPProjects{
+		SyncMode: "ALL_REACHABLE",
+	}
+	gcpInt := GCPIntegration{
+		Projects: &projects,
+	}
+	payload, err := json.Marshal(&gcpInt)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","projects":{"syncMode":"ALL_REACHABLE"}}`, string(payload), "payload does not match")
+	assert.Equal(t, int64(0), gcpInt.PollRateMs, "PollRateMs has been changed")
+}
+
+func TestUnmarshalGCPIntegrationWithSelectedProjectsAndSyncModeSetToSelected(t *testing.T) {
+	GCP := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"projects":{"selectedProjectIds":["prj-id-123"],"syncMode":"SELECTED"}}`), &GCP)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, &GCPProjects{SelectedProjectIds: []string{"prj-id-123"}, SyncMode: "SELECTED"}, GCP.Projects, "Projects does not match")
+}
+
+func TestUnmarshalGCPIntegrationWithoutSelectedProjectsAndSyncModeAllReachable(t *testing.T) {
+	GCP := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"projects":{"syncMode":"ALL_REACHABLE"}}`), &GCP)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, &GCPProjects{SyncMode: "ALL_REACHABLE"}, GCP.Projects, "Projects does not match")
+}
