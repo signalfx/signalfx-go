@@ -58,8 +58,8 @@ func TestMarshalGCPIntegrationWithWIFConfig(t *testing.T) {
 }
 
 func TestUnMarshalGCPIntegrationWithWIFConfig(t *testing.T) {
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"authMethod":"WORKLOAD_IDENTITY_FEDERATION","wifSplunkIdentity":{"account_id": "123", "aws_role_arn": "arn:aws:sts::123:assumed-role/splunk-o11y"},"workloadIdentityFederationConfigs":[{"projectId":"prj-id-123","wifConfig":"{\"some\":\"config\"}"}]}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"authMethod":"WORKLOAD_IDENTITY_FEDERATION","wifSplunkIdentity":{"account_id": "123", "aws_role_arn": "arn:aws:sts::123:assumed-role/splunk-o11y"},"workloadIdentityFederationConfigs":[{"projectId":"prj-id-123","wifConfig":"{\"some\":\"config\"}"}]}`), &gcp)
 
 	expectedSplunkIdentity := map[string]string{
 		"account_id":   "123",
@@ -74,14 +74,14 @@ func TestUnMarshalGCPIntegrationWithWIFConfig(t *testing.T) {
 	expectedAuthMethod := WORKLOAD_IDENTITY_FEDERATION
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.EqualValues(t, expectedConfigs, GCP.WifConfigs, "WifConfigs do not match")
-	assert.EqualValues(t, expectedSplunkIdentity, GCP.WifSplunkIdentity, "WifSplunkIdentity does not match")
-	assert.EqualValues(t, expectedAuthMethod, GCP.AuthMethod, "AuthMethod does not match")
+	assert.EqualValues(t, expectedConfigs, gcp.WifConfigs, "WifConfigs do not match")
+	assert.EqualValues(t, expectedSplunkIdentity, gcp.WifSplunkIdentity, "WifSplunkIdentity does not match")
+	assert.EqualValues(t, expectedAuthMethod, gcp.AuthMethod, "AuthMethod does not match")
 }
 
 func TestUnMarshalGCPIntegrationWithSAKeysHidden(t *testing.T) {
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"projectServiceKeys":[{"projectId":"prj-id-123"}]}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"projectServiceKeys":[{"projectId":"prj-id-123"}]}`), &gcp)
 
 	expectedConfigs := []*GCPProject{
 		{
@@ -90,25 +90,25 @@ func TestUnMarshalGCPIntegrationWithSAKeysHidden(t *testing.T) {
 	}
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.EqualValues(t, expectedConfigs, GCP.ProjectServiceKeys, "ProjectServiceKeys do not match")
+	assert.EqualValues(t, expectedConfigs, gcp.ProjectServiceKeys, "ProjectServiceKeys do not match")
 }
 
 func TestUnmarshalGCPIntegrationWithPollRate(t *testing.T) {
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"pollRate":60000}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"pollRate":60000}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error unmarshalling integration")
-	assert.Equal(t, OneMinutely, *GCP.PollRate, "PollRate does not match")
-	assert.Equal(t, int64(60000), GCP.PollRateMs, "PollRateMs does not match")
+	assert.Equal(t, OneMinutely, *gcp.PollRate, "PollRate does not match")
+	assert.Equal(t, int64(60000), gcp.PollRateMs, "PollRateMs does not match")
 }
 
 func TestUnmarshalGCPIntegrationWithPollRateMs(t *testing.T) {
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"pollRate":90000}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"pollRate":90000}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error unmarshalling integration")
-	assert.Nil(t, GCP.PollRate, "PollRate does not match")
-	assert.Equal(t, int64(90000), GCP.PollRateMs, "PollRateMs does not match")
+	assert.Nil(t, gcp.PollRate, "PollRate does not match")
+	assert.Equal(t, int64(90000), gcp.PollRateMs, "PollRateMs does not match")
 }
 
 func TestMarshalGCPIntegrationWithWhitelist(t *testing.T) {
@@ -136,12 +136,12 @@ func TestMarshalGCPIntegrationWithIncludeList(t *testing.T) {
 func TestUnmarshalGCPIntegrationWithIncludeList(t *testing.T) {
 	expectedValue := []string{"key"}
 
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"includeList":["key"]}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"includeList":["key"]}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error unmarshalling integration")
-	assert.Equal(t, expectedValue, GCP.IncludeList, "IncludeList does not match")
-	assert.Equal(t, expectedValue, GCP.Whitelist, "Whitelist does not match")
+	assert.Equal(t, expectedValue, gcp.IncludeList, "IncludeList does not match")
+	assert.Equal(t, expectedValue, gcp.Whitelist, "Whitelist does not match")
 }
 
 func TestMarshalGCPIntegrationWithUseMetricSourceProjectForQuotaEnabled(t *testing.T) {
@@ -179,9 +179,9 @@ func TestMarshalGCPIntegrationWithImportGCPMetricsDisabled(t *testing.T) {
 }
 
 func TestMarshalGCPIntegrationWithImportGCPMetricsEmpty(t *testing.T) {
-	GCP := GCPIntegration{}
+	gcp := GCPIntegration{}
 
-	payload, err := json.Marshal(GCP)
+	payload, err := json.Marshal(gcp)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
 	assert.Equal(t, `{"enabled":false,"type":""}`, string(payload), "payload does not match")
@@ -189,32 +189,32 @@ func TestMarshalGCPIntegrationWithImportGCPMetricsEmpty(t *testing.T) {
 }
 
 func TestUnmarshalGCPIntegrationWithImportGCPMetricsEnabled(t *testing.T) {
-	GCP := GCPIntegration{}
+	gcp := GCPIntegration{}
 
-	err := json.Unmarshal([]byte(`{"importGCPMetrics":true}`), &GCP)
+	err := json.Unmarshal([]byte(`{"importGCPMetrics":true}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.Equal(t, true, *GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
+	assert.Equal(t, true, *gcp.ImportGCPMetrics, "ImportGCPMetrics does not match")
 
 }
 
 func TestUnmarshalGCPIntegrationWithImportGCPMetricsDisabled(t *testing.T) {
-	GCP := GCPIntegration{}
+	gcp := GCPIntegration{}
 
-	err := json.Unmarshal([]byte(`{"importGCPMetrics":false}`), &GCP)
+	err := json.Unmarshal([]byte(`{"importGCPMetrics":false}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.Equal(t, false, *GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
+	assert.Equal(t, false, *gcp.ImportGCPMetrics, "ImportGCPMetrics does not match")
 
 }
 
 func TestUnmarshalGCPIntegrationWithImportGCPMetricsEmpty(t *testing.T) {
-	GCP := GCPIntegration{}
+	gcp := GCPIntegration{}
 
-	err := json.Unmarshal([]byte(`{}`), &GCP)
+	err := json.Unmarshal([]byte(`{}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.Equal(t, (*bool)(nil), GCP.ImportGCPMetrics, "ImportGCPMetrics does not match")
+	assert.Equal(t, (*bool)(nil), gcp.ImportGCPMetrics, "ImportGCPMetrics does not match")
 
 }
 
@@ -249,17 +249,17 @@ func TestMarshalGCPIntegrationWithEmptySelectedProjectsAndSyncModeAllReachable(t
 }
 
 func TestUnmarshalGCPIntegrationWithSelectedProjectsAndSyncModeSetToSelected(t *testing.T) {
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"projects":{"selectedProjectIds":["prj-id-123"],"syncMode":"SELECTED"}}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"projects":{"selectedProjectIds":["prj-id-123"],"syncMode":"SELECTED"}}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.Equal(t, &GCPProjects{SelectedProjectIds: []string{"prj-id-123"}, SyncMode: "SELECTED"}, GCP.Projects, "Projects does not match")
+	assert.Equal(t, &GCPProjects{SelectedProjectIds: []string{"prj-id-123"}, SyncMode: "SELECTED"}, gcp.Projects, "Projects does not match")
 }
 
 func TestUnmarshalGCPIntegrationWithoutSelectedProjectsAndSyncModeAllReachable(t *testing.T) {
-	GCP := GCPIntegration{}
-	err := json.Unmarshal([]byte(`{"projects":{"syncMode":"ALL_REACHABLE"}}`), &GCP)
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"projects":{"syncMode":"ALL_REACHABLE"}}`), &gcp)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.Equal(t, &GCPProjects{SyncMode: "ALL_REACHABLE"}, GCP.Projects, "Projects does not match")
+	assert.Equal(t, &GCPProjects{SyncMode: "ALL_REACHABLE"}, gcp.Projects, "Projects does not match")
 }
