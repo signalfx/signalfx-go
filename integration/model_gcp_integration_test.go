@@ -263,3 +263,23 @@ func TestUnmarshalGCPIntegrationWithoutSelectedProjectsAndSyncModeAllReachable(t
 	assert.NoError(t, err, "Unexpected error marshalling integration")
 	assert.Equal(t, &GCPProjects{SyncMode: "ALL_REACHABLE"}, gcp.Projects, "Projects does not match")
 }
+
+func TestMarshalGCPIntegrationWithExcludeGCEInstancesWithLabelsList(t *testing.T) {
+	excludeGCEInstancesWithLabels := []string{"some-label"}
+	payload, err := json.Marshal(GCPIntegration{
+		ExcludeGCEInstancesWithLabels: excludeGCEInstancesWithLabels,
+	})
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","excludeGCEInstancesWithLabels":["some-label"]}`, string(payload), "payload does not match")
+}
+
+func TestUnmarshalGCPIntegrationWithExcludeGCEInstancesWithLabelsList(t *testing.T) {
+	expectedValue := []string{"some-label"}
+
+	gcp := GCPIntegration{}
+	err := json.Unmarshal([]byte(`{"excludeGCEInstancesWithLabels":["some-label"]}`), &gcp)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, expectedValue, gcp.ExcludeGCEInstancesWithLabels, "ExcludeGCEInstancesWithLabels does not match")
+}
