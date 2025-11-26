@@ -48,7 +48,8 @@ type GCPIntegration struct {
 	Whitelist   []string `json:"-"`
 	NamedToken  string   `json:"namedToken,omitempty"`
 	// Flag determining whether SignalFx should also import Google Cloud metrics (when value is true) or only metadata (when value is false).
-	ImportGCPMetrics *bool `json:"importGCPMetrics,omitempty"`
+	ImportGCPMetrics              *bool    `json:"importGCPMetrics,omitempty"`
+	ExcludeGCEInstancesWithLabels []string `json:"excludeGCEInstancesWithLabels,omitempty"`
 }
 
 func (gcp *GCPIntegration) MarshalJSON() ([]byte, error) {
