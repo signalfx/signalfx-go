@@ -2,8 +2,9 @@ package integration
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAwsCloudWatchIntegration_MarshallingToAndFromJSON(t *testing.T) {
@@ -30,4 +31,25 @@ func TestDerivedTypeComparison(t *testing.T) {
 	assert.True(t, AwsService("AWS/Foo") == "AWS/Foo", "Golang revolution!")
 	assert.True(t, AwsService("AWS/Bar") == "AWS/Bar", "Golang revolution!")
 	assert.True(t, AwsService("") == "", "Golang revolution!")
+}
+
+func TestMarshalAwsCloudWatchIntegrationWithColdPollRate(t *testing.T) {
+	cwIntegration := AwsCloudWatchIntegration{
+		ColdPollRate: 60000,
+	}
+	payload, err := json.Marshal(&cwIntegration)
+
+	assert.NoError(t, err, "Unexpected error marshalling integration")
+	assert.Equal(t, `{"enabled":false,"type":"","coldPollRate":60000,"metricStreamsManagedExternally":false}`, string(payload), "payload does not match")
+	assert.Equal(t, int64(60000), cwIntegration.ColdPollRate, "ColdPollRate does not match")
+}
+
+func TestUnmarshalAwsCloudWatchIntegrationWithColdPollRate(t *testing.T) {
+	expectedValue := int64(60000)
+
+	cwIntegration := AwsCloudWatchIntegration{}
+	err := json.Unmarshal([]byte(`{"coldPollRate":60000}`), &cwIntegration)
+
+	assert.NoError(t, err, "Unexpected error unmarshalling integration")
+	assert.Equal(t, expectedValue, cwIntegration.ColdPollRate, "ColdPollRate does not match")
 }
