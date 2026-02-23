@@ -33,23 +33,23 @@ func TestDerivedTypeComparison(t *testing.T) {
 	assert.True(t, AwsService("") == "", "Golang revolution!")
 }
 
-func TestMarshalAwsCloudWatchIntegrationWithColdPollRate(t *testing.T) {
+func TestMarshalAwsCloudWatchIntegrationWithInactiveMetricsPollRate(t *testing.T) {
 	cwIntegration := AwsCloudWatchIntegration{
-		ColdPollRate: 60000,
+		InactiveMetricsPollRate: 60000,
 	}
 	payload, err := json.Marshal(&cwIntegration)
 
 	assert.NoError(t, err, "Unexpected error marshalling integration")
-	assert.Equal(t, `{"enabled":false,"type":"","coldPollRate":60000,"metricStreamsManagedExternally":false}`, string(payload), "payload does not match")
-	assert.Equal(t, int64(60000), cwIntegration.ColdPollRate, "ColdPollRate does not match")
+	assert.Equal(t, `{"enabled":false,"type":"","inactiveMetricsPollRate":60000,"metricStreamsManagedExternally":false}`, string(payload), "payload does not match")
+	assert.Equal(t, int64(60000), cwIntegration.InactiveMetricsPollRate, "InactiveMetricsPollRate does not match")
 }
 
-func TestUnmarshalAwsCloudWatchIntegrationWithColdPollRate(t *testing.T) {
+func TestUnmarshalAwsCloudWatchIntegrationWithInactiveMetricsPollRate(t *testing.T) {
 	expectedValue := int64(60000)
 
 	cwIntegration := AwsCloudWatchIntegration{}
-	err := json.Unmarshal([]byte(`{"coldPollRate":60000}`), &cwIntegration)
+	err := json.Unmarshal([]byte(`{"inactiveMetricsPollRate":60000}`), &cwIntegration)
 
 	assert.NoError(t, err, "Unexpected error unmarshalling integration")
-	assert.Equal(t, expectedValue, cwIntegration.ColdPollRate, "ColdPollRate does not match")
+	assert.Equal(t, expectedValue, cwIntegration.InactiveMetricsPollRate, "InactiveMetricsPollRate does not match")
 }
