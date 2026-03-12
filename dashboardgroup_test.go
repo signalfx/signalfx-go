@@ -193,4 +193,20 @@ func TestValidateDashboardGroupWithModeBad(t *testing.T) {
 		Name: "string",
 	}, "INVALID MODE")
 	assert.Error(t, err, "Should have gotten an error for invalid mode")
+
+}
+
+func TestListBuiltInDashboardGroups(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(10))
+	params.Add("offset", strconv.Itoa(0))
+	params.Add("excludeCustom", "true")
+	mux.HandleFunc("/v2/dashboardgroup", verifyRequest(t, "GET", true, http.StatusOK, params, "dashboardgroup/search_success.json"))
+
+	results, err := client.ListBuiltInDashboardGroups(context.Background(), 10, 0)
+	assert.NoError(t, err, "Unexpected error listing built-in dashboard groups")
+	assert.Equal(t, int32(1), results.Count, "Incorrect number of built-in dashboard groups")
 }

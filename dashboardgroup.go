@@ -115,3 +115,27 @@ func (c *Client) SearchDashboardGroups(ctx context.Context, limit int, name stri
 
 	return finalDashboardGroups, err
 }
+
+func (c *Client) ListBuiltInDashboardGroups(ctx context.Context, limit int, offset int) (*dashboard_group.SearchResult, error) {
+	params := url.Values{}
+	params.Add("limit", strconv.Itoa(limit))
+	params.Add("offset", strconv.Itoa(offset))
+	params.Add("excludeCustom", "true")
+
+	resp, err := c.doRequest(ctx, "GET", DashboardGroupAPIURL, params, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if err = newResponseError(resp, http.StatusOK); err != nil {
+		return nil, err
+	}
+
+	finalDashboardGroups := &dashboard_group.SearchResult{}
+
+	err = json.NewDecoder(resp.Body).Decode(finalDashboardGroups)
+	_, _ = io.Copy(io.Discard, resp.Body)
+
+	return finalDashboardGroups, err
+}
