@@ -63,8 +63,6 @@ type AwsCloudWatchIntegration struct {
 	MetricStatsToSync map[string]map[string][]string `json:"metricStatsToSync,omitempty"`
 	// If `ENABLED`, this property indicates that SignalFx should use Cloudwatch Metric Streams.
 	MetricStreamsSyncState string `json:"metricStreamsSyncState,omitempty"`
-	// If `ENABLED`, this property indicates that SignalFx should sync logs from supported AWS services.
-	LogsSyncState string `json:"logsSyncState,omitempty"`
 	// Name of an existing access token (org token) in your Observability Cloud organization. Used to track usage metrics.
 	NamedToken string `json:"namedToken,omitempty"`
 	// If `true`, this property indicates that SignalFx should sync metrics and metadata from custom AWS namespaces only.
