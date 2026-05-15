@@ -43,6 +43,7 @@
         "timeout" : 3600000,
         "type" : "TIMEOUT"
       },
+      "skipClearNotificationStates": ["OK", "AUTO_RESOLVED"],
       "severity": "Critical"
     }
   ],
