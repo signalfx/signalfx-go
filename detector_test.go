@@ -22,6 +22,7 @@ func TestCreateDetector(t *testing.T) {
 	})
 	assert.NoError(t, err, "Unexpected error creating detector")
 	assert.Equal(t, "string", result.Name, "Name does not match")
+	assert.Equal(t, []string{"OK", "AUTO_RESOLVED"}, result.Rules[0].SkipClearNotificationStates, "SkipClearNotificationStates does not match")
 }
 
 func TestCreateBadDetector(t *testing.T) {
@@ -259,6 +260,7 @@ func TestValidateDetector(t *testing.T) {
 					TimeoutMs:  10000,
 					Type:       "TIMEOUT",
 				},
+				SkipClearNotificationStates: []string{"OK", "AUTO_RESOLVED"},
 			},
 		},
 	})
