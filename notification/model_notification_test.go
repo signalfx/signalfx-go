@@ -48,6 +48,17 @@ func TestNotificationUnmarshaJSON(t *testing.T) {
 			errVal: "",
 		},
 		{
+			name: "Email with cc and bcc",
+			input: `{"type":"Email","email":"alerts@example.com","cc":["oncall@example.com","ops@example.com"],"bcc":["audit@example.com"]}`,
+			expect: &Notification{Type: "Email", Value: &EmailNotification{
+				Type:  "Email",
+				Email: "alerts@example.com",
+				Cc:    []string{"oncall@example.com", "ops@example.com"},
+				Bcc:   []string{"audit@example.com"},
+			}},
+			errVal: "",
+		},
+		{
 			name:  "Jira",
 			input: `{"type":"Jira"}`,
 			expect: &Notification{Type: "Jira", Value: &JiraNotification{

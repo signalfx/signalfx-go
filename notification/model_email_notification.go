@@ -6,4 +6,8 @@ type EmailNotification struct {
 	Type string `json:"type"`
 	// The destination address for the notification email. SignalFx doesn't validate this address, so you must ensure it's correct before you use it. SignalFx may not store invalid values, and it may try to  send notification email that doesn't have an address. In either case, the notification won't be delivered.
 	Email string `json:"email"`
+	// Optional CC recipient email addresses.
+	Cc []string `json:"cc,omitempty"`
+	// Optional BCC recipient email addresses.
+	Bcc []string `json:"bcc,omitempty"`
 }
