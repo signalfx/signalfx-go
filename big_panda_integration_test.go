@@ -35,6 +35,19 @@ var bigPandaRequestData = integration.BigPandaIntegration{
 	AlertResolvedPayloadTemplate:  bigPandaAlertResolvedTemplate,
 }
 
+var bigPandaResponseData = integration.BigPandaIntegration{
+	Created:                       bigPandaCreated,
+	Creator:                       bigPandaCreatedBy,
+	Enabled:                       true,
+	Id:                            bigPandaId,
+	LastUpdated:                   bigPandaLastUpdated,
+	LastUpdatedBy:                 bigPandaLastUpdatedBy,
+	Name:                          bigPandaName,
+	Type:                          integration.BIG_PANDA,
+	AlertTriggeredPayloadTemplate: bigPandaAlertTriggeredTemplate,
+	AlertResolvedPayloadTemplate:  bigPandaAlertResolvedTemplate,
+}
+
 func verifyGetBigPandaIntegrationRequest(t *testing.T, r *http.Request) {
 	verifyHeaders(t, r, true)
 	verifyParams(t, r, url.Values{})
@@ -56,20 +69,8 @@ func TestGetBigPandaIntegration(t *testing.T) {
 
 	result, err := client.GetBigPandaIntegration(context.Background(), bigPandaId)
 
-	if assert.NoError(t, err, "Unexpected error getting the integration") {
-		assert.Equal(t, integration.BIG_PANDA, result.Type, "Integration type does not match")
-		assert.Equal(t, true, result.Enabled, "Integration not enabled")
-		assert.Equal(t, bigPandaId, result.Id, "ID does not match")
-		assert.Equal(t, bigPandaName, result.Name, "Name does not match")
-		assert.Equal(t, bigPandaCreated, result.Created, "Create time does not match")
-		assert.Equal(t, bigPandaCreatedBy, result.Creator, "Creator does not match")
-		assert.Equal(t, bigPandaLastUpdated, result.LastUpdated, "Update time does not match")
-		assert.Equal(t, bigPandaLastUpdatedBy, result.LastUpdatedBy, "Updater does not match")
-		assert.Equal(t, bigPandaAlertTriggeredTemplate, result.AlertTriggeredPayloadTemplate, "Alert triggered template does not match")
-		assert.Equal(t, bigPandaAlertResolvedTemplate, result.AlertResolvedPayloadTemplate, "Alert resolved template does not match")
-		assert.Empty(t, result.AppKey, "App key is not empty")
-		assert.Empty(t, result.Token, "Token is not empty")
-	}
+	assert.NoError(t, err, "Unexpected error getting the integration")
+	assert.Equal(t, &bigPandaResponseData, result, "Integration does not match")
 }
 
 func verifyBigPandaIntegrationWriteRequest(t *testing.T, r *http.Request, method string) {
