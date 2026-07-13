@@ -30,4 +30,15 @@ type BigPandaIntegration struct {
 	AppKey string `json:"appKey,omitempty"`
 	// Token you get from BigPanda.<br> **NOTE:** To ensure security, SignalFx doesn't return this property in response objects.
 	Token string `json:"token,omitempty"`
+	// An optional template that Observability Cloud uses to create the BigPanda POST JSON payloads when an alert sends a triggered notification to BigPanda.
+	AlertTriggeredPayloadTemplate string `json:"alertTriggeredPayloadTemplate,omitempty"`
+	// An optional template that Observability Cloud uses to create the BigPanda POST JSON payloads when an alert sends a resolved notification to BigPanda.
+	AlertResolvedPayloadTemplate string `json:"alertResolvedPayloadTemplate,omitempty"`
+}
+
+type BigPandaIntegrationList struct {
+	// Number of integrations in the result set
+	Count int `json:"count,omitempty"`
+	// List of returned integration objects
+	Results []BigPandaIntegration `json:"results,omitempty"`
 }
