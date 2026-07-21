@@ -9,6 +9,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/tools v0.48.0
+	gopkg.in/validator.v2 v2.0.1
 )
 
 require (
@@ -30,6 +31,5 @@ require (
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
