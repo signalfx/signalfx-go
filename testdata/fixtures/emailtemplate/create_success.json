@@ -1,0 +1,18 @@
+{
+  "id": "template-id",
+  "name": "Terraform email template",
+  "triggerSubject": "{{ruleSeverity}} Alert: {{{ruleName}}}",
+  "triggerBody": "Triggered at {{timestamp}}",
+  "resolvedSubject": "{{ruleSeverity}} Resolved: {{{ruleName}}}",
+  "resolvedBody": "Resolved at {{timestamp}}",
+  "to": ["alerts@example.com"],
+  "cc": ["oncall@example.com"],
+  "bcc": ["audit@example.com"],
+  "customHeaders": {
+    "X-Test-Header": "terraform"
+  },
+  "createdOnMs": 1710000000000,
+  "createdBy": "creator-id",
+  "updatedOnMs": 1710000000000,
+  "updatedBy": "creator-id"
+}
