@@ -144,7 +144,11 @@ func TestGetDirectoryEntry(t *testing.T) {
 
 		result, err := client.GetDirectoryEntry(context.Background(), "test")
 		require.NoError(t, err)
-		assert.Nil(t, result.Data)
+		require.NotNil(t, result.Data)
+		assert.Equal(t, "test", result.Data.Path)
+		assert.False(t, result.Data.Pinned)
+		assert.Empty(t, result.Data.Templates)
+		assert.Empty(t, result.Data.Children)
 		assert.Empty(t, result.Errors)
 	})
 

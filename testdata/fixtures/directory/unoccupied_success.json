@@ -1,5 +1,16 @@
 {
-  "data": null,
+  "data": {
+    "self": "/v2/directory/test",
+    "type": "https://schema.splunkdev.com/dashify/v1/directory/Entry",
+    "path": "test",
+    "label": "test",
+    "templates": [],
+    "ancestors": [],
+    "children": [],
+    "pinned": false,
+    "identity": false,
+    "canonical": false
+  },
   "errors": null,
   "includes": null
 }
