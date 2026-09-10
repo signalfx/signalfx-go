@@ -1,0 +1,41 @@
+{
+  "data": {
+    "self": "/v2/directory/~users/user%40example.com/My+Dashboards",
+    "type": "https://schema.splunkdev.com/dashify/v1/directory/Entry",
+    "path": "~users/user@example.com/My Dashboards",
+    "label": "My Dashboards",
+    "templates": [
+      "/v2/template/test-dashboard",
+      "/v2/template/test-chart"
+    ],
+    "ancestors": [
+      "/v2/directory",
+      "/v2/directory/~users",
+      "/v2/directory/~users/user%40example.com"
+    ],
+    "children": [],
+    "pinned": true,
+    "identity": false,
+    "canonical": false
+  },
+  "errors": [],
+  "includes": [
+    {
+      "self": "/v2/directory/~users/user%40example.com",
+      "type": "https://schema.splunkdev.com/dashify/v1/directory/Entry",
+      "path": "~users/user@example.com",
+      "label": "Test User",
+      "templates": [],
+      "ancestors": [
+        "/v2/directory",
+        "/v2/directory/~users"
+      ],
+      "children": [
+        "/v2/directory/~users/user%40example.com/My+Dashboards"
+      ],
+      "pinned": true,
+      "identity": true,
+      "canonical": true
+    }
+  ]
+}

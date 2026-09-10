@@ -1,0 +1,20 @@
+{
+  "data": {
+    "self": "/v2/directory",
+    "type": "https://schema.splunkdev.com/dashify/v1/directory/Entry",
+    "path": "",
+    "label": "All dashboards",
+    "templates": [],
+    "ancestors": [],
+    "children": [
+      "/v2/directory/~organization",
+      "/v2/directory/~users"
+    ],
+    "pinned": true,
+    "identity": false,
+    "canonical": false,
+    "futureField": "ignored"
+  },
+  "errors": [],
+  "includes": []
+}
