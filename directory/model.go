@@ -1,5 +1,7 @@
 package directory
 
+import "github.com/signalfx/signalfx-go/util"
+
 // EntryType is the schema type returned for Directory entries.
 const EntryType = "https://schema.splunkdev.com/dashify/v1/directory/Entry"
 
@@ -19,22 +21,16 @@ type Entry struct {
 
 // Patch contains the writable fields for a Directory entry.
 //
-// Both fields are pointers so callers can distinguish an omitted field from
-// an explicit false value or empty list. Templates replaces the complete
-// membership list; it is not an atomic add or remove operation. A pointer to
-// a nil slice encodes as JSON null, which clears the list just like an empty
-// slice does.
+// Pinned is a pointer so callers can distinguish an omitted field from an
+// explicit false value. Templates replaces the complete membership list. A
+// nil Templates slice is omitted, while a non-nil empty slice clears the list.
 type Patch struct {
-	Templates *[]string `json:"templates,omitempty"`
-	Pinned    *bool     `json:"pinned,omitempty"`
+	Templates []string `json:"templates,omitzero"`
+	Pinned    *bool    `json:"pinned,omitempty"`
 }
 
-// APIError describes an error reported inside a Directory response envelope:
-// a status code as a string and a human-readable message.
-type APIError struct {
-	Code    string `json:"code,omitempty"`
-	Message string `json:"message,omitempty"`
-}
+// APIError describes an error reported inside a Directory response envelope.
+type APIError = util.APIError
 
 // Result is the response envelope returned by Directory reads and patches.
 type Result struct {

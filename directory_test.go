@@ -230,27 +230,21 @@ func TestPatchDirectoryEntry(t *testing.T) {
 		{
 			name: "complete ordered membership and pinned",
 			patch: &directory.Patch{
-				Templates: directoryStrings("/v2/template/dashboard", "/v2/template/chart"),
-				Pinned:    directoryBool(true),
+				Templates: []string{"/v2/template/dashboard", "/v2/template/chart"},
+				Pinned:    new(true),
 			},
 			wantBody:   `{"templates":["/v2/template/dashboard","/v2/template/chart"],"pinned":true}`,
 			statusCode: http.StatusOK,
 		},
 		{
 			name:       "explicit empty membership",
-			patch:      &directory.Patch{Templates: directoryStrings()},
+			patch:      &directory.Patch{Templates: []string{}},
 			wantBody:   `{"templates":[]}`,
 			statusCode: http.StatusOK,
 		},
 		{
-			name:       "explicit null membership",
-			patch:      &directory.Patch{Templates: directoryNullStrings()},
-			wantBody:   `{"templates":null}`,
-			statusCode: http.StatusOK,
-		},
-		{
 			name:       "false is not omitted",
-			patch:      &directory.Patch{Pinned: directoryBool(false)},
+			patch:      &directory.Patch{Pinned: new(false)},
 			wantBody:   `{"pinned":false}`,
 			statusCode: http.StatusOK,
 		},
@@ -262,7 +256,7 @@ func TestPatchDirectoryEntry(t *testing.T) {
 		},
 		{
 			name:       "legacy created status",
-			patch:      &directory.Patch{Pinned: directoryBool(true)},
+			patch:      &directory.Patch{Pinned: new(true)},
 			wantBody:   `{"pinned":true}`,
 			statusCode: http.StatusCreated,
 		},
@@ -371,22 +365,6 @@ func TestDeleteDirectoryEntry(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, responseError.Code())
 		assert.JSONEq(t, fixture("directory/error.json"), responseError.Details())
 	})
-}
-
-func directoryBool(value bool) *bool {
-	return &value
-}
-
-func directoryStrings(values ...string) *[]string {
-	if values == nil {
-		values = []string{}
-	}
-	return &values
-}
-
-func directoryNullStrings() *[]string {
-	var values []string
-	return &values
 }
 
 type directoryRoundTripFunc func(*http.Request) (*http.Response, error)
