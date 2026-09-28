@@ -1,7 +1,7 @@
 {
   "data": {
     "self": "/v2/directory/test",
-    "type": "https://schema.splunkdev.com/dashify/v1/directory/Entry",
+    "type": "#/dashify/v1/directory/Entry",
     "path": "test",
     "label": "test",
     "templates": [],

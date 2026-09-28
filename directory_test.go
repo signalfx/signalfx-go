@@ -223,13 +223,13 @@ func TestGetDirectoryEntry(t *testing.T) {
 func TestPatchDirectoryEntry(t *testing.T) {
 	tests := []struct {
 		name       string
-		patch      *directory.Patch
+		patch      *directory.PatchDirectoryEntryRequest
 		wantBody   string
 		statusCode int
 	}{
 		{
 			name: "complete ordered membership and pinned",
-			patch: &directory.Patch{
+			patch: &directory.PatchDirectoryEntryRequest{
 				Templates: []string{"/v2/template/dashboard", "/v2/template/chart"},
 				Pinned:    new(true),
 			},
@@ -238,25 +238,25 @@ func TestPatchDirectoryEntry(t *testing.T) {
 		},
 		{
 			name:       "explicit empty membership",
-			patch:      &directory.Patch{Templates: []string{}},
+			patch:      &directory.PatchDirectoryEntryRequest{Templates: []string{}},
 			wantBody:   `{"templates":[]}`,
 			statusCode: http.StatusOK,
 		},
 		{
 			name:       "false is not omitted",
-			patch:      &directory.Patch{Pinned: new(false)},
+			patch:      &directory.PatchDirectoryEntryRequest{Pinned: new(false)},
 			wantBody:   `{"pinned":false}`,
 			statusCode: http.StatusOK,
 		},
 		{
 			name:       "omitted fields",
-			patch:      &directory.Patch{},
+			patch:      &directory.PatchDirectoryEntryRequest{},
 			wantBody:   `{}`,
 			statusCode: http.StatusOK,
 		},
 		{
 			name:       "legacy created status",
-			patch:      &directory.Patch{Pinned: new(true)},
+			patch:      &directory.PatchDirectoryEntryRequest{Pinned: new(true)},
 			wantBody:   `{"pinned":true}`,
 			statusCode: http.StatusCreated,
 		},
@@ -300,7 +300,7 @@ func TestPatchDirectoryEntry(t *testing.T) {
 			requested = true
 		})
 
-		result, err := client.PatchDirectoryEntry(context.Background(), "other//user", &directory.Patch{})
+		result, err := client.PatchDirectoryEntry(context.Background(), "other//user", &directory.PatchDirectoryEntryRequest{})
 		assert.Nil(t, result)
 		assert.ErrorContains(t, err, "must not be empty")
 		assert.False(t, requested)
@@ -312,7 +312,7 @@ func TestPatchDirectoryEntry(t *testing.T) {
 
 		mux.HandleFunc("/v2/directory/test", verifyRequestWithJsonBody(t, http.MethodPatch, true, http.StatusBadRequest, nil, `{}`, "directory/error.json"))
 
-		result, err := client.PatchDirectoryEntry(context.Background(), "test", &directory.Patch{})
+		result, err := client.PatchDirectoryEntry(context.Background(), "test", &directory.PatchDirectoryEntryRequest{})
 		assert.Nil(t, result)
 		require.Error(t, err)
 

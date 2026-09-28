@@ -3,7 +3,7 @@ package directory
 import "github.com/signalfx/signalfx-go/util"
 
 // EntryType is the schema type returned for Directory entries.
-const EntryType = "https://schema.splunkdev.com/dashify/v1/directory/Entry"
+const EntryType = "#/dashify/v1/directory/Entry"
 
 // Entry describes one logical Directory path and its Template memberships.
 type Entry struct {
@@ -14,17 +14,19 @@ type Entry struct {
 	Templates []string `json:"templates"`
 	Ancestors []string `json:"ancestors"`
 	Children  []string `json:"children"`
-	Pinned    bool     `json:"pinned"`
-	Identity  bool     `json:"identity"`
-	Canonical bool     `json:"canonical"`
+	// Pinned marks the entry as explicitly kept even when it would otherwise
+	// be unoccupied (no Templates and no Children).
+	Pinned    bool `json:"pinned"`
+	Identity  bool `json:"identity"`
+	Canonical bool `json:"canonical"`
 }
 
-// Patch contains the writable fields for a Directory entry.
+// PatchDirectoryEntryRequest contains the writable fields for a Directory entry.
 //
 // Pinned is a pointer so callers can distinguish an omitted field from an
 // explicit false value. Templates replaces the complete membership list. A
 // nil Templates slice is omitted, while a non-nil empty slice clears the list.
-type Patch struct {
+type PatchDirectoryEntryRequest struct {
 	Templates []string `json:"templates,omitzero"`
 	Pinned    *bool    `json:"pinned,omitempty"`
 }

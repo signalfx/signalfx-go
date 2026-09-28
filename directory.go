@@ -52,7 +52,7 @@ func (c *Client) GetDirectoryEntry(ctx context.Context, path string) (*directory
 // The Directory API provides no atomic add/remove operation or stale-write
 // precondition, so callers must account for concurrent updates. Setting Pinned
 // to false on an entry with no Templates can make the entry unoccupied.
-func (c *Client) PatchDirectoryEntry(ctx context.Context, path string, patch *directory.Patch) (*directory.Result, error) {
+func (c *Client) PatchDirectoryEntry(ctx context.Context, path string, patch *directory.PatchDirectoryEntryRequest) (*directory.Result, error) {
 	if patch == nil {
 		return nil, errors.New("directory patch must not be nil")
 	}
