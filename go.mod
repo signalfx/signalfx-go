@@ -8,7 +8,7 @@ require (
 	github.com/signalfx/golib/v3 v3.5.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/oauth2 v0.36.0
-	golang.org/x/tools v0.48.0
+	golang.org/x/tools v0.50.0
 	gopkg.in/validator.v2 v2.0.1
 )
 
@@ -26,10 +26,10 @@ require (
 	github.com/signalfx/com_signalfx_metrics_protobuf v0.0.3 // indirect
 	github.com/signalfx/gohistogram v0.0.0-20160107210732-1ccfd2ff5083 // indirect
 	github.com/twmb/murmur3 v1.1.7 // indirect
-	golang.org/x/mod v0.38.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
