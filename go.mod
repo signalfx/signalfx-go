@@ -7,7 +7,7 @@ require (
 	github.com/mauricelam/genny v0.0.0-20190320071652-0800202903e5
 	github.com/signalfx/golib/v3 v3.5.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/oauth2 v0.36.0
+	golang.org/x/oauth2 v0.37.0
 	golang.org/x/tools v0.48.0
 	gopkg.in/validator.v2 v2.0.1
 )
