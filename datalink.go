@@ -89,7 +89,6 @@ func (c *Client) UpdateDataLink(ctx context.Context, id string, dataLinkRequest 
 
 	encodedName := url.PathEscape(id)
 	resp, err := c.doRequest(ctx, "PUT", DataLinkAPIURL+"/"+encodedName, nil, bytes.NewReader(payload))
-
 	if err != nil {
 		return nil, err
 	}
@@ -100,10 +99,8 @@ func (c *Client) UpdateDataLink(ctx context.Context, id string, dataLinkRequest 
 	}
 
 	finalDataLink := &datalink.DataLink{}
-
 	err = json.NewDecoder(resp.Body).Decode(finalDataLink)
 	_, _ = io.Copy(ioutil.Discard, resp.Body)
-
 	return finalDataLink, err
 }
 
