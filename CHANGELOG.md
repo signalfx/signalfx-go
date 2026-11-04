@@ -1,3 +1,7 @@
+# Unreleased
+
+* **BREAKING:** Change `datalink.CreateUpdateDataLinkRequest.PropertyValue` from `string` to `*string`. Use `nil` to omit the field and a pointer to an empty string to clear it.
+
 # 1.26.0 13 Jan 2023
 
 * Add `customMetricTypeDomains` field to the `GCPIntegration` struct [#180](https://github.com/signalfx/signalfx-go/pull/180)

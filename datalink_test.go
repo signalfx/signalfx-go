@@ -15,14 +15,26 @@ func TestCreateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink", verifyRequest(t, "POST", true, http.StatusOK, nil, "datalink/create_success.json"))
+	mux.HandleFunc("/v2/crosslink", verifyRequestWithJsonBody(t, http.MethodPost, true, http.StatusOK, nil, `{"propertyName":"string","propertyValue":"string"}`, "datalink/create_success.json"))
 
 	result, err := client.CreateDataLink(context.Background(), &datalink.CreateUpdateDataLinkRequest{
 		PropertyName:  "string",
-		PropertyValue: "string",
+		PropertyValue: new("string"),
 	})
 	assert.NoError(t, err, "Unexpected error creating data link")
 	assert.Equal(t, "string", result.PropertyName, "PropertyName does not match")
+}
+
+func TestCreateDataLinkWithoutPropertyValueOmitsField(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/crosslink", verifyRequestWithJsonBody(t, http.MethodPost, true, http.StatusOK, nil, `{"propertyName":"string"}`, "datalink/create_success.json"))
+
+	_, err := client.CreateDataLink(context.Background(), &datalink.CreateUpdateDataLinkRequest{
+		PropertyName: "string",
+	})
+	assert.NoError(t, err, "Unexpected error creating data link")
 }
 
 func TestBadCreateDataLink(t *testing.T) {
@@ -121,12 +133,26 @@ func TestUpdateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/v2/crosslink/string", verifyRequest(t, "PUT", true, http.StatusOK, nil, "datalink/update_success.json"))
+	mux.HandleFunc("/v2/crosslink/string", verifyRequestWithJsonBody(t, http.MethodPut, true, http.StatusOK, nil, `{"propertyName":"string"}`, "datalink/update_success.json"))
 
 	result, err := client.UpdateDataLink(context.Background(), "string", &datalink.CreateUpdateDataLinkRequest{
 		PropertyName: "string",
 	})
 	assert.NoError(t, err, "Unexpected error updating data link")
+	assert.Equal(t, "string", result.PropertyName, "PropertyName does not match")
+}
+
+func TestUpdateDataLinkWithEmptyPropertyValue(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/crosslink/string", verifyRequestWithJsonBody(t, http.MethodPut, true, http.StatusOK, nil, `{"propertyName":"string","propertyValue":""}`, "datalink/update_success.json"))
+
+	result, err := client.UpdateDataLink(context.Background(), "string", &datalink.CreateUpdateDataLinkRequest{
+		PropertyName:  "string",
+		PropertyValue: new(""),
+	})
+	assert.NoError(t, err, "Unexpected error clearing data link property value")
 	assert.Equal(t, "string", result.PropertyName, "PropertyName does not match")
 }
 
