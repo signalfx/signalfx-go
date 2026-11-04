@@ -11,10 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func stringPointer(value string) *string {
-	return &value
-}
-
 func TestCreateDataLink(t *testing.T) {
 	teardown := setup()
 	defer teardown()
@@ -23,7 +19,7 @@ func TestCreateDataLink(t *testing.T) {
 
 	result, err := client.CreateDataLink(context.Background(), &datalink.CreateUpdateDataLinkRequest{
 		PropertyName:  "string",
-		PropertyValue: stringPointer("string"),
+		PropertyValue: new("string"),
 	})
 	assert.NoError(t, err, "Unexpected error creating data link")
 	assert.Equal(t, "string", result.PropertyName, "PropertyName does not match")
@@ -154,7 +150,7 @@ func TestUpdateDataLinkWithEmptyPropertyValue(t *testing.T) {
 
 	result, err := client.UpdateDataLink(context.Background(), "string", &datalink.CreateUpdateDataLinkRequest{
 		PropertyName:  "string",
-		PropertyValue: stringPointer(""),
+		PropertyValue: new(""),
 	})
 	assert.NoError(t, err, "Unexpected error clearing data link property value")
 	assert.Equal(t, "string", result.PropertyName, "PropertyName does not match")
