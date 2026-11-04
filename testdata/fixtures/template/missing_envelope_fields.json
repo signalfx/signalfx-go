@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": "minimal-id",
+    "self": "/v2/template/minimal-id",
+    "type": "#/dashify/v1/templates/Record",
+    "title": "Minimal template",
+    "spec": {}
+  }
+}

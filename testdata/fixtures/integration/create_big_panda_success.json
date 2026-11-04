@@ -1,0 +1,12 @@
+{
+  "created": 1647426008469,
+  "creator": "EEEzzzzYYY",
+  "enabled": true,
+  "id": "FFF-yyyyZZ",
+  "lastUpdated": 1647426008953,
+  "lastUpdatedBy": "YY_zzzzyyy",
+  "name": "BigPanda integ",
+  "type": "BigPanda",
+  "alertTriggeredPayloadTemplate": "{\"status\":\"critical\",\"summary\":\"{{{messageTitle}}}\"}",
+  "alertResolvedPayloadTemplate": "{\"status\":\"ok\",\"summary\":\"{{{messageTitle}}}\"}"
+}

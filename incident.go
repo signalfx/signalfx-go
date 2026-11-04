@@ -46,14 +46,19 @@ func (c *Client) GetIncidents(ctx context.Context, includeResolved bool, limit i
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if err = newResponseError(resp, http.StatusOK); err != nil {
 		return nil, err
 	}
 
+	content := c.leaseBuffer()
+	defer c.releaseBuffer(content)
+	_, err = content.ReadFrom(resp.Body)
 	var incidents []*detector.Incident
-	err = json.NewDecoder(resp.Body).Decode(&incidents)
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
+	if err == nil {
+		err = json.Unmarshal(content.Bytes(), &incidents)
+	}
 
 	return incidents, err
 }

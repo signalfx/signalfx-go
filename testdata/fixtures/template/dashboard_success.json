@@ -1,0 +1,38 @@
+{
+  "data": {
+    "id": "HNPz_pNAIAE",
+    "self": "/v2/template/HNPz_pNAIAE",
+    "type": "#/dashify/v1/templates/Record",
+    "title": "Service overview",
+    "spec": {
+      "<Dashboard>": [
+        {
+          "<Panel>": [
+            {
+              "<$import.chart0>": []
+            }
+          ],
+          "futureLayoutOption": {
+            "preserve": true
+          }
+        }
+      ],
+      "$import:chart0": "/v2/template/HNPr-tr_AAc"
+    },
+    "metadata": {
+      "rootElement": "Dashboard",
+      "imports": []
+    },
+    "signalview": null,
+    "directoryEntries": [
+      "/v2/directory/~templates/HNPz_pNAIAE"
+    ],
+    "createdAt": "2026-09-05T00:44:31.408Z[UTC]",
+    "createdBy": "/v2/user/example",
+    "updatedAt": "2026-09-05T00:45:12.002Z[UTC]",
+    "updatedBy": null,
+    "futureRecordField": "ignored"
+  },
+  "errors": [],
+  "includes": []
+}

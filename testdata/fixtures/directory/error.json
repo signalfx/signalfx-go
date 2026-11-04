@@ -1,0 +1,10 @@
+{
+  "data": null,
+  "errors": [
+    {
+      "code": "403",
+      "message": "Directory path is not writable"
+    }
+  ],
+  "includes": []
+}

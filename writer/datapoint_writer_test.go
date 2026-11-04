@@ -126,16 +126,22 @@ func TestDatapointWriter(t *testing.T) {
 			ts.Writer.Start(ts.Ctx)
 
 			inputCount := 100000
+			nextDrain := ts.Writer.MaxBuffered / 2
 
 			i := 0
 			var batch []*datapoint.Datapoint
 			for i <= inputCount {
 				if i == inputCount || len(batch) == inBatchSize {
-					// Slow it down a bit so it doesn't wraparound the buffer
-					time.Sleep(100 * time.Nanosecond)
 					ts.Input <- batch
 					batch = nil
-					time.Sleep(100 * time.Nanosecond)
+					if i >= nextDrain {
+						// Drain periodically so wraparound is not dependent on scheduler timing.
+						require.Eventually(t, func() bool {
+							return atomic.LoadInt64(&ts.Writer.TotalSent) >= int64(i) &&
+								atomic.LoadInt64(&ts.Writer.TotalInFlight) == 0
+						}, 3*time.Second, time.Millisecond)
+						nextDrain = i + ts.Writer.MaxBuffered/2
+					}
 				}
 				batch = append(batch, &datapoint.Datapoint{Meta: map[interface{}]interface{}{"i": i}})
 				i++

@@ -1,0 +1,10 @@
+{
+  "data": null,
+  "errors": [
+    {
+      "code": "404",
+      "message": "Template with id 'missing-id' not found"
+    }
+  ],
+  "includes": []
+}

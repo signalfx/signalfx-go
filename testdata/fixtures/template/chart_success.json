@@ -1,0 +1,47 @@
+{
+  "data": {
+    "id": "HNPr-tr_AAc",
+    "self": "/v2/template/HNPr-tr_AAc",
+    "type": "#/dashify/v1/templates/Record",
+    "title": "Request rate",
+    "spec": {
+      "<Chart>": [
+        {
+          "<o11y:SingleValue>": [],
+          "chart": {
+            "colorScale": [
+              {
+                "gt": 0.5,
+                "color": "green"
+              }
+            ]
+          },
+          "datasource": {
+            "program": "A = data('requests'); publish(A)"
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "rootElement": "Chart",
+      "imports": []
+    },
+    "signalview": {
+      "type": "CHART",
+      "associationCreatedAt": "2026-09-05T00:40:00Z[UTC]",
+      "lastConvertedAt": null,
+      "lastConvertedBy": null,
+      "object": {
+        "name": "Classic chart",
+        "futureAssociationField": 42
+      }
+    },
+    "directoryEntries": [],
+    "createdAt": "2026-09-05T00:40:00Z[UTC]",
+    "createdBy": null,
+    "updatedAt": "2026-09-05T00:40:00Z[UTC]",
+    "updatedBy": "/v2/user/example"
+  },
+  "errors": null,
+  "includes": null
+}

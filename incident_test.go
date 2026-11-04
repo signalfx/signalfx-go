@@ -2,7 +2,9 @@ package signalfx
 
 import (
 	"context"
+	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/signalfx/signalfx-go/detector"
@@ -60,4 +62,30 @@ func TestGetIncidents(t *testing.T) {
 	assert.Equal(t, result[0].IncidentId, "string", "Name does not match")
 	assert.Equal(t, result[0].Active, true, "Active field does not match")
 	assert.Equal(t, result[1].IncidentId, "string1", "Name does not match")
+}
+
+func TestGetIncidentsClosesResponseBody(t *testing.T) {
+	body := &closeTrackingBody{Reader: strings.NewReader("[]")}
+	client, err := NewClient(TestToken, HTTPClient(&http.Client{Transport: roundTripperFunc(func(request *http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: http.StatusOK, Body: body, Request: request}, nil
+	})}))
+	assert.NoError(t, err)
+
+	_, err = client.GetIncidents(context.Background(), false, 10, "", 0)
+	assert.NoError(t, err)
+	assert.True(t, body.closed)
+}
+
+type roundTripperFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripperFunc) RoundTrip(request *http.Request) (*http.Response, error) { return f(request) }
+
+type closeTrackingBody struct {
+	io.Reader
+	closed bool
+}
+
+func (b *closeTrackingBody) Close() error {
+	b.closed = true
+	return nil
 }

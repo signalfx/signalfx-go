@@ -26,6 +26,8 @@ func (n *Notification) UnmarshalJSON(data []byte) error {
 		n.Value = &BigPandaNotification{}
 	case "Email":
 		n.Value = &EmailNotification{}
+	case "EmailTemplate":
+		n.Value = &EmailTemplateNotification{}
 	case "Jira":
 		n.Value = &JiraNotification{}
 	case "Office365":

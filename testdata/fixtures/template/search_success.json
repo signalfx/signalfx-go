@@ -1,0 +1,34 @@
+{
+  "data": {
+    "type": "#/dashify/v1/common/Collection",
+    "self": "/v2/template?offset=0&rootElement=Dashboard&size=200",
+    "next": null,
+    "prev": null,
+    "count": 1,
+    "items": [
+      "/v2/template/HNPz_pNAIAE"
+    ]
+  },
+  "errors": [],
+  "includes": [
+    {
+      "id": "HNPz_pNAIAE",
+      "self": "/v2/template/HNPz_pNAIAE",
+      "type": "#/dashify/v1/templates/Record",
+      "title": "Service overview",
+      "spec": {
+        "<Dashboard>": []
+      },
+      "metadata": {
+        "rootElement": "Dashboard",
+        "imports": []
+      },
+      "signalview": null,
+      "directoryEntries": [],
+      "createdAt": "2026-09-05T00:44:31.408Z[UTC]",
+      "createdBy": null,
+      "updatedAt": "2026-09-05T00:44:31.408Z[UTC]",
+      "updatedBy": null
+    }
+  ]
+}
